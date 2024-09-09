@@ -1,0 +1,125 @@
+Goal: Deploy Upgradeable HYAX Rewards Token
+
+D:&cd D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Rewards
+
+---------------DONE---------------
+
+0. Recap the functionalities and requirements 
+
+1. Create a Test-Driven Development plan
+
+2. Set up full dev environment DONE
+
+---------INITIAL HARDHAT SETUP---------
+
+npm init -y
+
+npm install --save-dev hardhat
+
+npx hardhat init
+
+Create an empty hardhat.config.js
+
+npm install --save-dev @nomicfoundation/hardhat-toolbox
+
+npm install --save-dev hardhat
+
+npm install --save-dev @nomicfoundation/hardhat-ethers ethers
+
+npm install --save-dev @openzeppelin/hardhat-upgrades
+
+npm install --save-dev @nomicfoundation/hardhat-network-helpers
+
+npm install --save dotenv
+
+npm install --save-dev chai@4.3.7
+
+
+3. Create tests code DONE
+
+---------EXECUTE LOCAL TESTS---------
+
+npm i hardhat-gas-reporter
+
+npx hardhat test
+
+
+
+---------------ToDo---------------
+
+
+4. Create growth tokens functionalities
+
+npm install @openzeppelin/contracts
+
+CONTINUE HERE!
+fundSmartContract onlyOwner library
+
+
+
+
+---------INITIAL LOCAL DEPLOYMENT---------
+
+npx hardhat node
+
+npx hardhat compile --force
+
+
+
+5. Create teams tokens functionalities
+
+6. Create rewards functionalities
+
+7. Create external script for rewards
+
+8. Test everything locally
+
+9. Create local upgradeable version
+
+10. Create testnet upgradeable version
+
+
+
+----------------------------
+
+Using the following hardhat testing template, generate the following test cases for the "XXXXXXXXXXXXXXXXXXXXXXX", for the solidity smart contract: UpgradeableHYAXRewards.sol
+
+const {
+  loadFixture,
+} = require("@nomicfoundation/hardhat-toolbox/network-helpers");
+const { expect } = require("chai");
+
+describe("Token contract", function () {
+  async function deployTokenFixture() {
+    const [owner, addr1, addr2] = await ethers.getSigners();
+
+    const hardhatToken = await ethers.deployContract("Token");
+
+    // Fixtures can return anything you consider useful for your tests
+    return { hardhatToken, owner, addr1, addr2 };
+  }
+
+  it("Should assign the total supply of tokens to the owner", async function () {
+    const { hardhatToken, owner } = await loadFixture(deployTokenFixture);
+
+    const ownerBalance = await hardhatToken.balanceOf(owner.address);
+    expect(await hardhatToken.totalSupply()).to.equal(ownerBalance);
+  });
+
+  it("Should transfer tokens between accounts", async function () {
+    const { hardhatToken, owner, addr1, addr2 } = await loadFixture(
+      deployTokenFixture
+    );
+
+    // Transfer 50 tokens from owner to addr1
+    await expect(
+      hardhatToken.transfer(addr1.address, 50)
+    ).to.changeTokenBalances(hardhatToken, [owner, addr1], [-50, 50]);
+
+    // Transfer 50 tokens from addr1 to addr2
+    // We use .connect(signer) to send a transaction from another account
+    await expect(
+      hardhatToken.connect(addr1).transfer(addr2.address, 50)
+    ).to.changeTokenBalances(hardhatToken, [addr1, addr2], [-50, 50]);
+  });
+});

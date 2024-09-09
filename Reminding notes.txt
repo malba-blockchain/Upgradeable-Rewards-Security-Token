@@ -1,0 +1,118 @@
+------------TOKENS DE EQUIPO------------
+
+1.5B tokens
+Lock: 4 years - 208 weeks
+----
+Unlock roadmap
+Year 5: 20% / 20%
+Year 6: 20% / 40%
+Year 7: 20% / 60%
+Year 8: 20% / 80%
+Year 9: 20% / 100%
+
+The locked % can be seen from the platform and while it's locked the team member can get rewards
+
+------------TOKENS DE CRECIMIENTO------------
+
+4B tokens total
+1. 40% available (directly) = 1.6B tokens
+2. 60% locked for 20 years = 2.4B tokens. Unlock 5% per year.
+Year 1: 5% / 5%  - 120,000,000 / 120,000,000 
+Year 2: 5% / 10% - 120,000,000 / 240,000,000 
+Year 3: 5% / 15% - 120,000,000 / 360,000,000 
+...
+Year 20: 5% / 100% - 120,000,000 / 2,400,000,000
+
+
+------------TOKENS DE RECOMPENSA------------
+
+Distribution ONLY among users who hold HYAX in their wallet and have an account that approved hydraxis KYC.
+
+1.2B tokens distributed during 8 years. Every week the same amount.
+
+Year 1: 12.5% / 12.5% - 150,000,000 / 150,000,000 
+Year 2: 12.5% / 25% - 150,000,000 / 300,000,000 
+Year 3: 12.5% / 37.5% - 150,000,000 / 450,000,000 
+...
+Year 8: 100% / 100% - 150,000,000 / 1,200,000,000
+
+Weeks in a year:
+52 weeks
+2,884,615 tokens per week
+
+--------PROCESS (Tokens Equipo)---------
+
+1. Admin uses depositLockedTokensForTeam(address, value)
+2. Rewards are calculated based on the TOTAL tokens that member has
+3. If the member wants to retire has to wait until the lock time per % has been completed
+4. Rewards for the team are calculated based on the total rewards/ amount of tokens each member is holding.
+
+Q. The member can extract his rewards from the smart contract whenever he wants to?
+
+------PROCESS (Tokens Crecimiento)-------
+
+An amount of tokens get issued for the admin to use them as he finds best.
+1. 40% will be minted instantaneusly and sent to the multisign
+2. 60% will be mintend instantaneusly and sent to the rewards smart contract. Allowing to withdraw 5% every year for 20 years.
+
+------PROCESS (Tokens Recompensa)-------
+
+1. User goes through KYC to get his wallet approved. User sends information of his bitcoin wallet and token holder address.
+
+2. Hydraxis team adds his wallet to whitelist (Wallet Data)
+
+3. User can freely move his tokens across wallet, there is no lock
+
+4. Rewards to holding are calculated on a weekly basis externally using ethers.js. Takes a snapshot and then calculates the values.
+
+Those values are updated on a weekly basis using javascript.
+
+5. Users can extract their rewards freely.
+
+
+-------------VARIABLES------------------
+enum WalletType {TeamMember, Investor}
+enum FundingType {TeamRewards, InvestorRewards, GrowthTokens}
+Wallet Data: Cantidad de HYAX en staking por wallet, tiempo de staking, rewards acumulados, Bitcoin Reward Address, rewards withdrawn, isTeamWallet.
+
+Locking time
+
+tokenInvestorRewards
+tokenTeamRewards
+tokenGrowthTokens
+
+------------METHODS------------------
+
+Add wallet to whitelist (WalletType)
+
+Remove wallet from whitelist (WalletType)
+
+fundSmartcontract (FundingType)
+
+WithdrawLockedTokensForTeamMember ()
+
+withdrawLockedTokensForGrowth ()
+
+updateValuesOfTokensRewards()
+
+withdrawTokenRewards(WalletType)
+
+withdrawTokensToBurn()
+
+updateWaitingTime()
+
+------------External Script------------------
+
+calculateTokenRewardsEarnedWeekly()
+
+
+
+
+
+
+
+
+
+
+
+
