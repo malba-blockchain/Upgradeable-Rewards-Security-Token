@@ -48,21 +48,13 @@ npx hardhat test
 ---------------ToDo---------------
 
 
+CONTINUE HEREEEEEEEEEEE
+
 4. Create growth tokens functionalities
 
 npm install @openzeppelin/contracts
 
-CONTINUE HERE!
-fundSmartContract onlyOwner library
 
-
-
-
----------INITIAL LOCAL DEPLOYMENT---------
-
-npx hardhat node
-
-npx hardhat compile --force
 
 
 
@@ -74,6 +66,12 @@ npx hardhat compile --force
 
 8. Test everything locally
 
+---------INITIAL LOCAL DEPLOYMENT---------
+
+npx hardhat node
+
+npx hardhat compile --force
+
 9. Create local upgradeable version
 
 10. Create testnet upgradeable version
@@ -83,43 +81,3 @@ npx hardhat compile --force
 ----------------------------
 
 Using the following hardhat testing template, generate the following test cases for the "XXXXXXXXXXXXXXXXXXXXXXX", for the solidity smart contract: UpgradeableHYAXRewards.sol
-
-const {
-  loadFixture,
-} = require("@nomicfoundation/hardhat-toolbox/network-helpers");
-const { expect } = require("chai");
-
-describe("Token contract", function () {
-  async function deployTokenFixture() {
-    const [owner, addr1, addr2] = await ethers.getSigners();
-
-    const hardhatToken = await ethers.deployContract("Token");
-
-    // Fixtures can return anything you consider useful for your tests
-    return { hardhatToken, owner, addr1, addr2 };
-  }
-
-  it("Should assign the total supply of tokens to the owner", async function () {
-    const { hardhatToken, owner } = await loadFixture(deployTokenFixture);
-
-    const ownerBalance = await hardhatToken.balanceOf(owner.address);
-    expect(await hardhatToken.totalSupply()).to.equal(ownerBalance);
-  });
-
-  it("Should transfer tokens between accounts", async function () {
-    const { hardhatToken, owner, addr1, addr2 } = await loadFixture(
-      deployTokenFixture
-    );
-
-    // Transfer 50 tokens from owner to addr1
-    await expect(
-      hardhatToken.transfer(addr1.address, 50)
-    ).to.changeTokenBalances(hardhatToken, [owner, addr1], [-50, 50]);
-
-    // Transfer 50 tokens from addr1 to addr2
-    // We use .connect(signer) to send a transaction from another account
-    await expect(
-      hardhatToken.connect(addr1).transfer(addr2.address, 50)
-    ).to.changeTokenBalances(hardhatToken, [addr1, addr2], [-50, 50]);
-  });
-});

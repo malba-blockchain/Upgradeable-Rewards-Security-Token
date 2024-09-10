@@ -73,7 +73,7 @@ Those values are updated on a weekly basis using javascript.
 -------------VARIABLES------------------
 enum WalletType {TeamMember, Investor}
 enum FundingType {TeamRewards, InvestorRewards, GrowthTokens}
-Wallet Data: Cantidad de HYAX en staking por wallet, tiempo de staking, rewards acumulados, Bitcoin Reward Address, rewards withdrawn, isTeamWallet.
+Wallet Data: Cantidad de HYAX en holding por wallet, tiempo de holding, rewards acumulados, Bitcoin Reward Address, rewards withdrawn, isTeamWallet.
 
 Locking time
 
@@ -100,6 +100,12 @@ withdrawTokenRewards(WalletType)
 withdrawTokensToBurn()
 
 updateWaitingTime()
+
+pause()
+
+unpause()
+
+changeSmartContractOwner()
 
 ------------External Script------------------
 
