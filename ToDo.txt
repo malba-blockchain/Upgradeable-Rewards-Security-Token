@@ -34,6 +34,7 @@ npm install --save dotenv
 
 npm install --save-dev chai@4.3.7
 
+npm install @openzeppelin/contracts
 
 3. Create tests code DONE
 
@@ -44,19 +45,16 @@ npm i hardhat-gas-reporter
 npx hardhat test
 
 
+4. Create growth tokens functionalities DONE
+
+
+
+
 
 ---------------ToDo---------------
 
 
 CONTINUE HEREEEEEEEEEEE
-
-4. Create growth tokens functionalities
-
-npm install @openzeppelin/contracts
-
-
-
-
 
 5. Create teams tokens functionalities
 

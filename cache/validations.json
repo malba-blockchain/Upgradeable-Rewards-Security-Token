@@ -2,6 +2,2074 @@
   "version": "3.4",
   "log": [
     {
+      "@openzeppelin/contracts/access/Ownable.sol:Ownable": {
+        "src": "@openzeppelin\\contracts\\access\\Ownable.sol:20",
+        "inherit": [
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "owner()",
+          "renounceOwnership()",
+          "transferOwnership(address)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "Ownable",
+            "src": "@openzeppelin\\contracts\\access\\Ownable.sol:38"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin\\contracts\\access\\Ownable.sol:21"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/Context.sol:Context": {
+        "src": "@openzeppelin\\contracts\\utils\\Context.sol:16",
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/UpgradeableHYAXRewards.sol:ERC20TokenInterface": {
+        "src": "contracts\\UpgradeableHYAXRewards.sol:10",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "transfer(address,uint256)",
+          "transferFrom(address,address,uint256)",
+          "balanceOf(address)",
+          "symbol()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/UpgradeableHYAXRewards.sol:UpgradeableHYAXRewards": {
+        "src": "contracts\\UpgradeableHYAXRewards.sol:17",
+        "version": {
+          "withMetadata": "fb695dd44850a4a358eb803f54c0a3625326029a3029caa4a87c14a4a3d47ccf",
+          "withoutMetadata": "5a33f7a7ae72922412d1c06e79a8c8739dc558e8252739fe27def210e5d27071",
+          "linkedWithoutMetadata": "5a33f7a7ae72922412d1c06e79a8c8739dc558e8252739fe27def210e5d27071"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/access/Ownable.sol:Ownable",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "(address)",
+          "addWalletToWhitelist(address,bool,string)",
+          "fundSmartContract(uint8,uint256)",
+          "withdrawGrowthTokens()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:79"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin\\contracts\\access\\Ownable.sol:21"
+            },
+            {
+              "label": "hyaxTokenAddress",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_address",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:29"
+            },
+            {
+              "label": "hyaxToken",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_contract(ERC20TokenInterface)214",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:31"
+            },
+            {
+              "label": "growthTokensFunded",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:44"
+            },
+            {
+              "label": "growthTokensWithdrawn",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:46"
+            },
+            {
+              "label": "growthTokensInSmartContract",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:48"
+            },
+            {
+              "label": "growthTokensLastWithdrawalTime",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:50"
+            },
+            {
+              "label": "growthTokensStartFundingTime",
+              "offset": 0,
+              "slot": "7",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:52"
+            },
+            {
+              "label": "growthTokensFundingStarted",
+              "offset": 0,
+              "slot": "8",
+              "type": "t_bool",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:54"
+            },
+            {
+              "label": "tokenInvestorRewards",
+              "offset": 0,
+              "slot": "9",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:59"
+            },
+            {
+              "label": "tokenTeamRewards",
+              "offset": 0,
+              "slot": "10",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:61"
+            },
+            {
+              "label": "whiteListerAddress",
+              "offset": 0,
+              "slot": "11",
+              "type": "t_address",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:63"
+            },
+            {
+              "label": "wallets",
+              "offset": 0,
+              "slot": "12",
+              "type": "t_mapping(t_address,t_struct(WalletData)288_storage)",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:76"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_contract(ERC20TokenInterface)214": {
+              "label": "contract ERC20TokenInterface",
+              "numberOfBytes": "20"
+            },
+            "t_mapping(t_address,t_struct(WalletData)288_storage)": {
+              "label": "mapping(address => struct UpgradeableHYAXRewards.WalletData)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_struct(WalletData)288_storage": {
+              "label": "struct UpgradeableHYAXRewards.WalletData",
+              "members": [
+                {
+                  "label": "hyaxHoldingAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "holdingTime",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "totalHyaxRewardsAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "currentRewardsAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "bitcoinRewardsAddress",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "rewardsWithdrawn",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "isTeamWallet",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "6"
+                },
+                {
+                  "label": "isWhitelisted",
+                  "type": "t_bool",
+                  "offset": 1,
+                  "slot": "6"
+                }
+              ],
+              "numberOfBytes": "224"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      }
+    },
+    {
+      "@openzeppelin/contracts/access/Ownable.sol:Ownable": {
+        "src": "@openzeppelin\\contracts\\access\\Ownable.sol:20",
+        "inherit": [
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "owner()",
+          "renounceOwnership()",
+          "transferOwnership(address)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "Ownable",
+            "src": "@openzeppelin\\contracts\\access\\Ownable.sol:38"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin\\contracts\\access\\Ownable.sol:21"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/Context.sol:Context": {
+        "src": "@openzeppelin\\contracts\\utils\\Context.sol:16",
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/UpgradeableHYAXRewards.sol:ERC20TokenInterface": {
+        "src": "contracts\\UpgradeableHYAXRewards.sol:10",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "transfer(address,uint256)",
+          "transferFrom(address,address,uint256)",
+          "balanceOf(address)",
+          "symbol()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/UpgradeableHYAXRewards.sol:UpgradeableHYAXRewards": {
+        "src": "contracts\\UpgradeableHYAXRewards.sol:17",
+        "version": {
+          "withMetadata": "fcf90876d5edf21e23db41725f0959d90e97151955ba67aa652ccb4f2d85ac22",
+          "withoutMetadata": "5a33f7a7ae72922412d1c06e79a8c8739dc558e8252739fe27def210e5d27071",
+          "linkedWithoutMetadata": "5a33f7a7ae72922412d1c06e79a8c8739dc558e8252739fe27def210e5d27071"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/access/Ownable.sol:Ownable",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "(address)",
+          "addWalletToWhitelist(address,bool,string)",
+          "fundSmartContract(uint8,uint256)",
+          "withdrawGrowthTokens()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:79"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin\\contracts\\access\\Ownable.sol:21"
+            },
+            {
+              "label": "hyaxTokenAddress",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_address",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:29"
+            },
+            {
+              "label": "hyaxToken",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_contract(ERC20TokenInterface)214",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:31"
+            },
+            {
+              "label": "growthTokensFunded",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:44"
+            },
+            {
+              "label": "growthTokensWithdrawn",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:46"
+            },
+            {
+              "label": "growthTokensInSmartContract",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:48"
+            },
+            {
+              "label": "growthTokensLastWithdrawalTime",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:50"
+            },
+            {
+              "label": "growthTokensStartFundingTime",
+              "offset": 0,
+              "slot": "7",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:52"
+            },
+            {
+              "label": "growthTokensFundingStarted",
+              "offset": 0,
+              "slot": "8",
+              "type": "t_bool",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:54"
+            },
+            {
+              "label": "tokenInvestorRewards",
+              "offset": 0,
+              "slot": "9",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:59"
+            },
+            {
+              "label": "tokenTeamRewards",
+              "offset": 0,
+              "slot": "10",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:61"
+            },
+            {
+              "label": "whiteListerAddress",
+              "offset": 0,
+              "slot": "11",
+              "type": "t_address",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:63"
+            },
+            {
+              "label": "wallets",
+              "offset": 0,
+              "slot": "12",
+              "type": "t_mapping(t_address,t_struct(WalletData)288_storage)",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:76"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_contract(ERC20TokenInterface)214": {
+              "label": "contract ERC20TokenInterface",
+              "numberOfBytes": "20"
+            },
+            "t_mapping(t_address,t_struct(WalletData)288_storage)": {
+              "label": "mapping(address => struct UpgradeableHYAXRewards.WalletData)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_struct(WalletData)288_storage": {
+              "label": "struct UpgradeableHYAXRewards.WalletData",
+              "members": [
+                {
+                  "label": "hyaxHoldingAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "holdingTime",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "totalHyaxRewardsAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "currentRewardsAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "bitcoinRewardsAddress",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "rewardsWithdrawn",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "isTeamWallet",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "6"
+                },
+                {
+                  "label": "isWhitelisted",
+                  "type": "t_bool",
+                  "offset": 1,
+                  "slot": "6"
+                }
+              ],
+              "numberOfBytes": "224"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      }
+    },
+    {
+      "@openzeppelin/contracts/access/Ownable.sol:Ownable": {
+        "src": "@openzeppelin\\contracts\\access\\Ownable.sol:20",
+        "inherit": [
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "owner()",
+          "renounceOwnership()",
+          "transferOwnership(address)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "Ownable",
+            "src": "@openzeppelin\\contracts\\access\\Ownable.sol:38"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin\\contracts\\access\\Ownable.sol:21"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/Context.sol:Context": {
+        "src": "@openzeppelin\\contracts\\utils\\Context.sol:16",
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/UpgradeableHYAXRewards.sol:ERC20TokenInterface": {
+        "src": "contracts\\UpgradeableHYAXRewards.sol:10",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "transfer(address,uint256)",
+          "transferFrom(address,address,uint256)",
+          "balanceOf(address)",
+          "symbol()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/UpgradeableHYAXRewards.sol:UpgradeableHYAXRewards": {
+        "src": "contracts\\UpgradeableHYAXRewards.sol:17",
+        "version": {
+          "withMetadata": "c42e4f553bf2238545856f2d772c3fcc408c52877ad7e8e371c63e69dfa9d41a",
+          "withoutMetadata": "ddd8367be0143a21b5071333bb883a440d3c3a9c14f1ab684a903f2a0c736fb8",
+          "linkedWithoutMetadata": "ddd8367be0143a21b5071333bb883a440d3c3a9c14f1ab684a903f2a0c736fb8"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/access/Ownable.sol:Ownable",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "(address)",
+          "addWalletToWhitelist(address,bool,string)",
+          "fundSmartContract(uint8,uint256)",
+          "withdrawGrowthTokens()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:79"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin\\contracts\\access\\Ownable.sol:21"
+            },
+            {
+              "label": "hyaxTokenAddress",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_address",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:29"
+            },
+            {
+              "label": "hyaxToken",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_contract(ERC20TokenInterface)214",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:31"
+            },
+            {
+              "label": "growthTokensFunded",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:44"
+            },
+            {
+              "label": "growthTokensWithdrawn",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:46"
+            },
+            {
+              "label": "growthTokensInSmartContract",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:48"
+            },
+            {
+              "label": "growthTokensLastWithdrawalTime",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:50"
+            },
+            {
+              "label": "growthTokensStartFundingTime",
+              "offset": 0,
+              "slot": "7",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:52"
+            },
+            {
+              "label": "growthTokensFundingStarted",
+              "offset": 0,
+              "slot": "8",
+              "type": "t_bool",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:54"
+            },
+            {
+              "label": "tokenInvestorRewards",
+              "offset": 0,
+              "slot": "9",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:59"
+            },
+            {
+              "label": "tokenTeamRewards",
+              "offset": 0,
+              "slot": "10",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:61"
+            },
+            {
+              "label": "whiteListerAddress",
+              "offset": 0,
+              "slot": "11",
+              "type": "t_address",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:63"
+            },
+            {
+              "label": "wallets",
+              "offset": 0,
+              "slot": "12",
+              "type": "t_mapping(t_address,t_struct(WalletData)288_storage)",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:76"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_contract(ERC20TokenInterface)214": {
+              "label": "contract ERC20TokenInterface",
+              "numberOfBytes": "20"
+            },
+            "t_mapping(t_address,t_struct(WalletData)288_storage)": {
+              "label": "mapping(address => struct UpgradeableHYAXRewards.WalletData)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_struct(WalletData)288_storage": {
+              "label": "struct UpgradeableHYAXRewards.WalletData",
+              "members": [
+                {
+                  "label": "hyaxHoldingAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "holdingTime",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "totalHyaxRewardsAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "currentRewardsAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "bitcoinRewardsAddress",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "rewardsWithdrawn",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "isTeamWallet",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "6"
+                },
+                {
+                  "label": "isWhitelisted",
+                  "type": "t_bool",
+                  "offset": 1,
+                  "slot": "6"
+                }
+              ],
+              "numberOfBytes": "224"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      }
+    },
+    {
+      "@openzeppelin/contracts/access/Ownable.sol:Ownable": {
+        "src": "@openzeppelin\\contracts\\access\\Ownable.sol:20",
+        "inherit": [
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "owner()",
+          "renounceOwnership()",
+          "transferOwnership(address)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "Ownable",
+            "src": "@openzeppelin\\contracts\\access\\Ownable.sol:38"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin\\contracts\\access\\Ownable.sol:21"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/Context.sol:Context": {
+        "src": "@openzeppelin\\contracts\\utils\\Context.sol:16",
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/UpgradeableHYAXRewards.sol:ERC20TokenInterface": {
+        "src": "contracts\\UpgradeableHYAXRewards.sol:10",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "transfer(address,uint256)",
+          "transferFrom(address,address,uint256)",
+          "balanceOf(address)",
+          "symbol()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/UpgradeableHYAXRewards.sol:UpgradeableHYAXRewards": {
+        "src": "contracts\\UpgradeableHYAXRewards.sol:17",
+        "version": {
+          "withMetadata": "36e9560377106758c12823ee604076e6397e9ecbc955eafd2e1bb221a5363dbf",
+          "withoutMetadata": "d82962281713d74192b607881b98cfbb28fb5d728262b7b4988c005d5860a864",
+          "linkedWithoutMetadata": "d82962281713d74192b607881b98cfbb28fb5d728262b7b4988c005d5860a864"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/access/Ownable.sol:Ownable",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "(address)",
+          "addWalletToWhitelist(address,bool,string)",
+          "fundSmartContract(uint8,uint256)",
+          "withdrawGrowthTokens()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:77"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin\\contracts\\access\\Ownable.sol:21"
+            },
+            {
+              "label": "hyaxTokenAddress",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_address",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:29"
+            },
+            {
+              "label": "hyaxToken",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_contract(ERC20TokenInterface)214",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:31"
+            },
+            {
+              "label": "growthTokensFunded",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:44"
+            },
+            {
+              "label": "growthTokensWithdrawn",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:46"
+            },
+            {
+              "label": "growthTokensLastWithdrawalTime",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:48"
+            },
+            {
+              "label": "growthTokensStartFundingTime",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:50"
+            },
+            {
+              "label": "growthTokensFundingStarted",
+              "offset": 0,
+              "slot": "7",
+              "type": "t_bool",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:52"
+            },
+            {
+              "label": "tokenInvestorRewards",
+              "offset": 0,
+              "slot": "8",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:57"
+            },
+            {
+              "label": "tokenTeamRewards",
+              "offset": 0,
+              "slot": "9",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:59"
+            },
+            {
+              "label": "whiteListerAddress",
+              "offset": 0,
+              "slot": "10",
+              "type": "t_address",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:61"
+            },
+            {
+              "label": "wallets",
+              "offset": 0,
+              "slot": "11",
+              "type": "t_mapping(t_address,t_struct(WalletData)286_storage)",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:74"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_contract(ERC20TokenInterface)214": {
+              "label": "contract ERC20TokenInterface",
+              "numberOfBytes": "20"
+            },
+            "t_mapping(t_address,t_struct(WalletData)286_storage)": {
+              "label": "mapping(address => struct UpgradeableHYAXRewards.WalletData)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_struct(WalletData)286_storage": {
+              "label": "struct UpgradeableHYAXRewards.WalletData",
+              "members": [
+                {
+                  "label": "hyaxHoldingAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "holdingTime",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "totalHyaxRewardsAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "currentRewardsAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "bitcoinRewardsAddress",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "rewardsWithdrawn",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "isTeamWallet",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "6"
+                },
+                {
+                  "label": "isWhitelisted",
+                  "type": "t_bool",
+                  "offset": 1,
+                  "slot": "6"
+                }
+              ],
+              "numberOfBytes": "224"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      }
+    },
+    {
+      "@openzeppelin/contracts/access/Ownable.sol:Ownable": {
+        "src": "@openzeppelin\\contracts\\access\\Ownable.sol:20",
+        "inherit": [
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "owner()",
+          "renounceOwnership()",
+          "transferOwnership(address)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "Ownable",
+            "src": "@openzeppelin\\contracts\\access\\Ownable.sol:38"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin\\contracts\\access\\Ownable.sol:21"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/Context.sol:Context": {
+        "src": "@openzeppelin\\contracts\\utils\\Context.sol:16",
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/UpgradeableHYAXRewards.sol:ERC20TokenInterface": {
+        "src": "contracts\\UpgradeableHYAXRewards.sol:10",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "transfer(address,uint256)",
+          "transferFrom(address,address,uint256)",
+          "balanceOf(address)",
+          "symbol()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/UpgradeableHYAXRewards.sol:UpgradeableHYAXRewards": {
+        "src": "contracts\\UpgradeableHYAXRewards.sol:17",
+        "version": {
+          "withMetadata": "83d7ea96afa9a82fb6298b71b2b4a67a8740ba80449df0edc81d9aae82016b1f",
+          "withoutMetadata": "d82962281713d74192b607881b98cfbb28fb5d728262b7b4988c005d5860a864",
+          "linkedWithoutMetadata": "d82962281713d74192b607881b98cfbb28fb5d728262b7b4988c005d5860a864"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/access/Ownable.sol:Ownable",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "(address)",
+          "addWalletToWhitelist(address,bool,string)",
+          "fundSmartContract(uint8,uint256)",
+          "withdrawGrowthTokens()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:77"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin\\contracts\\access\\Ownable.sol:21"
+            },
+            {
+              "label": "hyaxTokenAddress",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_address",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:29"
+            },
+            {
+              "label": "hyaxToken",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_contract(ERC20TokenInterface)214",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:31"
+            },
+            {
+              "label": "growthTokensFunded",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:44"
+            },
+            {
+              "label": "growthTokensWithdrawn",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:46"
+            },
+            {
+              "label": "growthTokensLastWithdrawalTime",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:48"
+            },
+            {
+              "label": "growthTokensStartFundingTime",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:50"
+            },
+            {
+              "label": "growthTokensFundingStarted",
+              "offset": 0,
+              "slot": "7",
+              "type": "t_bool",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:52"
+            },
+            {
+              "label": "tokenInvestorRewards",
+              "offset": 0,
+              "slot": "8",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:57"
+            },
+            {
+              "label": "tokenTeamRewards",
+              "offset": 0,
+              "slot": "9",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:59"
+            },
+            {
+              "label": "whiteListerAddress",
+              "offset": 0,
+              "slot": "10",
+              "type": "t_address",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:61"
+            },
+            {
+              "label": "wallets",
+              "offset": 0,
+              "slot": "11",
+              "type": "t_mapping(t_address,t_struct(WalletData)286_storage)",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:74"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_contract(ERC20TokenInterface)214": {
+              "label": "contract ERC20TokenInterface",
+              "numberOfBytes": "20"
+            },
+            "t_mapping(t_address,t_struct(WalletData)286_storage)": {
+              "label": "mapping(address => struct UpgradeableHYAXRewards.WalletData)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_struct(WalletData)286_storage": {
+              "label": "struct UpgradeableHYAXRewards.WalletData",
+              "members": [
+                {
+                  "label": "hyaxHoldingAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "holdingTime",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "totalHyaxRewardsAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "currentRewardsAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "bitcoinRewardsAddress",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "rewardsWithdrawn",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "isTeamWallet",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "6"
+                },
+                {
+                  "label": "isWhitelisted",
+                  "type": "t_bool",
+                  "offset": 1,
+                  "slot": "6"
+                }
+              ],
+              "numberOfBytes": "224"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      }
+    },
+    {
+      "@openzeppelin/contracts/access/Ownable.sol:Ownable": {
+        "src": "@openzeppelin\\contracts\\access\\Ownable.sol:20",
+        "inherit": [
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "owner()",
+          "renounceOwnership()",
+          "transferOwnership(address)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "Ownable",
+            "src": "@openzeppelin\\contracts\\access\\Ownable.sol:38"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin\\contracts\\access\\Ownable.sol:21"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/Context.sol:Context": {
+        "src": "@openzeppelin\\contracts\\utils\\Context.sol:16",
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/UpgradeableHYAXRewards.sol:ERC20TokenInterface": {
+        "src": "contracts\\UpgradeableHYAXRewards.sol:10",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "transfer(address,uint256)",
+          "transferFrom(address,address,uint256)",
+          "balanceOf(address)",
+          "symbol()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/UpgradeableHYAXRewards.sol:UpgradeableHYAXRewards": {
+        "src": "contracts\\UpgradeableHYAXRewards.sol:17",
+        "version": {
+          "withMetadata": "9e0d3ff5769b5fef200f75dfd0951d4277a4bba6142cf3ed905cb3b4ea1b45f6",
+          "withoutMetadata": "d82962281713d74192b607881b98cfbb28fb5d728262b7b4988c005d5860a864",
+          "linkedWithoutMetadata": "d82962281713d74192b607881b98cfbb28fb5d728262b7b4988c005d5860a864"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/access/Ownable.sol:Ownable",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "(address)",
+          "addWalletToWhitelist(address,bool,string)",
+          "fundSmartContract(uint8,uint256)",
+          "withdrawGrowthTokens()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:77"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin\\contracts\\access\\Ownable.sol:21"
+            },
+            {
+              "label": "hyaxTokenAddress",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_address",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:29"
+            },
+            {
+              "label": "hyaxToken",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_contract(ERC20TokenInterface)214",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:31"
+            },
+            {
+              "label": "growthTokensFunded",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:44"
+            },
+            {
+              "label": "growthTokensWithdrawn",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:46"
+            },
+            {
+              "label": "growthTokensLastWithdrawalTime",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:48"
+            },
+            {
+              "label": "growthTokensStartFundingTime",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:50"
+            },
+            {
+              "label": "growthTokensFundingStarted",
+              "offset": 0,
+              "slot": "7",
+              "type": "t_bool",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:52"
+            },
+            {
+              "label": "tokenInvestorRewards",
+              "offset": 0,
+              "slot": "8",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:57"
+            },
+            {
+              "label": "tokenTeamRewards",
+              "offset": 0,
+              "slot": "9",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:59"
+            },
+            {
+              "label": "whiteListerAddress",
+              "offset": 0,
+              "slot": "10",
+              "type": "t_address",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:61"
+            },
+            {
+              "label": "wallets",
+              "offset": 0,
+              "slot": "11",
+              "type": "t_mapping(t_address,t_struct(WalletData)286_storage)",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:74"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_contract(ERC20TokenInterface)214": {
+              "label": "contract ERC20TokenInterface",
+              "numberOfBytes": "20"
+            },
+            "t_mapping(t_address,t_struct(WalletData)286_storage)": {
+              "label": "mapping(address => struct UpgradeableHYAXRewards.WalletData)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_struct(WalletData)286_storage": {
+              "label": "struct UpgradeableHYAXRewards.WalletData",
+              "members": [
+                {
+                  "label": "hyaxHoldingAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "holdingTime",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "totalHyaxRewardsAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "currentRewardsAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "bitcoinRewardsAddress",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "rewardsWithdrawn",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "isTeamWallet",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "6"
+                },
+                {
+                  "label": "isWhitelisted",
+                  "type": "t_bool",
+                  "offset": 1,
+                  "slot": "6"
+                }
+              ],
+              "numberOfBytes": "224"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      }
+    },
+    {
+      "@openzeppelin/contracts/access/Ownable.sol:Ownable": {
+        "src": "@openzeppelin\\contracts\\access\\Ownable.sol:20",
+        "inherit": [
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "owner()",
+          "renounceOwnership()",
+          "transferOwnership(address)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "Ownable",
+            "src": "@openzeppelin\\contracts\\access\\Ownable.sol:38"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin\\contracts\\access\\Ownable.sol:21"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/Context.sol:Context": {
+        "src": "@openzeppelin\\contracts\\utils\\Context.sol:16",
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/UpgradeableHYAXRewards.sol:ERC20TokenInterface": {
+        "src": "contracts\\UpgradeableHYAXRewards.sol:10",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "transfer(address,uint256)",
+          "transferFrom(address,address,uint256)",
+          "balanceOf(address)",
+          "symbol()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/UpgradeableHYAXRewards.sol:UpgradeableHYAXRewards": {
+        "src": "contracts\\UpgradeableHYAXRewards.sol:17",
+        "version": {
+          "withMetadata": "619b9774fe3b1abb551a4430042a0ff875461455b46722b7e8e88f00edc6a197",
+          "withoutMetadata": "d554437985dad11a22f553ec487d6665fdfc889190c9811fbb4f1e90349409eb",
+          "linkedWithoutMetadata": "d554437985dad11a22f553ec487d6665fdfc889190c9811fbb4f1e90349409eb"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/access/Ownable.sol:Ownable",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "(address)",
+          "addWalletToWhitelist(address,bool,string)",
+          "fundSmartContract(uint8,uint256)",
+          "withdrawGrowthTokens()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:77"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin\\contracts\\access\\Ownable.sol:21"
+            },
+            {
+              "label": "hyaxTokenAddress",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_address",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:29"
+            },
+            {
+              "label": "hyaxToken",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_contract(ERC20TokenInterface)214",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:31"
+            },
+            {
+              "label": "growthTokensFunded",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:44"
+            },
+            {
+              "label": "growthTokensWithdrawn",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:46"
+            },
+            {
+              "label": "growthTokensLastWithdrawalTime",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:48"
+            },
+            {
+              "label": "growthTokensStartFundingTime",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:50"
+            },
+            {
+              "label": "growthTokensFundingStarted",
+              "offset": 0,
+              "slot": "7",
+              "type": "t_bool",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:52"
+            },
+            {
+              "label": "tokenInvestorRewards",
+              "offset": 0,
+              "slot": "8",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:57"
+            },
+            {
+              "label": "tokenTeamRewards",
+              "offset": 0,
+              "slot": "9",
+              "type": "t_uint256",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:59"
+            },
+            {
+              "label": "whiteListerAddress",
+              "offset": 0,
+              "slot": "10",
+              "type": "t_address",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:61"
+            },
+            {
+              "label": "wallets",
+              "offset": 0,
+              "slot": "11",
+              "type": "t_mapping(t_address,t_struct(WalletData)286_storage)",
+              "contract": "UpgradeableHYAXRewards",
+              "src": "contracts\\UpgradeableHYAXRewards.sol:74"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_contract(ERC20TokenInterface)214": {
+              "label": "contract ERC20TokenInterface",
+              "numberOfBytes": "20"
+            },
+            "t_mapping(t_address,t_struct(WalletData)286_storage)": {
+              "label": "mapping(address => struct UpgradeableHYAXRewards.WalletData)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_struct(WalletData)286_storage": {
+              "label": "struct UpgradeableHYAXRewards.WalletData",
+              "members": [
+                {
+                  "label": "hyaxHoldingAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "holdingTime",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "totalHyaxRewardsAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "currentRewardsAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "bitcoinRewardsAddress",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "rewardsWithdrawn",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "isTeamWallet",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "6"
+                },
+                {
+                  "label": "isWhitelisted",
+                  "type": "t_bool",
+                  "offset": 1,
+                  "slot": "6"
+                }
+              ],
+              "numberOfBytes": "224"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      }
+    },
+    {
       "@openzeppelin/contracts/interfaces/draft-IERC6093.sol:IERC1155Errors": {
         "src": "@openzeppelin\\contracts\\interfaces\\draft-IERC6093.sol:113",
         "inherit": [],

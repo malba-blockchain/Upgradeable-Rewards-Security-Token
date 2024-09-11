@@ -45,6 +45,8 @@ contract UpgradeableHYAXRewards is Ownable {
 
     uint256 public growthTokensWithdrawn;
 
+    uint256 public growthTokensInSmartContract;
+
     uint256 public growthTokensLastWithdrawalTime;
 
     uint256 public growthTokensStartFundingTime;
@@ -116,8 +118,8 @@ contract UpgradeableHYAXRewards is Ownable {
 
     function fundSmartContract(FundingType _fundingType, uint256 _amount) onlyOwner() public {
 
-        //Verify that the funding type is valid
-        require(_fundingType == FundingType.TeamRewards || _fundingType == FundingType.InvestorRewards || _fundingType == FundingType.GrowthTokens, "Invalid funding type");
+        // Check if the funding type is valid
+        require(_fundingType == FundingType.GrowthTokens || _fundingType == FundingType.TeamRewards || _fundingType == FundingType.InvestorRewards, "Invalid funding type");
 
         // Verify that the amount is greater than 0
         require(_amount > 0, "Amount must be greater than 0");
@@ -127,7 +129,10 @@ contract UpgradeableHYAXRewards is Ownable {
 
         // Add the amount to the corresponding token
         if (_fundingType == FundingType.GrowthTokens) {
+            // Increase the total amount of growth tokens funded
             growthTokensFunded += _amount;
+            // Increase the current balance of growth tokens in the smart contract
+            growthTokensInSmartContract += _amount;
         
             // If growth tokens funding has not started yet, start it
             if (!growthTokensFundingStarted) {
@@ -162,12 +167,11 @@ contract UpgradeableHYAXRewards is Ownable {
         require(block.timestamp >= growthTokensStartFundingTime + GROWTH_TOKENS_WITHDRAWAL_PERIOD , "Cannot withdraw before 1 year after funding start");
         
         // Verify that not all growth tokens have been withdrawn yet
-        require(growthTokensWithdrawn <= GROWTH_TOKENS_TOTAL, "All growth tokens have been withdrawn");
+        require(growthTokensWithdrawn < GROWTH_TOKENS_TOTAL, "All growth tokens have been withdrawn");
         
         // Ensure that at least one year has passed since the last withdrawal
         require(block.timestamp >= growthTokensLastWithdrawalTime + GROWTH_TOKENS_WITHDRAWAL_PERIOD, "Can only withdraw once per year");
         
-
         // Set the initial withdrawable amount to the yearly withdrawal limit
         uint256 withdrawableAmount = GROWTH_TOKENS_WITHDRAWAL_PER_YEAR;
         
@@ -180,6 +184,9 @@ contract UpgradeableHYAXRewards is Ownable {
         // Update the growth tokens withdrawn amount
         growthTokensWithdrawn += withdrawableAmount;
 
+        // Update the growth tokens in the smart contract
+        growthTokensInSmartContract -= withdrawableAmount;
+
         // Update the last withdrawal time
         growthTokensLastWithdrawalTime = block.timestamp;
 
@@ -188,6 +195,5 @@ contract UpgradeableHYAXRewards is Ownable {
 
         // Emit an event to notify that the growth tokens were withdrawn    
         emit GrowthTokensWithdrawn(withdrawableAmount);
-
     }
 }
