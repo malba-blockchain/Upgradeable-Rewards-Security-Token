@@ -48,15 +48,42 @@ npx hardhat test
 4. Create growth tokens functionalities DONE
 
 
-
-
-
 ---------------ToDo---------------
-
 
 CONTINUE HEREEEEEEEEEEE
 
 5. Create teams tokens functionalities
+
+5.1. Add variables DONE
+
+5.2. Add fuding method uptades DONE
+
+5.3. Add withdraw method
+
+5.4. Test team tokens functionalities
+-addWalletToWhitelist
+--not owner nor whitelister DONE
+--as owner DONE
+--as whitelister DONE
+--same wallet (already added) DONE
+--invalid data (wallet address, isTeamWallet, _bitcoinRewardsAddress, _hyaxHoldingAmount) DONE
+
+-removeWalletFromWhitelist
+--not owner nor whitelister DONE 
+--as owner DONE 
+--as whitelister DONE
+-already removed DONE
+
+CONTINUEEEEEEEE HEREEEEEEEEEEEEEEE
+
+-fundSmartContract (team tokens) DONE
+-fund smart contract (team tokens) after funding first time
+-TEST for funding upper limits for team and growth tokens GROWTH_TOKENS_TOTAL, TEAM_TOKENS_TOTAL
+--test with limits 1.5B
+
+
+-withdrawTeamTokens
+
 
 6. Create rewards functionalities
 
@@ -79,3 +106,14 @@ npx hardhat compile --force
 ----------------------------
 
 Using the following hardhat testing template, generate the following test cases for the "XXXXXXXXXXXXXXXXXXXXXXX", for the solidity smart contract: UpgradeableHYAXRewards.sol
+
+----------------------------
+
+QUESTIONS
+
+Should withdrawal be based on general date or in time per person?
+
+Should we store on chain the bitcoin addresses of people? (Better nope: Gas an privacy concerns)
+
+Is there a maximum of team tokens a wallet is expected to hold? (Should be)
+
