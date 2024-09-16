@@ -1,14 +1,15 @@
-
-require("@nomicfoundation/hardhat-ethers");
-require('@openzeppelin/hardhat-upgrades');
-require("@nomicfoundation/hardhat-verify");
-require("hardhat-gas-reporter");
-require("@nomicfoundation/hardhat-chai-matchers");
-require("@nomicfoundation/hardhat-toolbox");
-require('dotenv').config();
+import { HardhatUserConfig } from "hardhat/config";
+import "@nomicfoundation/hardhat-ethers";
+import '@openzeppelin/hardhat-upgrades';
+import "@nomicfoundation/hardhat-verify";
+import "hardhat-gas-reporter";
+import "@nomicfoundation/hardhat-chai-matchers";
+import "@nomicfoundation/hardhat-toolbox";
+import dotenv from 'dotenv';
+dotenv.config();
 
 /** @type import('hardhat/config').HardhatUserConfig */
-module.exports = {
+const config: HardhatUserConfig = {
   solidity: {
     version: "0.8.20",
     settings: {
@@ -51,4 +52,6 @@ module.exports = {
     enabled: false,
   },
 };
+
+export default config;
 

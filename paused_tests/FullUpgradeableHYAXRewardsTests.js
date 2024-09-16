@@ -1,6 +1,6 @@
-const { loadFixture, } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
-const { ethers } = require("hardhat");
-const { expect } = require("chai");
+import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
+import { ethers } from "hardhat"
+import { expect } from "chai"
 
 describe("Testing Use Case #1: Constructor", function () {
 

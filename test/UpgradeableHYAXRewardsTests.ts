@@ -1,6 +1,6 @@
-const { loadFixture, } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
-const { ethers } = require("hardhat");
-const { expect } = require("chai");
+import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
+import { ethers } from "hardhat"
+import { expect } from "chai"
 
 describe("Testing Use Case #1: Constructor", function () {
 
@@ -86,10 +86,10 @@ describe("Testing Use Case #2: Add team wallet to Whitelist", function () {
             lastRewardsWithdrawalTime, isTeamWallet, isWhitelisted]
             = await upgradeableHYAXRewards.wallets(addr1.address);
 
-        console.log("\n   Wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "hyaxHoldingAmountAtWhitelistTime:", 
-            hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "currentRewardsAmount:", 
-            currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "bitcoinRewardsAddress:", bitcoinRewardsAddress, 
-            "addedToWhitelistTime:", addedToWhitelistTime, "lastTokenWithdrawalTime:", lastTokenWithdrawalTime, 
+        console.log("\n   [Log]: Wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:", 
+            hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:", 
+            currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "bitcoinRewardsAddress:", bitcoinRewardsAddress, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "lastTokenWithdrawalTime:", lastTokenWithdrawalTime, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "isTeamWallet:", isTeamWallet, 
             "isWhitelisted:", isWhitelisted);
 
@@ -191,10 +191,10 @@ describe("Testing Use Case 3: Remove team wallet from Whitelist", function () {
             lastRewardsWithdrawalTime, isTeamWallet, isWhitelisted]
             = await upgradeableHYAXRewards.wallets(addr1.address);
 
-        console.log("\n   Wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "hyaxHoldingAmountAtWhitelistTime:", 
-            hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "currentRewardsAmount:", 
-            currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "bitcoinRewardsAddress:", bitcoinRewardsAddress, 
-            "addedToWhitelistTime:", addedToWhitelistTime, "lastTokenWithdrawalTime:", lastTokenWithdrawalTime, 
+        console.log("\n   [Log]: Wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:", 
+            hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:", 
+            currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "bitcoinRewardsAddress:", bitcoinRewardsAddress, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "lastTokenWithdrawalTime:", lastTokenWithdrawalTime, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "isTeamWallet:", isTeamWallet, 
             "isWhitelisted:", isWhitelisted);
 
@@ -310,10 +310,10 @@ describe("Testing Use Case #4: Fund Smart Contract with growth tokens", function
 
         // Get the initial balance of the smart contract
         const prevSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   PrevSmartContractBalance:", prevSmartContractBalance);
+        console.log("\n   [Log]: PrevSmartContractBalance:", prevSmartContractBalance);
         // Get the initial balance of the owner
         const prevOwnerTokenBalance = await hyaxToken.balanceOf(owner.address);
-        console.log("   PrevOwnerTokenBalance:", prevOwnerTokenBalance);
+        console.log("   [Log]: PrevOwnerTokenBalance:", prevOwnerTokenBalance);
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         await upgradeableHYAXRewards.fundSmartContract(0, fundingAmount);
 
@@ -326,11 +326,11 @@ describe("Testing Use Case #4: Fund Smart Contract with growth tokens", function
         // Verify that the smart contract balance increased by the correct amount
         const newSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
         expect(newSmartContractBalance - prevSmartContractBalance).to.equal(ethers.parseUnits("1000000000", 18));
-        console.log("\n   NewSmartContractBalance:", newSmartContractBalance);
+        console.log("\n   [Log]: NewSmartContractBalance:", newSmartContractBalance);
         
         // Check if the owner's balance decreased by the correct amount
         const newOwnerTokenBalance = await hyaxToken.balanceOf(owner.address);  
-        console.log("   NewOwnerTokenBalance:", newOwnerTokenBalance);
+        console.log("   [Log]: NewOwnerTokenBalance:", newOwnerTokenBalance);
         expect(prevOwnerTokenBalance - newOwnerTokenBalance).to.equal(ethers.parseUnits("1000000000", 18));
     });
 
@@ -361,13 +361,13 @@ describe("Testing Use Case #4: Fund Smart Contract with growth tokens", function
         await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
 
         const prevGrowthTokensFunded = await upgradeableHYAXRewards.growthTokensFunded();
-        console.log("\n   PrevGrowthTokensFunded:", prevGrowthTokensFunded);
+        console.log("\n   [Log]: PrevGrowthTokensFunded:", prevGrowthTokensFunded);
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         await upgradeableHYAXRewards.fundSmartContract(0, fundingAmount);
 
         // Get the value of growthTokensFunded
         const newGrowthTokensFunded = prevGrowthTokensFunded + fundingAmount;
-        console.log("   NewGrowthTokensFunded:", newGrowthTokensFunded);
+        console.log("   [Log]: NewGrowthTokensFunded:", newGrowthTokensFunded);
         const growthTokensFunded = await upgradeableHYAXRewards.growthTokensFunded();
     
         // Check if the growthTokensStartFundingTime and growthTokensLastWithdrawalTime are equal to the timestamp of the block before
@@ -393,9 +393,9 @@ describe("Testing Use Case #4: Fund Smart Contract with growth tokens", function
 
         // Get the growthTokensStartFundingTime and growthTokensLastWithdrawalTime
         const growthTokensStartFundingTime = await upgradeableHYAXRewards.growthTokensStartFundingTime();
-        console.log("\n   GrowthTokensStartFundingTime:", growthTokensStartFundingTime);
+        console.log("\n   [Log]: GrowthTokensStartFundingTime:", growthTokensStartFundingTime);
         const growthTokensLastWithdrawalTime = await upgradeableHYAXRewards.growthTokensLastWithdrawalTime();
-        console.log("   GrowthTokensLastWithdrawalTime:", growthTokensLastWithdrawalTime);
+        console.log("   [Log]: GrowthTokensLastWithdrawalTime:", growthTokensLastWithdrawalTime);
     
         // Check if the growthTokensStartFundingTime and growthTokensLastWithdrawalTime are equal to the timestamp of the block before
         expect(growthTokensStartFundingTime).to.equal(timestampOfBlockBefore);
@@ -427,10 +427,10 @@ describe("Testing Use Case #4: Fund Smart Contract with growth tokens", function
 
         // Get the initial balance of the smart contract
         const prevSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   PrevSmartContractBalance:", prevSmartContractBalance);
+        console.log("\n   [Log]: PrevSmartContractBalance:", prevSmartContractBalance);
         // Get the initial balance of the owner
         const prevOwnerTokenBalance = await hyaxToken.balanceOf(owner.address);
-        console.log("   PrevOwnerTokenBalance:", prevOwnerTokenBalance);
+        console.log("   [Log]: PrevOwnerTokenBalance:", prevOwnerTokenBalance);
 
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         await upgradeableHYAXRewards.fundSmartContract(0, fundingAmount);
@@ -443,12 +443,12 @@ describe("Testing Use Case #4: Fund Smart Contract with growth tokens", function
 
         // Verify that the smart contract balance increased by the correct amount
         const newSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   NewSmartContractBalance:", newSmartContractBalance);
+        console.log("\n   [Log]: NewSmartContractBalance:", newSmartContractBalance);
         expect(newSmartContractBalance - prevSmartContractBalance).to.equal(ethers.parseUnits("2400000000", 18));
         
         // Check if the owner's balance decreased by the correct amount
         const newOwnerTokenBalance = await hyaxToken.balanceOf(owner.address);  
-        console.log("   NewOwnerTokenBalance:", newOwnerTokenBalance);
+        console.log("   [Log]: NewOwnerTokenBalance:", newOwnerTokenBalance);
         expect(prevOwnerTokenBalance - newOwnerTokenBalance).to.equal(ethers.parseUnits("2400000000", 18));
     });
 });
@@ -490,32 +490,32 @@ describe("Testing Use Case #5: Fund Smart Contract with growth tokens after havi
 
         // Get the initial balance of the smart contract
         const prevSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   PrevSmartContractBalance:", prevSmartContractBalance);
+        console.log("\n   [Log]: PrevSmartContractBalance:", prevSmartContractBalance);
 
         // Get the initial balance of the owner
         const prevOwnerTokenBalance = await hyaxToken.balanceOf(owner.address);
-        console.log("   PrevOwnerTokenBalance:", prevOwnerTokenBalance);
+        console.log("   [Log]: PrevOwnerTokenBalance:", prevOwnerTokenBalance);
 
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         await upgradeableHYAXRewards.connect(owner).fundSmartContract(0, fundingAmount);
 
         // Get the value of growthTokensFunded
         const newGrowthTokensFunded = prevGrowthTokensFunded + fundingAmount;
-        console.log("\n   NewGrowthTokensFunded:", newGrowthTokensFunded);
+        console.log("\n   [Log]: NewGrowthTokensFunded:", newGrowthTokensFunded);
         const growthTokensFunded = await upgradeableHYAXRewards.growthTokensFunded();
-        console.log("   GrowthTokensFunded:", growthTokensFunded);
+        console.log("   [Log]: GrowthTokensFunded:", growthTokensFunded);
 
         // Verify that the contract balance matches the funding amount
         expect(growthTokensFunded).to.equal(newGrowthTokensFunded);
 
         // Verify that the smart contract balance increased by the correct amount
         const newSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   NewSmartContractBalance:", newSmartContractBalance);
+        console.log("\n   [Log]: NewSmartContractBalance:", newSmartContractBalance);
         expect(newSmartContractBalance - prevSmartContractBalance).to.equal(ethers.parseUnits("1000000000", 18));
         
         // Check if the owner's balance decreased by the correct amount
         const newOwnerTokenBalance = await hyaxToken.balanceOf(owner.address);
-        console.log("   NewOwnerTokenBalance:", newOwnerTokenBalance);
+        console.log("   [Log]: NewOwnerTokenBalance:", newOwnerTokenBalance);
         expect(prevOwnerTokenBalance - newOwnerTokenBalance).to.equal(ethers.parseUnits("1000000000", 18));
     });
 
@@ -552,13 +552,13 @@ describe("Testing Use Case #5: Fund Smart Contract with growth tokens after havi
         const blockNumBefore = await ethers.provider.getBlockNumber();
         const blockBefore = await ethers.provider.getBlock(blockNumBefore);
         const timestampOfBlockBefore = blockBefore.timestamp;
-        console.log("\n   TimestampOfBlockBefore:", timestampOfBlockBefore);
+        console.log("\n   [Log]: TimestampOfBlockBefore:", timestampOfBlockBefore);
 
         // Get the growthTokensStartFundingTime and growthTokensLastWithdrawalTime
         const growthTokensStartFundingTime = await upgradeableHYAXRewards.growthTokensStartFundingTime();
-        console.log("   GrowthTokensStartFundingTime:", growthTokensStartFundingTime);
+        console.log("   [Log]: GrowthTokensStartFundingTime:", growthTokensStartFundingTime);
         const growthTokensLastWithdrawalTime = await upgradeableHYAXRewards.growthTokensLastWithdrawalTime();
-        console.log("   GrowthTokensLastWithdrawalTime:", growthTokensLastWithdrawalTime);
+        console.log("   [Log]: GrowthTokensLastWithdrawalTime:", growthTokensLastWithdrawalTime);
     
         // Check if the growthTokensStartFundingTime and growthTokensLastWithdrawalTime are equal to the timestamp of the block before
         expect(growthTokensStartFundingTime).to.not.equal(timestampOfBlockBefore);
@@ -672,11 +672,11 @@ describe("Testing Use Case #6: Withdraw Growth Tokens ", function () {
         await network.provider.send("evm_mine");
         // Get the initial balance of the smart contract
         const prevSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   PrevSmartContractBalance:", prevSmartContractBalance);
+        console.log("\n   [Log]: PrevSmartContractBalance:", prevSmartContractBalance);
 
         // Get the initial balance of the owner
         const prevOwnerTokenBalance = await hyaxToken.balanceOf(owner.address);
-        console.log("   PrevOwnerTokenBalance:", prevOwnerTokenBalance);
+        console.log("   [Log]: PrevOwnerTokenBalance:", prevOwnerTokenBalance);
 
         // Withdraw growth tokens
         await upgradeableHYAXRewards.connect(owner).withdrawGrowthTokens();
@@ -688,27 +688,27 @@ describe("Testing Use Case #6: Withdraw Growth Tokens ", function () {
 
         // Check if the correct amount of tokens was withdrawn
         const growthTokensWithdrawn = await upgradeableHYAXRewards.growthTokensWithdrawn();
-        console.log("\n   GrowthTokensWithdrawn:", growthTokensWithdrawn);
+        console.log("\n   [Log]: GrowthTokensWithdrawn:", growthTokensWithdrawn);
         expect(growthTokensWithdrawn).to.equal(ethers.parseUnits("120000000", 18));
 
         // Verify that the last withdrawal time was updated correctly
         const growthTokensLastWithdrawalTime = await upgradeableHYAXRewards.growthTokensLastWithdrawalTime();
-        console.log("   GrowthTokensLastWithdrawalTime:", growthTokensLastWithdrawalTime);
+        console.log("   [Log]: GrowthTokensLastWithdrawalTime:", growthTokensLastWithdrawalTime);
         expect(growthTokensLastWithdrawalTime).to.equal(timestampOfBlockBefore);
 
         // Check if the remaining tokens in the smart contract are correct
         const growthTokensInSmartContract = await upgradeableHYAXRewards.growthTokensInSmartContract();
-        console.log("   GrowthTokensInSmartContract:", growthTokensInSmartContract);
+        console.log("   [Log]: GrowthTokensInSmartContract:", growthTokensInSmartContract);
         expect(growthTokensInSmartContract).to.equal(fundingAmount - growthTokensWithdrawn);
 
         // Verify that the smart contract balance decreased by the correct amount
         const newSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   NewSmartContractBalance:", newSmartContractBalance);
+        console.log("\n   [Log]: NewSmartContractBalance:", newSmartContractBalance);
         expect(prevSmartContractBalance - newSmartContractBalance).to.equal(ethers.parseUnits("120000000", 18));
 
         // Check if the owner's balance increased by the correct amount
         const newOwnerTokenBalance = await hyaxToken.balanceOf(owner.address);
-        console.log("   NewOwnerTokenBalance:", newOwnerTokenBalance);
+        console.log("   [Log]: NewOwnerTokenBalance:", newOwnerTokenBalance);
         expect(newOwnerTokenBalance - prevOwnerTokenBalance).to.equal(ethers.parseUnits("120000000", 18));
     });
 
@@ -765,11 +765,11 @@ describe("Testing Use Case #6: Withdraw Growth Tokens ", function () {
 
         // Get the initial balance of the smart contract
         const prevSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   PrevSmartContractBalance:", prevSmartContractBalance);
+        console.log("\n   [Log]: PrevSmartContractBalance:", prevSmartContractBalance);
 
         // Get the initial balance of the owner
         const prevOwnerTokenBalance = await hyaxToken.balanceOf(owner.address);
-        console.log("   PrevOwnerTokenBalance:", prevOwnerTokenBalance);
+        console.log("   [Log]: PrevOwnerTokenBalance:", prevOwnerTokenBalance);
 
         const secondYear = 365 * 24 * 60 * 60; // Less than one year in seconds
         // Wait for the specified time period to elapse (simulate one year)
@@ -785,27 +785,27 @@ describe("Testing Use Case #6: Withdraw Growth Tokens ", function () {
 
         // Check if the correct amount of tokens was withdrawn
         const growthTokensWithdrawn = await upgradeableHYAXRewards.growthTokensWithdrawn();
-        console.log("\n   GrowthTokensWithdrawn:", growthTokensWithdrawn);
+        console.log("\n   [Log]: GrowthTokensWithdrawn:", growthTokensWithdrawn);
         expect(growthTokensWithdrawn).to.equal(ethers.parseUnits("240000000", 18));
 
         // Verify that the last withdrawal time was updated correctly
         const growthTokensLastWithdrawalTime = await upgradeableHYAXRewards.growthTokensLastWithdrawalTime();
-        console.log("   GrowthTokensLastWithdrawalTime:", growthTokensLastWithdrawalTime);
+        console.log("   [Log]: GrowthTokensLastWithdrawalTime:", growthTokensLastWithdrawalTime);
         expect(growthTokensLastWithdrawalTime).to.equal(timestampOfBlockBefore);
 
         // Check if the remaining tokens in the smart contract are correct
         const growthTokensInSmartContract = await upgradeableHYAXRewards.growthTokensInSmartContract();
-        console.log("   GrowthTokensInSmartContract:", growthTokensInSmartContract);
+        console.log("   [Log]: GrowthTokensInSmartContract:", growthTokensInSmartContract);
         expect(growthTokensInSmartContract).to.equal(fundingAmount - growthTokensWithdrawn);
 
         // Verify that the smart contract balance decreased by the correct amount
         const newSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   NewSmartContractBalance:", newSmartContractBalance);
+        console.log("\n   [Log]: NewSmartContractBalance:", newSmartContractBalance);
         expect(prevSmartContractBalance - newSmartContractBalance).to.equal(ethers.parseUnits("120000000", 18));
 
         // Check if the owner's balance increased by the correct amount
         const newOwnerTokenBalance = await hyaxToken.balanceOf(owner.address);
-        console.log("   NewOwnerTokenBalance:", newOwnerTokenBalance);
+        console.log("   [Log]: NewOwnerTokenBalance:", newOwnerTokenBalance);
         expect(newOwnerTokenBalance - prevOwnerTokenBalance).to.equal(ethers.parseUnits("120000000", 18));
     });
 
@@ -824,11 +824,11 @@ describe("Testing Use Case #6: Withdraw Growth Tokens ", function () {
 
         // Get the initial balance of the smart contract
         const prevSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   PrevSmartContractBalance:", prevSmartContractBalance);
+        console.log("\n   [Log]: PrevSmartContractBalance:", prevSmartContractBalance);
 
         // Get the initial balance of the owner
         const prevOwnerTokenBalance = await hyaxToken.balanceOf(owner.address);
-        console.log("   PrevOwnerTokenBalance:", prevOwnerTokenBalance);
+        console.log("   [Log]: PrevOwnerTokenBalance:", prevOwnerTokenBalance);
 
         const oneYear = 365 * 24 * 60 * 60; // One year in seconds
 
@@ -847,27 +847,27 @@ describe("Testing Use Case #6: Withdraw Growth Tokens ", function () {
 
         // Check if the correct amount of tokens was withdrawn
         const growthTokensWithdrawn = await upgradeableHYAXRewards.growthTokensWithdrawn();
-        console.log("\n   GrowthTokensWithdrawn:", growthTokensWithdrawn);
+        console.log("\n   [Log]: GrowthTokensWithdrawn:", growthTokensWithdrawn);
         expect(growthTokensWithdrawn).to.equal(ethers.parseUnits("2400000000", 18));
 
         // Verify that the last withdrawal time was updated correctly
         const growthTokensLastWithdrawalTime = await upgradeableHYAXRewards.growthTokensLastWithdrawalTime();
-        console.log("   GrowthTokensLastWithdrawalTime:", growthTokensLastWithdrawalTime);
+        console.log("   [Log]: GrowthTokensLastWithdrawalTime:", growthTokensLastWithdrawalTime);
         expect(growthTokensLastWithdrawalTime).to.equal(timestampOfBlockBefore);
 
         // Check if the remaining tokens in the smart contract are correct
         const growthTokensInSmartContract = await upgradeableHYAXRewards.growthTokensInSmartContract();
-        console.log("   GrowthTokensInSmartContract:", growthTokensInSmartContract);
+        console.log("   [Log]: GrowthTokensInSmartContract:", growthTokensInSmartContract);
         expect(growthTokensInSmartContract).to.equal(fundingAmount - growthTokensWithdrawn);
 
         // Verify that the smart contract balance decreased by the correct amount
         const newSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   NewSmartContractBalance:", newSmartContractBalance);
+        console.log("\n   [Log]: NewSmartContractBalance:", newSmartContractBalance);
         expect(prevSmartContractBalance - newSmartContractBalance).to.equal(ethers.parseUnits("2400000000", 18));
 
         // Check if the owner's balance increased by the correct amount
         const newOwnerTokenBalance = await hyaxToken.balanceOf(owner.address);
-        console.log("   NewOwnerTokenBalance:", newOwnerTokenBalance);
+        console.log("   [Log]: NewOwnerTokenBalance:", newOwnerTokenBalance);
         expect(newOwnerTokenBalance - prevOwnerTokenBalance).to.equal(ethers.parseUnits("2400000000", 18));
         
         //Try to withdraw again once there are no more growth tokens to withdraw
@@ -954,11 +954,11 @@ describe("Testing Use Case #7: Fund Smart Contract with team tokens", function (
 
         // Get the initial balance of the smart contract
         const prevSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   PrevSmartContractBalance:", prevSmartContractBalance);
+        console.log("\n   [Log]: PrevSmartContractBalance:", prevSmartContractBalance);
 
         // Get the initial balance of the owner
         const prevOwnerTokenBalance = await hyaxToken.balanceOf(owner.address);
-        console.log("   PrevOwnerTokenBalance:", prevOwnerTokenBalance);
+        console.log("   [Log]: PrevOwnerTokenBalance:", prevOwnerTokenBalance);
 
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         await upgradeableHYAXRewards.fundSmartContract(1, fundingAmount);
@@ -971,12 +971,12 @@ describe("Testing Use Case #7: Fund Smart Contract with team tokens", function (
 
         // Verify that the smart contract balance increased by the correct amount
         const newSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   NewSmartContractBalance:", newSmartContractBalance);
+        console.log("\n   [Log]: NewSmartContractBalance:", newSmartContractBalance);
         expect(newSmartContractBalance - prevSmartContractBalance).to.equal(ethers.parseUnits("1000000000", 18));
         
         // Check if the owner's balance decreased by the correct amount
         const newOwnerTokenBalance = await hyaxToken.balanceOf(owner.address);  
-        console.log("   NewOwnerTokenBalance:", newOwnerTokenBalance);
+        console.log("   [Log]: NewOwnerTokenBalance:", newOwnerTokenBalance);
         expect(prevOwnerTokenBalance - newOwnerTokenBalance).to.equal(ethers.parseUnits("1000000000", 18));
     });
 
@@ -1007,15 +1007,15 @@ describe("Testing Use Case #7: Fund Smart Contract with team tokens", function (
         await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
 
         const prevTeamTokensFunded = await upgradeableHYAXRewards.teamTokensFunded();
-        console.log("\n   PrevTeamTokensFunded:", prevTeamTokensFunded);
+        console.log("\n   [Log]: PrevTeamTokensFunded:", prevTeamTokensFunded);
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         await upgradeableHYAXRewards.fundSmartContract(1, fundingAmount);
 
         // Get the value of teamTokensFunded
         const newTeamTokensFunded = prevTeamTokensFunded + fundingAmount;
-        console.log("   NewTeamTokensFunded:", newTeamTokensFunded);
+        console.log("   [Log]: NewTeamTokensFunded:", newTeamTokensFunded);
         const teamTokensFunded = await upgradeableHYAXRewards.teamTokensFunded();
-        console.log("   TeamTokensFunded:", teamTokensFunded);
+        console.log("   [Log]: TeamTokensFunded:", teamTokensFunded);
         // Check if the growthTokensStartFundingTime and teamTokensLastWithdrawalTime are equal to the timestamp of the block before
         expect(teamTokensFunded).to.equal(newTeamTokensFunded);
     });
@@ -1036,10 +1036,10 @@ describe("Testing Use Case #7: Fund Smart Contract with team tokens", function (
         const blockNumBefore = await ethers.provider.getBlockNumber();
         const blockBefore = await ethers.provider.getBlock(blockNumBefore);
         const timestampOfBlockBefore = blockBefore.timestamp;
-        console.log("\n   TimestampOfBlockBefore:", timestampOfBlockBefore);
+        console.log("\n   [Log]: TimestampOfBlockBefore:", timestampOfBlockBefore);
         // Get the teamTokensStartFundingTime
         const teamTokensStartFundingTime = await upgradeableHYAXRewards.teamTokensStartFundingTime();
-        console.log("   TeamTokensStartFundingTime:", teamTokensStartFundingTime);
+        console.log("   [Log]: TeamTokensStartFundingTime:", teamTokensStartFundingTime);
         // Check if the teamTokensStartFundingTime is equal to the timestamp of the block before
         expect(teamTokensStartFundingTime).to.equal(timestampOfBlockBefore);
     });
@@ -1069,10 +1069,10 @@ describe("Testing Use Case #7: Fund Smart Contract with team tokens", function (
 
         // Get the initial balance of the smart contract
         const prevSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   PrevSmartContractBalance:", prevSmartContractBalance);
+        console.log("\n   [Log]: PrevSmartContractBalance:", prevSmartContractBalance);
         // Get the initial balance of the owner
         const prevOwnerTokenBalance = await hyaxToken.balanceOf(owner.address);
-        console.log("   PrevOwnerTokenBalance:", prevOwnerTokenBalance);
+        console.log("   [Log]: PrevOwnerTokenBalance:", prevOwnerTokenBalance);
 
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         await upgradeableHYAXRewards.fundSmartContract(1, fundingAmount);
@@ -1085,12 +1085,12 @@ describe("Testing Use Case #7: Fund Smart Contract with team tokens", function (
 
         // Verify that the smart contract balance increased by the correct amount
         const newSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   NewSmartContractBalance:", newSmartContractBalance);
+        console.log("\n   [Log]: NewSmartContractBalance:", newSmartContractBalance);
         expect(newSmartContractBalance - prevSmartContractBalance).to.equal(ethers.parseUnits("1500000000", 18));
         
         // Check if the owner's balance decreased by the correct amount
         const newOwnerTokenBalance = await hyaxToken.balanceOf(owner.address);  
-        console.log("   NewOwnerTokenBalance:", newOwnerTokenBalance);
+        console.log("   [Log]: NewOwnerTokenBalance:", newOwnerTokenBalance);
         expect(prevOwnerTokenBalance - newOwnerTokenBalance).to.equal(ethers.parseUnits("1500000000", 18));
     });
 });
@@ -1131,32 +1131,32 @@ describe("Testing Use Case #8: Fund Smart Contract with team tokens after having
 
         // Get the initial balance of the smart contract
         const prevSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   PrevSmartContractBalance:", prevSmartContractBalance);    
+        console.log("\n   [Log]: PrevSmartContractBalance:", prevSmartContractBalance);    
         // Get the initial balance of the owner
         const prevOwnerTokenBalance = await hyaxToken.balanceOf(owner.address);
-        console.log("   PrevOwnerTokenBalance:", prevOwnerTokenBalance);
+        console.log("   [Log]: PrevOwnerTokenBalance:", prevOwnerTokenBalance);
 
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
 
         // Get the value of teamTokensFunded
         const newTeamTokensFunded = prevTeamTokensFunded + fundingAmount;
-        console.log("   NewTeamTokensFunded:", newTeamTokensFunded);
+        console.log("   [Log]: NewTeamTokensFunded:", newTeamTokensFunded);
 
         const teamTokensFunded = await upgradeableHYAXRewards.teamTokensFunded();
-        console.log("   TeamTokensFunded:", teamTokensFunded);
+        console.log("   [Log]: TeamTokensFunded:", teamTokensFunded);
 
         // Verify that the contract balance matches the funding amount
         expect(teamTokensFunded).to.equal(newTeamTokensFunded);
 
         // Verify that the smart contract balance increased by the correct amount
         const newSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("   NewSmartContractBalance:", newSmartContractBalance);
+        console.log("   [Log]: NewSmartContractBalance:", newSmartContractBalance);
         expect(newSmartContractBalance - prevSmartContractBalance).to.equal(ethers.parseUnits("500000000", 18));
         
         // Check if the owner's balance decreased by the correct amount
         const newOwnerTokenBalance = await hyaxToken.balanceOf(owner.address);
-        console.log("   NewOwnerTokenBalance:", newOwnerTokenBalance);
+        console.log("   [Log]: NewOwnerTokenBalance:", newOwnerTokenBalance);
         expect(prevOwnerTokenBalance - newOwnerTokenBalance).to.equal(ethers.parseUnits("500000000", 18));
     });
 
@@ -1193,11 +1193,11 @@ describe("Testing Use Case #8: Fund Smart Contract with team tokens after having
         const blockNumBefore = await ethers.provider.getBlockNumber();
         const blockBefore = await ethers.provider.getBlock(blockNumBefore);
         const timestampOfBlockBefore = blockBefore.timestamp;
-        console.log("\n   TimestampOfBlockBefore:", timestampOfBlockBefore);
+        console.log("\n   [Log]: TimestampOfBlockBefore:", timestampOfBlockBefore);
 
         // Get the teamTokensStartFundingTime
         const teamTokensStartFundingTime = await upgradeableHYAXRewards.teamTokensStartFundingTime();
-        console.log("   TeamTokensStartFundingTime:", teamTokensStartFundingTime);
+        console.log("   [Log]: TeamTokensStartFundingTime:", teamTokensStartFundingTime);
         // Check if the teamTokensStartFundingTime and teamTokensLastWithdrawalTime are equal to the timestamp of the block before
         expect(teamTokensStartFundingTime).to.not.equal(timestampOfBlockBefore);
     });
@@ -1343,10 +1343,10 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         await network.provider.send("evm_mine");
         // Get the initial balance of the smart contract
         const prevSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   PrevSmartContractBalance:", prevSmartContractBalance);
+        console.log("\n   [Log]: PrevSmartContractBalance:", prevSmartContractBalance);
         // Get the initial balance of the team member wallet
         const prevTeamMemberWalletTokenBalance = await hyaxToken.balanceOf(addr1.address);
-        console.log("   PrevTeamMemberWalletTokenBalance:", prevTeamMemberWalletTokenBalance);
+        console.log("   [Log]: PrevTeamMemberWalletTokenBalance:", prevTeamMemberWalletTokenBalance);
 
         // Check if the correct amount of tokens was withdrawn for the wallet
         const [prevHyaxHoldingAmount, , , , , , , , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
@@ -1358,35 +1358,35 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         const blockNumBefore = await ethers.provider.getBlockNumber();
         const blockBefore = await ethers.provider.getBlock(blockNumBefore);
         const timestampOfBlockBefore = blockBefore.timestamp;
-        console.log("\n   TimestampOfBlockBefore:", timestampOfBlockBefore);
+        console.log("\n   [Log]: TimestampOfBlockBefore:", timestampOfBlockBefore);
 
         // Check if the correct amount of tokens was withdrawn
         const teamTokensWithdrawn = await upgradeableHYAXRewards.teamTokensWithdrawn();
         expect(teamTokensWithdrawn).to.equal(ethers.parseUnits("200000", 18));
-        console.log("\n   TeamTokensWithdrawn:", teamTokensWithdrawn);
+        console.log("\n   [Log]: TeamTokensWithdrawn:", teamTokensWithdrawn);
 
         // Check if the correct amount of tokens was withdrawn for the wallet
         const [newHyaxHoldingAmount, , , , , , ,lastTokenWithdrawalTime , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
-        console.log("   NewHyaxHoldingAmount:", newHyaxHoldingAmount);
-        console.log("   PrevHyaxHoldingAmount:", prevHyaxHoldingAmount);
+        console.log("   [Log]: NewHyaxHoldingAmount:", newHyaxHoldingAmount);
+        console.log("   [Log]: PrevHyaxHoldingAmount:", prevHyaxHoldingAmount);
         expect(prevHyaxHoldingAmount - newHyaxHoldingAmount).to.equal(ethers.parseUnits("200000", 18));
         // Verify that the last withdrawal time was updated correctly
         expect(lastTokenWithdrawalTime).to.equal(timestampOfBlockBefore);
 
         // Check if the remaining tokens in the smart contract are correct
         const teamTokensInSmartContract = await upgradeableHYAXRewards.teamTokensInSmartContract();
-        console.log("   TeamTokensInSmartContract:", teamTokensInSmartContract);
+        console.log("   [Log]: TeamTokensInSmartContract:", teamTokensInSmartContract);
         expect(teamTokensInSmartContract).to.equal(fundingAmount - teamTokensWithdrawn);
 
         // Verify that the smart contract balance decreased by the correct amount
         const newSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("   NewSmartContractBalance:", newSmartContractBalance);
+        console.log("   [Log]: NewSmartContractBalance:", newSmartContractBalance);
         expect(prevSmartContractBalance - newSmartContractBalance).to.equal(ethers.parseUnits("200000", 18));
 
         // Check if the team member's balance increased by the correct amount
         const newTeamMemberWalletTokenBalance = await hyaxToken.balanceOf(addr1.address);
-        console.log("   NewTeamMemberWalletTokenBalance:", newTeamMemberWalletTokenBalance);
-        console.log("   PrevTeamMemberWalletTokenBalance:", prevTeamMemberWalletTokenBalance);
+        console.log("   [Log]: NewTeamMemberWalletTokenBalance:", newTeamMemberWalletTokenBalance);
+        console.log("   [Log]: PrevTeamMemberWalletTokenBalance:", prevTeamMemberWalletTokenBalance);
         expect(newTeamMemberWalletTokenBalance - prevTeamMemberWalletTokenBalance).to.equal(ethers.parseUnits("200000", 18));
     });
 
@@ -1459,10 +1459,10 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
         // Get the initial balance of the smart contract
         const prevSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   PrevSmartContractBalance:", prevSmartContractBalance);
+        console.log("\n   [Log]: PrevSmartContractBalance:", prevSmartContractBalance);
         // Get the initial balance of the team member wallet
         const prevTeamMemberWalletTokenBalance = await hyaxToken.balanceOf(addr1.address);
-        console.log("   PrevTeamMemberWalletTokenBalance:", prevTeamMemberWalletTokenBalance);
+        console.log("   [Log]: PrevTeamMemberWalletTokenBalance:", prevTeamMemberWalletTokenBalance);
 
         // Check if the correct amount of tokens was withdrawn for the wallet
         const [prevHyaxHoldingAmount, , , , , , , , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
@@ -1477,35 +1477,35 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
         // Check if the correct amount of tokens was withdrawn
         const teamTokensWithdrawn = await upgradeableHYAXRewards.teamTokensWithdrawn();
-        console.log("   TeamTokensWithdrawn:", teamTokensWithdrawn);
+        console.log("   [Log]: TeamTokensWithdrawn:", teamTokensWithdrawn);
         expect(teamTokensWithdrawn).to.equal(ethers.parseUnits("400000", 18));
 
         // Check if the correct amount of tokens was withdrawn for the wallet
         const [newHyaxHoldingAmount, , , , , , ,lastTokenWithdrawalTime , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
         expect(prevHyaxHoldingAmount - newHyaxHoldingAmount).to.equal(ethers.parseUnits("200000", 18));
-        console.log("\n   NewHyaxHoldingAmount:", newHyaxHoldingAmount);
-        console.log("   PrevHyaxHoldingAmount:", prevHyaxHoldingAmount);
+        console.log("\n   [Log]: NewHyaxHoldingAmount:", newHyaxHoldingAmount);
+        console.log("   [Log]: PrevHyaxHoldingAmount:", prevHyaxHoldingAmount);
         // Verify that the last withdrawal time was updated correctly
         expect(lastTokenWithdrawalTime).to.equal(timestampOfBlockBefore);
 
         // Check if the remaining tokens in the smart contract are correct
         const teamTokensInSmartContract = await upgradeableHYAXRewards.teamTokensInSmartContract();
-        console.log("   TeamTokensInSmartContract:", teamTokensInSmartContract);
+        console.log("   [Log]: TeamTokensInSmartContract:", teamTokensInSmartContract);
         expect(teamTokensInSmartContract).to.equal(fundingAmount - teamTokensWithdrawn);
 
         // Verify that the smart contract balance decreased by the correct amount
         const newSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   NewSmartContractBalance:", newSmartContractBalance);
+        console.log("\n   [Log]: NewSmartContractBalance:", newSmartContractBalance);
         expect(prevSmartContractBalance - newSmartContractBalance).to.equal(ethers.parseUnits("200000", 18));
 
         // Check if the team member's balance increased by the correct amount
         const newTeamMemberWalletTokenBalance = await hyaxToken.balanceOf(addr1.address);
-        console.log("   NewTeamMemberWalletTokenBalance:", newTeamMemberWalletTokenBalance);
+        console.log("   [Log]: NewTeamMemberWalletTokenBalance:", newTeamMemberWalletTokenBalance);
         expect(newTeamMemberWalletTokenBalance - prevTeamMemberWalletTokenBalance).to.equal(ethers.parseUnits("200000", 18));
 
         // Check if the total amount in team member's wallet is correct
         const teamMemberWalletBalance = await hyaxToken.balanceOf(addr1.address);
-        console.log("   TeamMemberWalletBalance:", teamMemberWalletBalance);
+        console.log("   [Log]: TeamMemberWalletBalance:", teamMemberWalletBalance);
         expect(teamMemberWalletBalance).to.equal(ethers.parseUnits("400000", 18));
     });
 
@@ -1555,28 +1555,28 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
         // Verify that the last withdrawal time was updated correctly
         const [newHyaxHoldingAmount, , , , , , , lastTokenWithdrawalTime , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
-        console.log("\n   LastTokenWithdrawalTime:", lastTokenWithdrawalTime);
+        console.log("\n   [Log]: LastTokenWithdrawalTime:", lastTokenWithdrawalTime);
         expect(lastTokenWithdrawalTime).to.equal(timestampOfBlockBefore);
         
 
         // Check if the correct amount of tokens was withdrawn
         const teamTokensWithdrawn = await upgradeableHYAXRewards.teamTokensWithdrawn();
-        console.log("\n   TeamTokensWithdrawn:", teamTokensWithdrawn);
+        console.log("\n   [Log]: TeamTokensWithdrawn:", teamTokensWithdrawn);
         expect(teamTokensWithdrawn).to.equal(ethers.parseUnits("1500000000", 18));
 
         // Check if the remaining tokens in the smart contract are correct. It should be 0 because all tokens have been withdrawn
         const teamTokensInSmartContract = await upgradeableHYAXRewards.teamTokensInSmartContract();
-        console.log("   TeamTokensInSmartContract:", teamTokensInSmartContract);
+        console.log("   [Log]: TeamTokensInSmartContract:", teamTokensInSmartContract);
         expect(teamTokensInSmartContract).to.equal(0);
 
         // Verify that the smart contract balance decreased by the correct amount
         const newSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   NewSmartContractBalance:", newSmartContractBalance);
+        console.log("\n   [Log]: NewSmartContractBalance:", newSmartContractBalance);
         expect(prevSmartContractBalance - newSmartContractBalance).to.equal(ethers.parseUnits("1500000000", 18));
         
         // Check if the team member's wallet balance increased by the correct amount
         const newTeamMemberWalletBalance = await hyaxToken.balanceOf(addr1.address);
-        console.log("   NewTeamMemberWalletBalance:", newTeamMemberWalletBalance);
+        console.log("   [Log]: NewTeamMemberWalletBalance:", newTeamMemberWalletBalance);
         expect(newTeamMemberWalletBalance - prevTeamMemberWalletBalance).to.equal(ethers.parseUnits("1500000000", 18));
         
         //Try to withdraw again once there are no more team tokens to withdraw
@@ -1606,10 +1606,10 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
             .addWalletToWhitelist(addr1.address, true, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", ethers.parseUnits("10000000", 18));
 
         const prevSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   PrevSmartContractBalance:", prevSmartContractBalance);
+        console.log("\n   [Log]: PrevSmartContractBalance:", prevSmartContractBalance);
 
         const prevTeamMemberWalletBalance = await hyaxToken.balanceOf(addr1.address);
-        console.log("   PrevTeamMemberWalletBalance:", prevTeamMemberWalletBalance);
+        console.log("   [Log]: PrevTeamMemberWalletBalance:", prevTeamMemberWalletBalance);
         
         const fourYears = 1460 * 24 * 60 * 60; // 4 years in seconds
 
@@ -1638,28 +1638,28 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
         // Verify that the last withdrawal time was updated correctly
         const [newHyaxHoldingAmount, , , , , , , lastTokenWithdrawalTime , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
-        console.log("\n   LastTokenWithdrawalTime:", lastTokenWithdrawalTime);
+        console.log("\n   [Log]: LastTokenWithdrawalTime:", lastTokenWithdrawalTime);
         expect(lastTokenWithdrawalTime).to.equal(timestampOfBlockBefore);
         
         // Check if the correct amount of tokens was withdrawn
         const teamTokensWithdrawn = await upgradeableHYAXRewards.teamTokensWithdrawn();
-        console.log("   TeamTokensWithdrawn:", teamTokensWithdrawn);
+        console.log("   [Log]: TeamTokensWithdrawn:", teamTokensWithdrawn);
         expect(teamTokensWithdrawn).to.equal(ethers.parseUnits("10000000", 18));
 
         // Check if the remaining tokens in the smart contract are correct. It should be 0 because all tokens have been withdrawn
         const teamTokensInSmartContract = await upgradeableHYAXRewards.teamTokensInSmartContract();
-        console.log("   TeamTokensInSmartContract:", teamTokensInSmartContract);
+        console.log("   [Log]: TeamTokensInSmartContract:", teamTokensInSmartContract);
         expect(teamTokensInSmartContract).to.equal(fundingAmount - teamTokensWithdrawn);
 
         // Verify that the smart contract balance decreased by the correct amount
         const newSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
-        console.log("\n   NewSmartContractBalance:", newSmartContractBalance);
+        console.log("\n   [Log]: NewSmartContractBalance:", newSmartContractBalance);
         expect(prevSmartContractBalance - newSmartContractBalance).to.equal(ethers.parseUnits("10000000", 18));
 
         // Check if the team member's wallet balance increased by the correct amount
         const newTeamMemberWalletBalance = await hyaxToken.balanceOf(addr1.address);
         expect(newTeamMemberWalletBalance - prevTeamMemberWalletBalance).to.equal(ethers.parseUnits("10000000", 18));
-        console.log("   NewTeamMemberWalletBalance:", newTeamMemberWalletBalance);
+        console.log("   [Log]: NewTeamMemberWalletBalance:", newTeamMemberWalletBalance);
         //Try to withdraw again once there are no more team tokens to withdraw
         // Wait for the specified time period to elapse (simulate one year)
         await network.provider.send("evm_increaseTime", [oneYear]);
