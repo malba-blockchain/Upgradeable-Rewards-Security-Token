@@ -50,8 +50,6 @@ npx hardhat test
 
 ---------------ToDo---------------
 
-CONTINUE HEREEEEEEEEEEE
-
 5. Create teams tokens functionalities
 
 5.1. Add variables DONE
@@ -74,22 +72,53 @@ CONTINUE HEREEEEEEEEEEE
 --as whitelister DONE
 -already removed DONE
 
-CONTINUEEEEEEEE HEREEEEEEEEEEEEEEE
 
 -fundSmartContract (team tokens) DONE
--fund smart contract (team tokens) after funding first time
--TEST for funding upper limits for team and growth tokens GROWTH_TOKENS_TOTAL, TEAM_TOKENS_TOTAL
---test with limits 1.5B
+-fund smart contract (team tokens) after funding first time DONE
+-TEST for funding upper limits for team and growth tokens GROWTH_TOKENS_TOTAL, TEAM_TOKENS_TOTAL DONE
+-first exceeding the limit - revert DONE
+-first exactly the limit - approve DONE
+-second exceeding the limit DONE
 
 
 -withdrawTeamTokens
+--before being funded DONE
+--not in whitelist DONE
+--notteammember DONE
+--after being funded but beforethe4years DONE
+--after4years have passed and it was funded (check all variables) DONE
+--before1yearafterfirstwithdraw (you need a way to track the initial tokens in the wallet vs the current tokens) DONE
+--afterAYearHasPassedSinceLastWithdrawal DONE
+--revertAfterWithdrawingAllTeamTokens DONE
+--revertAfterWithdrawingAllOwnTokens DONE
+
+Print the values of times and token balances DONE
 
 
-6. Create rewards functionalities
+6. Create holder rewards functionalities
+
+address rewardsUpdater.
+
+event
+
+updateRewardsUpdaterAddress()
+
+updateValuesOfTokenRewards(mapping rewards (address investorAddress –> uint256 rewardAmount))
+
+withdrawTokenRewards()
+
+
+
+
+7. Create additional functionalities for smart contract
+
 
 7. Create external script for rewards
 
 8. Test everything locally
+
+
+
 
 ---------INITIAL LOCAL DEPLOYMENT---------
 
@@ -102,7 +131,6 @@ npx hardhat compile --force
 10. Create testnet upgradeable version
 
 
-
 ----------------------------
 
 Using the following hardhat testing template, generate the following test cases for the "XXXXXXXXXXXXXXXXXXXXXXX", for the solidity smart contract: UpgradeableHYAXRewards.sol
@@ -111,9 +139,15 @@ Using the following hardhat testing template, generate the following test cases 
 
 QUESTIONS
 
-Should withdrawal be based on general date or in time per person?
+For team tokens. Should withdrawal be based on general date or in time per person?
+
+For investor holder tokens. Should withdrawal be based on general date or in time per person?
 
 Should we store on chain the bitcoin addresses of people? (Better nope: Gas an privacy concerns)
 
-Is there a maximum of team tokens a wallet is expected to hold? (Should be)
+Is there a maximum of team tokens a wallet is expected to hold? (Should be as team member. I.e. No more than 51%)
+
+Should we have a smart contract owner, whitelister address and updater address?
+
+
 

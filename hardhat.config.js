@@ -1,4 +1,4 @@
-//hardhat.config.js
+
 require("@nomicfoundation/hardhat-ethers");
 require('@openzeppelin/hardhat-upgrades');
 require("@nomicfoundation/hardhat-verify");

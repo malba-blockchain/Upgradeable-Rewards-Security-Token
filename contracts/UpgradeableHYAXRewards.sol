@@ -89,18 +89,24 @@ contract UpgradeableHYAXRewards is Ownable, Pausable {
    
     address public whiteListerAddress;
 
-    struct WalletData {
-        uint256 hyaxHoldingAmount;
-        uint256 addedToWhitelistTime;
-        uint256 totalHyaxRewardsAmount;
-        uint256 currentRewardsAmount;
-        string bitcoinRewardsAddress;
-        uint256 rewardsWithdrawn;
-        uint256 lastTokenWithdrawalTime;
-        uint256 lastRewardsWithdrawalTime;
+    address public rewardsUpdaterAddress;
 
-        bool isTeamWallet;
-        bool isWhitelisted;
+    struct WalletData {
+        uint256 hyaxHoldingAmount;                  // Current amount of HYAX tokens held by the wallet
+        uint256 hyaxHoldingAmountAtWhitelistTime;   // Amount of HYAX tokens held when the wallet was whitelisted. Useful for the team wallets
+
+        uint256 totalHyaxRewardsAmount;             // Total amount of HYAX rewards earned by the wallet
+        uint256 currentRewardsAmount;               // Current amount of rewards available for withdrawal
+        uint256 rewardsWithdrawn;                   // Total amount of rewards withdrawn by the wallet
+        
+        string bitcoinRewardsAddress;               // Bitcoin address for receiving rewards
+
+        uint256 addedToWhitelistTime;               // Timestamp when the wallet was added to the whitelist
+        uint256 lastTokenWithdrawalTime;            // Timestamp of the last token withdrawal
+        uint256 lastRewardsWithdrawalTime;          // Timestamp of the last rewards withdrawal
+
+        bool isTeamWallet;                          // Flag indicating if this is a team wallet
+        bool isWhitelisted;                         // Flag indicating if the wallet is whitelisted
     }
 
     mapping(address => WalletData) public wallets;
@@ -129,7 +135,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable {
      * @param _isTeamWallet A boolean indicating if the wallet is a team wallet
      * @param _bitcoinRewardsAddress The Bitcoin rewards address associated with the wallet
      */
-    function addWalletToWhitelist(address _walletAddress, bool _isTeamWallet, string memory _bitcoinRewardsAddress, uint256 _hyaxHoldingAmount) onlyOwnerOrWhitelister public {
+    function addWalletToWhitelist(address _walletAddress, bool _isTeamWallet, string memory _bitcoinRewardsAddress, uint256 _hyaxHoldingAmountAtWhitelistTime) onlyOwnerOrWhitelister public {
 
         //Verify that the wallet is not already in the whitelist
         require(wallets[_walletAddress].isWhitelisted == false, "Wallet is already whitelisted");
@@ -149,16 +155,14 @@ contract UpgradeableHYAXRewards is Ownable, Pausable {
         wallets[_walletAddress].rewardsWithdrawn = 0; // Initialize the rewards withdrawn to 0
 
         if(_isTeamWallet){
-            require(_hyaxHoldingAmount > 0, "Team wallets must be added with a hyax holding amount greater than 0");
-            require(_hyaxHoldingAmount < TEAM_TOKENS_TOTAL, "Team wallets must be added with a hyax holding amount less than the total team tokens");
-            wallets[_walletAddress].hyaxHoldingAmount = _hyaxHoldingAmount; // Set the wallet's HYAX holding amount
-        }
-        else{
-            wallets[_walletAddress].hyaxHoldingAmount = 0; // Initialize the wallet's HYAX holding amount to 0
+            require(_hyaxHoldingAmountAtWhitelistTime > 0, "Team wallets must be added with a hyax holding amount greater than 0");
+            require(_hyaxHoldingAmountAtWhitelistTime <= TEAM_TOKENS_TOTAL, "Team wallets must be added with a hyax holding amount less than the total team tokens");
+            wallets[_walletAddress].hyaxHoldingAmountAtWhitelistTime = _hyaxHoldingAmountAtWhitelistTime; // Set the wallet's HYAX holding amount
+            wallets[_walletAddress].hyaxHoldingAmount = _hyaxHoldingAmountAtWhitelistTime; // Set the wallet's HYAX holding amount
         }
 
         //Emit an event to notify that the wallet was added to the whitelist
-        emit WalletAddedToWhitelist(msg.sender, _walletAddress, _isTeamWallet, _bitcoinRewardsAddress, _hyaxHoldingAmount);
+        emit WalletAddedToWhitelist(msg.sender, _walletAddress, _isTeamWallet, _bitcoinRewardsAddress, _hyaxHoldingAmountAtWhitelistTime);
     }
 
     /**
@@ -198,8 +202,12 @@ contract UpgradeableHYAXRewards is Ownable, Pausable {
 
         // Add the amount to the corresponding token
         if (_fundingType == FundingType.GrowthTokens) {
+            //Require that the amount is less than the total growth tokens
+            require(growthTokensFunded + _amount <= GROWTH_TOKENS_TOTAL, "Amount to fund is greater than the total intented for growth tokens");
+
             // Increase the total amount of growth tokens funded
             growthTokensFunded += _amount;
+
             // Increase the current balance of growth tokens in the smart contract
             growthTokensInSmartContract += _amount;
         
@@ -211,6 +219,9 @@ contract UpgradeableHYAXRewards is Ownable, Pausable {
             }
             
         } else if (_fundingType == FundingType.TeamTokens) {
+            //Require that the amount is less than the total growth tokens
+            require(teamTokensFunded + _amount <= TEAM_TOKENS_TOTAL, "Amount to fund is greater than the total intented for team tokens");
+            
             // Increase the total amount of team tokens funded
             teamTokensFunded += _amount;
 
@@ -317,8 +328,8 @@ contract UpgradeableHYAXRewards is Ownable, Pausable {
         // Verify that the wallet has a hyax holding amount as team tokens greater than 0 to withdraw
         require(wallets[msg.sender].hyaxHoldingAmount > 0, "No hyax holding amount to withdraw");
 
-        // Set the initial withdrawable amount to the limit per year (20% of the hyax holding amount) 
-        uint256 withdrawableAmount = wallets[msg.sender].hyaxHoldingAmount / 5;
+        // Set the initial withdrawable amount to the limit per year (20% of the hyax holding amount at whitelist time) 
+        uint256 withdrawableAmount = wallets[msg.sender].hyaxHoldingAmountAtWhitelistTime / 5;
         
         // Check if withdrawing the yearly amount would exceed the total team tokens
         if (teamTokensWithdrawn + withdrawableAmount > TEAM_TOKENS_TOTAL) {
