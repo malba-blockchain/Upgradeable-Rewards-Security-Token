@@ -61,6 +61,7 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "wallets"
       | "whiteListerAddress"
       | "withdrawGrowthTokens"
+      | "withdrawInvestorRewards"
       | "withdrawTeamTokens"
   ): FunctionFragment;
 
@@ -68,6 +69,7 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     nameOrSignatureOrTopic:
       | "FundingAdded"
       | "GrowthTokensWithdrawn"
+      | "InvestorRewardsWithdrawn"
       | "OwnershipTransferred"
       | "Paused"
       | "TeamTokensWithdrawn"
@@ -202,6 +204,10 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "withdrawInvestorRewards",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "withdrawTeamTokens",
     values?: undefined
   ): string;
@@ -329,6 +335,10 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "withdrawInvestorRewards",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "withdrawTeamTokens",
     data: BytesLike
   ): Result;
@@ -348,6 +358,19 @@ export namespace FundingAddedEvent {
 }
 
 export namespace GrowthTokensWithdrawnEvent {
+  export type InputTuple = [_walletAddress: AddressLike, _amount: BigNumberish];
+  export type OutputTuple = [_walletAddress: string, _amount: bigint];
+  export interface OutputObject {
+    _walletAddress: string;
+    _amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace InvestorRewardsWithdrawnEvent {
   export type InputTuple = [_walletAddress: AddressLike, _amount: BigNumberish];
   export type OutputTuple = [_walletAddress: string, _amount: bigint];
   export interface OutputObject {
@@ -623,6 +646,8 @@ export interface UpgradeableHYAXRewards extends BaseContract {
 
   withdrawGrowthTokens: TypedContractMethod<[], [void], "nonpayable">;
 
+  withdrawInvestorRewards: TypedContractMethod<[], [void], "nonpayable">;
+
   withdrawTeamTokens: TypedContractMethod<[], [void], "nonpayable">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
@@ -786,6 +811,9 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     nameOrSignature: "withdrawGrowthTokens"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "withdrawInvestorRewards"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "withdrawTeamTokens"
   ): TypedContractMethod<[], [void], "nonpayable">;
 
@@ -802,6 +830,13 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     GrowthTokensWithdrawnEvent.InputTuple,
     GrowthTokensWithdrawnEvent.OutputTuple,
     GrowthTokensWithdrawnEvent.OutputObject
+  >;
+  getEvent(
+    key: "InvestorRewardsWithdrawn"
+  ): TypedContractEvent<
+    InvestorRewardsWithdrawnEvent.InputTuple,
+    InvestorRewardsWithdrawnEvent.OutputTuple,
+    InvestorRewardsWithdrawnEvent.OutputObject
   >;
   getEvent(
     key: "OwnershipTransferred"
@@ -867,6 +902,17 @@ export interface UpgradeableHYAXRewards extends BaseContract {
       GrowthTokensWithdrawnEvent.InputTuple,
       GrowthTokensWithdrawnEvent.OutputTuple,
       GrowthTokensWithdrawnEvent.OutputObject
+    >;
+
+    "InvestorRewardsWithdrawn(address,uint256)": TypedContractEvent<
+      InvestorRewardsWithdrawnEvent.InputTuple,
+      InvestorRewardsWithdrawnEvent.OutputTuple,
+      InvestorRewardsWithdrawnEvent.OutputObject
+    >;
+    InvestorRewardsWithdrawn: TypedContractEvent<
+      InvestorRewardsWithdrawnEvent.InputTuple,
+      InvestorRewardsWithdrawnEvent.OutputTuple,
+      InvestorRewardsWithdrawnEvent.OutputObject
     >;
 
     "OwnershipTransferred(address,address)": TypedContractEvent<

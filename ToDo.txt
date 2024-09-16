@@ -81,7 +81,7 @@ npx hardhat test
 -second exceeding the limit DONE
 
 
--withdrawTeamTokens
+-withdrawTeamTokens DONE
 --before being funded DONE
 --not in whitelist DONE
 --notteammember DONE
@@ -91,15 +91,18 @@ npx hardhat test
 --afterAYearHasPassedSinceLastWithdrawal DONE
 --revertAfterWithdrawingAllTeamTokens DONE
 --revertAfterWithdrawingAllOwnTokens DONE
-
-Print the values of times and token balances DONE
+--Print the values of times and token balances DONE
 
 
 6. Create holder rewards functionalities
 
-address rewardsUpdater.
+address rewardsUpdater DONE
 
-event
+event rewards withdrawn  DONE
+
+variables DONE
+
+fundRewards DONE
 
 updateRewardsUpdaterAddress()
 

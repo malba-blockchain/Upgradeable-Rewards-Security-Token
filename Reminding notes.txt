@@ -65,9 +65,9 @@ An amount of tokens get issued for the admin to use them as he finds best.
 
 4. Rewards to holding are calculated on a weekly basis externally using ethers.js. Takes a snapshot and then calculates the values.
 
-Those values are updated on a weekly basis using javascript.
+Those values are updated on a weekly basis using typescript script
 
-5. Users can extract their rewards freely.
+5. Users can extract their rewards freely every week.
 
 
 -------------VARIABLES------------------

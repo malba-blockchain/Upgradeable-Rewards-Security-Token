@@ -1,5 +1,5 @@
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
-import { ethers } from "hardhat"
+import { ethers, network } from "hardhat"
 import { expect } from "chai"
 
 describe("Testing Use Case #1: Constructor", function () {
@@ -389,7 +389,7 @@ describe("Testing Use Case #4: Fund Smart Contract with growth tokens", function
         // Get the timestamp of the block before
         const blockNumBefore = await ethers.provider.getBlockNumber();
         const blockBefore = await ethers.provider.getBlock(blockNumBefore);
-        const timestampOfBlockBefore = blockBefore.timestamp;
+        const timestampOfBlockBefore = blockBefore?.timestamp;
 
         // Get the growthTokensStartFundingTime and growthTokensLastWithdrawalTime
         const growthTokensStartFundingTime = await upgradeableHYAXRewards.growthTokensStartFundingTime();
@@ -551,7 +551,7 @@ describe("Testing Use Case #5: Fund Smart Contract with growth tokens after havi
         // Get the timestamp of the block before
         const blockNumBefore = await ethers.provider.getBlockNumber();
         const blockBefore = await ethers.provider.getBlock(blockNumBefore);
-        const timestampOfBlockBefore = blockBefore.timestamp;
+        const timestampOfBlockBefore = blockBefore?.timestamp;
         console.log("\n   [Log]: TimestampOfBlockBefore:", timestampOfBlockBefore);
 
         // Get the growthTokensStartFundingTime and growthTokensLastWithdrawalTime
@@ -684,7 +684,7 @@ describe("Testing Use Case #6: Withdraw Growth Tokens ", function () {
         // Get the timestamp of the block after withdrawal
         const blockNumBefore = await ethers.provider.getBlockNumber();
         const blockBefore = await ethers.provider.getBlock(blockNumBefore);
-        const timestampOfBlockBefore = blockBefore.timestamp;
+        const timestampOfBlockBefore = blockBefore?.timestamp;
 
         // Check if the correct amount of tokens was withdrawn
         const growthTokensWithdrawn = await upgradeableHYAXRewards.growthTokensWithdrawn();
@@ -781,7 +781,7 @@ describe("Testing Use Case #6: Withdraw Growth Tokens ", function () {
         // Get the timestamp of the block after withdrawal
         const blockNumBefore = await ethers.provider.getBlockNumber();
         const blockBefore = await ethers.provider.getBlock(blockNumBefore);
-        const timestampOfBlockBefore = blockBefore.timestamp;
+        const timestampOfBlockBefore = blockBefore?.timestamp;
 
         // Check if the correct amount of tokens was withdrawn
         const growthTokensWithdrawn = await upgradeableHYAXRewards.growthTokensWithdrawn();
@@ -843,7 +843,7 @@ describe("Testing Use Case #6: Withdraw Growth Tokens ", function () {
         // Get the timestamp of the block after withdrawal
         const blockNumBefore = await ethers.provider.getBlockNumber();
         const blockBefore = await ethers.provider.getBlock(blockNumBefore);
-        const timestampOfBlockBefore = blockBefore.timestamp;
+        const timestampOfBlockBefore = blockBefore?.timestamp;
 
         // Check if the correct amount of tokens was withdrawn
         const growthTokensWithdrawn = await upgradeableHYAXRewards.growthTokensWithdrawn();
@@ -1035,7 +1035,7 @@ describe("Testing Use Case #7: Fund Smart Contract with team tokens", function (
         // Get the timestamp of the block before
         const blockNumBefore = await ethers.provider.getBlockNumber();
         const blockBefore = await ethers.provider.getBlock(blockNumBefore);
-        const timestampOfBlockBefore = blockBefore.timestamp;
+        const timestampOfBlockBefore = blockBefore?.timestamp;
         console.log("\n   [Log]: TimestampOfBlockBefore:", timestampOfBlockBefore);
         // Get the teamTokensStartFundingTime
         const teamTokensStartFundingTime = await upgradeableHYAXRewards.teamTokensStartFundingTime();
@@ -1192,7 +1192,7 @@ describe("Testing Use Case #8: Fund Smart Contract with team tokens after having
         // Get the timestamp of the block before
         const blockNumBefore = await ethers.provider.getBlockNumber();
         const blockBefore = await ethers.provider.getBlock(blockNumBefore);
-        const timestampOfBlockBefore = blockBefore.timestamp;
+        const timestampOfBlockBefore = blockBefore?.timestamp;
         console.log("\n   [Log]: TimestampOfBlockBefore:", timestampOfBlockBefore);
 
         // Get the teamTokensStartFundingTime
@@ -1357,7 +1357,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         // Get the timestamp of the block after withdrawal
         const blockNumBefore = await ethers.provider.getBlockNumber();
         const blockBefore = await ethers.provider.getBlock(blockNumBefore);
-        const timestampOfBlockBefore = blockBefore.timestamp;
+        const timestampOfBlockBefore = blockBefore?.timestamp;
         console.log("\n   [Log]: TimestampOfBlockBefore:", timestampOfBlockBefore);
 
         // Check if the correct amount of tokens was withdrawn
@@ -1473,7 +1473,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         // Get the timestamp of the block after withdrawal
         const blockNumBefore = await ethers.provider.getBlockNumber();
         const blockBefore = await ethers.provider.getBlock(blockNumBefore);
-        const timestampOfBlockBefore = blockBefore.timestamp;
+        const timestampOfBlockBefore = blockBefore?.timestamp;
 
         // Check if the correct amount of tokens was withdrawn
         const teamTokensWithdrawn = await upgradeableHYAXRewards.teamTokensWithdrawn();
@@ -1546,7 +1546,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
             blockNumBefore = await ethers.provider.getBlockNumber();
             blockBefore = await ethers.provider.getBlock(blockNumBefore);
-            timestampOfBlockBefore = blockBefore.timestamp;
+            timestampOfBlockBefore = blockBefore?.timestamp;
 
             // Wait for the specified time period to elapse (simulate one year)
             await network.provider.send("evm_increaseTime", [oneYear]);
@@ -1629,7 +1629,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
             blockNumBefore = await ethers.provider.getBlockNumber();
             blockBefore = await ethers.provider.getBlock(blockNumBefore);
-            timestampOfBlockBefore = blockBefore.timestamp;
+            timestampOfBlockBefore = blockBefore?.timestamp;
 
             // Wait for the specified time period to elapse (simulate one year)
             await network.provider.send("evm_increaseTime", [oneYear]);
