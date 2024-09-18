@@ -83,14 +83,14 @@ describe("Testing Use Case #2: Add team wallet to Whitelist", function () {
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount, 
             rewardsWithdrawn, bitcoinRewardsAddress, addedToWhitelistTime, lastTokenWithdrawalTime, 
-            lastRewardsWithdrawalTime, isTeamWallet, isWhitelisted]
+            lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted]
             = await upgradeableHYAXRewards.wallets(addr1.address);
 
         console.log("\n   [Log]: Wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:", 
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:", 
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "bitcoinRewardsAddress:", bitcoinRewardsAddress, "\n   ",
             "addedToWhitelistTime:", addedToWhitelistTime, "lastTokenWithdrawalTime:", lastTokenWithdrawalTime, "\n   ",
-            "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "isTeamWallet:", isTeamWallet, 
+            "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet, 
             "isWhitelisted:", isWhitelisted);
 
         // Check if the wallet is in the whitelist
@@ -110,7 +110,7 @@ describe("Testing Use Case #2: Add team wallet to Whitelist", function () {
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount, 
             rewardsWithdrawn, bitcoinRewardsAddress, addedToWhitelistTime, lastTokenWithdrawalTime, 
-            lastRewardsWithdrawalTime, isTeamWallet, isWhitelisted]
+            lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted]
             = await upgradeableHYAXRewards.wallets(addr1.address);
 
         // Check if the wallet is in the whitelist
@@ -188,14 +188,14 @@ describe("Testing Use Case 3: Remove team wallet from Whitelist", function () {
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount, 
             rewardsWithdrawn, bitcoinRewardsAddress, addedToWhitelistTime, lastTokenWithdrawalTime, 
-            lastRewardsWithdrawalTime, isTeamWallet, isWhitelisted]
+            lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted]
             = await upgradeableHYAXRewards.wallets(addr1.address);
 
         console.log("\n   [Log]: Wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:", 
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:", 
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "bitcoinRewardsAddress:", bitcoinRewardsAddress, "\n   ",
             "addedToWhitelistTime:", addedToWhitelistTime, "lastTokenWithdrawalTime:", lastTokenWithdrawalTime, "\n   ",
-            "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "isTeamWallet:", isTeamWallet, 
+            "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet, 
             "isWhitelisted:", isWhitelisted);
 
         // Check if the wallet is a team wallet
@@ -214,9 +214,9 @@ describe("Testing Use Case 3: Remove team wallet from Whitelist", function () {
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount, 
             rewardsWithdrawn, bitcoinRewardsAddress, addedToWhitelistTime, lastTokenWithdrawalTime, 
-            lastRewardsWithdrawalTime, isTeamWallet, isWhitelisted]
+            lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted]
             = await upgradeableHYAXRewards.wallets(addr1.address);
-
+        
         // Check if the wallet is a team wallet
         expect(isTeamWallet).to.equal(true);
 

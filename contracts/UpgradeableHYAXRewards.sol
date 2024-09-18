@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
  /**
  * @title ERC20TokenInterface
@@ -15,30 +16,77 @@ interface ERC20TokenInterface {
     function symbol() external view returns (string memory);
 }
 
-contract UpgradeableHYAXRewards is Ownable, Pausable {
+contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
 
     ////////////////// SMART CONTRACT EVENTS //////////////////
 
-    // Emitted when the stored value changes
+    /**
+     * @dev Emitted when funding is added to the contract
+     * @param _fundingType The type of funding added (GrowthTokens, TeamTokens, or HolderRewards)
+     * @param _amount The amount of tokens added
+     */
     event FundingAdded(FundingType _fundingType, uint256 _amount);
-
-    // Emitted when the stored value changes
+    
+    /**
+     * @dev Emitted when growth tokens are withdrawn
+     * @param _walletAddress The address of the wallet that withdrew the tokens
+     * @param _amount The amount of growth tokens withdrawn
+     */
     event GrowthTokensWithdrawn(address _walletAddress, uint256 _amount);
 
-    // Emitted when the stored value changes
+    /**
+     * @dev Emitted when team tokens are withdrawn
+     * @param _walletAddress The address of the wallet that withdrew the tokens
+     * @param _amount The amount of team tokens withdrawn
+     */
     event TeamTokensWithdrawn(address _walletAddress, uint256 _amount);
 
-    // Emitted when the stored value changes
+    /**
+     * @dev Emitted when holder rewards are withdrawn
+     * @param _walletAddress The address of the wallet that withdrew the rewards
+     * @param _amount The amount of rewards withdrawn
+     */
     event HolderRewardsWithdrawn(address _walletAddress, uint256 _amount);
 
-    // Emitted when the stored value changes
+    /**
+     * @dev Emitted when tokens are withdrawn to be burned
+     * @param _fundingType The type of funding (GrowthTokens, TeamTokens, or HolderRewards)
+     * @param _amount The amount of tokens withdrawn to be burned
+     */
+    event TokensToBurnWithdrawn(FundingType _fundingType, uint256 _amount);
+
+    /**
+     * @dev Emitted when a wallet is added to the whitelist
+     * @param _sender The address that added the wallet to the whitelist
+     * @param _walletAddress The address of the wallet added to the whitelist
+     * @param _isTeamWallet Boolean indicating if the wallet is a team wallet
+     * @param _bitcoinRewardsAddress The Bitcoin address for rewards
+     * @param _hyaxHoldingAmount The amount of HYAX tokens held by the wallet
+     */
     event WalletAddedToWhitelist(address _sender, address _walletAddress, bool _isTeamWallet, string _bitcoinRewardsAddress, uint256 _hyaxHoldingAmount);
 
-    // Emitted when the stored value changes
+    /**
+     * @dev Emitted when a wallet is removed from the whitelist
+     * @param _sender The address that removed the wallet from the whitelist
+     * @param _walletAddress The address of the wallet removed from the whitelist
+     */
     event WalletRemovedFromWhitelist(address _sender, address _walletAddress);
 
-    // Emitted when the stored value changes
-    event RewardsUpdated(address[] _walletAddresses, uint256[] _hyaxHoldingAmounts);
+    /**
+     * @dev Emitted when rewards are updated for multiple wallets
+     * @param _sender The address that updated the rewards
+     * @param _walletAddresses An array of wallet addresses that had their rewards updated
+     * @param _hyaxHoldingAmounts An array of the updated HYAX holding amounts for each wallet
+     */
+    event RewardsUpdated(address _sender, address[] _walletAddresses, uint256[] _hyaxHoldingAmounts);
+
+    /**
+     * @dev Emitted when a reward update fails for a specific wallet
+     * @param _sender The address that attempted to update the rewards
+     * @param _walletAddress The address of the wallet for which the update failed
+     * @param _errorMessage A string describing the reason for the failure
+     */
+    event RewardUpdateFailed(address _sender, address _walletAddress, string _errorMessage);
 
     ////////////////// SMART CONTRACT VARIABLES //////////////////
 
@@ -95,9 +143,13 @@ contract UpgradeableHYAXRewards is Ownable, Pausable {
     
     uint256 public constant REWARD_TOKENS_WITHDRAWAL_PER_YEAR = 150000000 * 10**18; // 150 Million tokens per year
 
-    uint256 public constant REWARD_TOKENS_HOLDING_PERIOD = 7 days; // 7 years
+    uint256 public constant REWARD_TOKENS_WITHDRAWAL_PER_WEEK =  REWARD_TOKENS_WITHDRAWAL_PER_YEAR / 52; // 150 Million tokens divided by 52 weeks
+
+    uint256 public constant REWARD_TOKENS_HOLDING_PERIOD = 7 days; // 7 days
 
     uint256 public rewardTokensFunded; // Total amount of reward tokens funded to the contract
+
+    uint256 public rewardTokensDistributed; // Total amount of reward tokens distributed to the wallets 
 
     uint256 public rewardTokensWithdrawn; // Total amount of reward tokens withdrawn from the contract
 
@@ -127,10 +179,15 @@ contract UpgradeableHYAXRewards is Ownable, Pausable {
         uint256 addedToWhitelistTime;               // Timestamp when the wallet was added to the whitelist
         uint256 lastTokenWithdrawalTime;            // Timestamp of the last token withdrawal
         uint256 lastRewardsWithdrawalTime;          // Timestamp of the last rewards withdrawal
+        uint256 lastRewardsUpdateTime;            // Timestamp of the last rewards update
 
         bool isTeamWallet;                          // Flag indicating if this is a team wallet
         bool isWhitelisted;                         // Flag indicating if the wallet is whitelisted
     }
+
+    uint256 public constant MAX_BATCH_SIZE_FOR_UPDATE_REWARDS = 100;
+    
+    uint256 public constant MIN_INTERVAL_FOR_UPDATE_REWARDS = 7 days;
 
     mapping(address => WalletData) public wallets;
 
@@ -212,7 +269,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable {
      * @param _amount The amount of tokens to fund
      * @custom:events Emits a FundingAdded event upon successful funding
      */
-    function fundSmartContract(FundingType _fundingType, uint256 _amount) onlyOwner() public {
+    function fundSmartContract(FundingType _fundingType, uint256 _amount) onlyOwner() nonReentrant() public {
 
         // Check if the funding type is valid
         require(_fundingType == FundingType.GrowthTokens || _fundingType == FundingType.TeamTokens || _fundingType == FundingType.HolderRewards, "Invalid funding type");
@@ -308,7 +365,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable {
      * @custom:requirements At least one year has passed since the last withdrawal
      * @custom:events Emits a GrowthTokensWithdrawn event upon successful withdrawal
      */
-    function withdrawGrowthTokens() onlyOwner() public {
+    function withdrawGrowthTokens() onlyOwner() nonReentrant() public {
 
         // Check if growth tokens funding has started
         require(growthTokensFundingStarted, "Funding has not started yet, no tokens to withdraw");
@@ -363,7 +420,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable {
      * @custom:requirements The wallet must have a positive HYAX holding amount
      * @custom:events Emits a TeamTokensWithdrawn event upon successful withdrawal
      */
-    function withdrawTeamTokens() isWhitelisted(msg.sender) public {
+    function withdrawTeamTokens() isWhitelisted(msg.sender) nonReentrant() public {
 
         // Check if the sender is a team wallet
         require(wallets[msg.sender].isTeamWallet == true, "Only team wallets can withdraw tokens using this function");
@@ -413,54 +470,211 @@ contract UpgradeableHYAXRewards is Ownable, Pausable {
     
     /////////////HOLDER REWARDS FUNCTIONS///////////
 
-    /**
+    /*
      * @notice Allows the rewards updater or the owner to update the rewards for a list of wallets
      * @dev This function can only be called by the rewards updater or the owner
      * @param _walletAddresses The list of wallet addresses to update the rewards for
      * @param _hyaxHoldingAmounts The list of HYAX holding amounts for the wallets
      * @custom:events Emits a RewardsUpdated event upon successful update
      */
-    function updateRewards(address[] calldata _walletAddresses, uint256[] calldata _hyaxHoldingAmounts) onlyOwnerOrRewardsUpdater public {
+    function updateRewardsBatch(address[] calldata _walletAddresses, uint256[] calldata _hyaxRewards) onlyOwnerOrRewardsUpdater nonReentrant() public {
+
+        // Validate the batch size limit
+        require(_walletAddresses.length <= MAX_BATCH_SIZE_FOR_UPDATE_REWARDS, "Batch size exceeds limit. Max batch size is 100");
 
         // Validate the length of the arrays
-        require(_walletAddresses.length == _hyaxHoldingAmounts.length, "Array lengths must match");
+        require(_walletAddresses.length == _hyaxRewards.length, "Array lengths must match.");
 
         // Iterate through the list of wallets
         for (uint256 i = 0; i < _walletAddresses.length; i++) {
+
+            //Get the wallet address for the current iteration
             address walletAddress = _walletAddresses[i];
-            uint256 hyaxHoldingAmount = _hyaxHoldingAmounts[i];
 
-            // Update the HYAX holding amount for the wallet
-            wallets[walletAddress].hyaxHoldingAmount = hyaxHoldingAmount;
+            //Get the hyax rewards for the current iteration
+            uint256 hyaxRewards = _hyaxRewards[i];
+
+            //Try to update the rewards for the current wallet
+            try this.updateRewardsSingle(walletAddress, hyaxRewards) {
+
+            } catch {
+                // Handle the error (e.g., emit an event to log failure)
+                emit RewardUpdateFailed(msg.sender, walletAddress, "Reward update failed for this wallet");
+            }
+
         }
-
         // Emit an event to notify that the rewards were updated
-        emit RewardsUpdated(_walletAddresses, _hyaxHoldingAmounts);
+        emit RewardsUpdated(msg.sender, _walletAddresses, _hyaxRewards);
     }
 
     /**
-     * @notice Allows the rewards updater or the owner to update the rewards for a list of wallets
+     * @notice Updates rewards for a single wallet
      * @dev This function can only be called by the rewards updater or the owner
-     * @custom:requirements Caller must be a whitelisted team wallet
-     * @custom:requirements Team tokens funding must have started
-     * @custom:requirements At least four years must have passed since the wallet was added to the whitelist
-     * @custom:requirements At least one year must have passed since the last withdrawal
-     * @custom:requirements Not all team tokens have been withdrawn
-     * @custom:requirements The wallet must have a positive HYAX holding amount
-     * @custom:events Emits a TeamTokensWithdrawn event upon successful withdrawal
+     * @dev Implements nonReentrant guard to prevent reentrancy attacks
+     * @param _walletAddress The address of the wallet to update rewards for
+     * @param _hyaxRewards The amount of HYAX rewards to add
+     * @custom:requirements Wallet must be whitelisted
+     * @custom:requirements Minimum interval between updates must have passed
+     * @custom:requirements Rewards must not exceed weekly withdrawal limit
+     * @custom:requirements Contract must have sufficient tokens to distribute
+     * @custom:requirements Wallet must have positive HYAX balance (or holding amount for team wallets)
      */
+    function updateRewardsSingle(address _walletAddress, uint256 _hyaxRewards) onlyOwnerOrRewardsUpdater nonReentrant() public {
 
+        // Validate that the wallet is whitelisted
+        require(wallets[_walletAddress].isWhitelisted == true, "Wallet is not whitelisted");
 
-    function withdrawHolderRewards() isWhitelisted(msg.sender) public {
+        //Timestamp validation
+        require(block.timestamp >= wallets[_walletAddress].lastRewardsUpdateTime + MIN_INTERVAL_FOR_UPDATE_REWARDS, "Too soon to update rewards for this wallet");
 
+        // Ensure rewards don't exceed the weekly withdrawal limit
+        require(_hyaxRewards < REWARD_TOKENS_WITHDRAWAL_PER_WEEK, "A single wallet cannot have rewards higher than the weekly withdrawal limit");
+
+        // Check if there are sufficient tokens in the contract to distribute as rewards
+        require(rewardTokensDistributed + _hyaxRewards <= rewardTokensInSmartContract, "Insufficient tokens to distribute as rewards");
+
+        // Check if the wallet is a team wallet and has a positive HYAX holding amount
+        if(wallets[_walletAddress].isTeamWallet){
+            // For team wallets, check if they have a positive HYAX holding amount
+            require(wallets[_walletAddress].hyaxHoldingAmount > 0, "Team wallets must have a hyax holding amount greater than 0 to get rewards");
+        }
+        else{
+            // For non-team wallets, check their current HYAX balance
+            require(hyaxToken.balanceOf(_walletAddress) > 0, "Wallet must have a hyax balance greater than 0 to get rewards");
+        }
+
+        // Update the total rewards distributed
+        rewardTokensDistributed += _hyaxRewards;
+
+        // Update the last rewards update time
+        wallets[_walletAddress].lastRewardsUpdateTime = block.timestamp;
+
+        // Update the total rewards for the wallet
+        wallets[_walletAddress].totalHyaxRewardsAmount += _hyaxRewards;
+
+        // Update the HYAX holding amount for the wallet
+        wallets[_walletAddress].currentRewardsAmount += _hyaxRewards;
+    }
+
+    /*
+     * @notice Allows whitelisted holders to withdraw their accumulated rewards
+     * @dev This function is restricted to whitelisted addresses and implements a nonReentrant guard
+     * @dev Rewards can only be withdrawn once every REWARD_TOKENS_HOLDING_PERIOD (7 days)
+     * @dev The function checks for various conditions before allowing withdrawal
+     * @dev Upon successful withdrawal, it updates relevant state variables and transfers tokens
+     * @return None
+     */
+    function withdrawHolderRewards() isWhitelisted(msg.sender) nonReentrant() public {
+
+        //Check if the wallet is whitelisted
+        require(wallets[msg.sender].isWhitelisted == true, "Wallet is not whitelisted");
+
+        // Check if rewards funding has started
+        require(rewardTokensFundingStarted, "Funding has not started yet, no tokens to withdraw");
+        
+        // Ensure that at least 7 days have passed since the last rewards withdrawal
+        require(block.timestamp >= wallets[msg.sender].lastRewardsWithdrawalTime + REWARD_TOKENS_HOLDING_PERIOD, "Can only withdraw rewards once every 7 days");
+        
+        // Verify that not all reward tokens have been withdrawn yet
+        require(rewardTokensWithdrawn < REWARD_TOKENS_TOTAL, "All reward tokens have been withdrawn");
+        
+        // Verify that the wallet has rewards to withdraw
+        uint256 withdrawableAmount = wallets[msg.sender].currentRewardsAmount;
+
+        // Validate that the wallet has rewards to withdraw
+        require(withdrawableAmount > 0, "No rewards available to withdraw");
+        
+        // Verify that there are sufficient tokens in the contract to withdraw
+        require(withdrawableAmount <= rewardTokensInSmartContract, "Insufficient reward tokens in the contract to withdraw");
+
+        // Update the rewards withdrawn amount
+        wallets[msg.sender].rewardsWithdrawn += withdrawableAmount;
+
+        // Reset the current rewards amount
+        wallets[msg.sender].currentRewardsAmount = 0;
+
+        // Update the reward tokens in the smart contract
+        rewardTokensInSmartContract -= withdrawableAmount;
+
+        // Update the total reward tokens withdrawn
+        rewardTokensWithdrawn += withdrawableAmount;
+
+        // Update the last rewards withdrawal time
+        wallets[msg.sender].lastRewardsWithdrawalTime = block.timestamp;
+
+        // Transfer the calculated amount to the wallet
+        require(hyaxToken.transfer(msg.sender, withdrawableAmount), "Failed to transfer reward tokens");
+
+        // Emit an event to notify that the holder rewards were withdrawn
+        emit HolderRewardsWithdrawn(msg.sender, withdrawableAmount);
     }
 
     /////////////SMART CONTRACT MANAGEMENT FUNCTIONS///////////
 
+    /**
+     * @notice Allows the owner to withdraw tokens to be burned
+     * @dev This function can only be called by the owner
+     * @param _fundingType The type of funding to withdraw from
+     * @param _amount The amount of tokens to withdraw
+     * @custom:requirements Funding must have started
+     * @custom:requirements Amount must be greater than 0
+     */
+    function withdrawTokensToBurn(FundingType _fundingType, uint256 _amount) onlyOwner() nonReentrant() public {
+
+        // Check if the funding type is valid
+        require(_fundingType == FundingType.GrowthTokens || _fundingType == FundingType.TeamTokens || _fundingType == FundingType.HolderRewards, "Invalid funding type");
+
+        // Verify that the amount is greater than 0
+        require(_amount > 0, "Amount must be greater than 0");
+
+        // Check if growth tokens funding has started
+        if(_fundingType == FundingType.GrowthTokens){
+            require(growthTokensFundingStarted, "Funding has not started yet, no tokens to withdraw");
+            require(_amount <= growthTokensInSmartContract, "Insufficient growth tokens in the contract to withdraw");
+            growthTokensInSmartContract -= _amount;
+        }
+        else if(_fundingType == FundingType.TeamTokens){
+            require(teamTokensFundingStarted, "Funding has not started yet, no tokens to withdraw");
+            require(_amount <= teamTokensInSmartContract, "Insufficient team tokens in the contract to withdraw");
+            teamTokensInSmartContract -= _amount;
+
+        }
+        else if(_fundingType == FundingType.HolderRewards){
+            require(rewardTokensFundingStarted, "Funding has not started yet, no tokens to withdraw");
+            require(_amount <= rewardTokensInSmartContract, "Insufficient reward tokens in the contract to withdraw");
+            rewardTokensInSmartContract -= _amount;
+        }
+        
+        // Transfer the calculated amount to the owner
+        require(hyaxToken.transfer(owner(), _amount), "Failed to transfer growth tokens");
+
+        // Emit an event to notify that the growth tokens were withdrawn    
+        emit TokensToBurnWithdrawn(_fundingType, _amount);
+    }
+
+    /**
+     * @notice Updates the white lister address
+     * @dev This function can only be called by the owner
+     * @param _whiteListerAddress The address of the new white lister
+     */
     function updateWhiteListerAddress(address _whiteListerAddress) onlyOwner() public {
         whiteListerAddress = _whiteListerAddress;
     }
 
+    /**
+     * @notice Updates the rewards updater address
+     * @dev This function can only be called by the owner
+     * @param _rewardsUpdaterAddress The address of the new rewards updater
+     */
+    function updateRewardsUpdaterAddress(address _rewardsUpdaterAddress) onlyOwner() public {
+        rewardsUpdaterAddress = _rewardsUpdaterAddress;
+    }
+
+    /**
+     * @notice Updates the hyax token address
+     * @dev This function can only be called by the owner
+     * @param _hyaxTokenAddress The address of the new hyax token
+     */
     function updateHyaxTokenAddress(address _hyaxTokenAddress) onlyOwner() public {
         hyaxTokenAddress = _hyaxTokenAddress;
         hyaxToken = ERC20TokenInterface(hyaxTokenAddress);

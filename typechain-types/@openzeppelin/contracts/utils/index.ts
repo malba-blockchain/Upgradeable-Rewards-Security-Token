@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { Pausable } from "./Pausable";
+export type { ReentrancyGuard } from "./ReentrancyGuard";

@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export { Pausable__factory } from "./Pausable__factory";
+export { ReentrancyGuard__factory } from "./ReentrancyGuard__factory";

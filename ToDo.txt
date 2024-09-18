@@ -104,19 +104,42 @@ variables DONE
 
 fundRewards DONE
 
-updateRewardsUpdaterAddress()
+updateRewardsUpdaterAddress() DONE
+
+Update the data one by uploading the info or by doing the calculation in the code?
+
 
 updateValuesOfTokenRewards(mapping rewards (address investorAddress –> uint256 rewardAmount))
 
-withdrawTokenRewards()
+1. Batch Size Limit: Introduce a limit on the maximum number of wallet addresses that can be updated in a single transaction. This prevents gas exhaustion in case too many addresses are passed. DONE
+2. Timestamp Validation: Check whether enough time has passed since the last rewards update. For example, rewards might only be allowed to be updated weekly, so check that the minimum time (7 days) has elapsed. DONE
+3. Reentrancy Guard: Add a reentrancy guard to protect against malicious external calls. DONE
+4. Hyax Balance Check:  Ensure that the wallet has a non-zero HYAX balance before proceeding to update its rewards. This avoids unnecessary operations on wallets with zero balances. DONE
+5. Token Balance Consistency: Before updating the rewards, verify that the contract has enough tokens to distribute rewards based on the current weekly distribution formula. This prevents scenarios where the contract might not have sufficient tokens to cover all wallets. TODO
+6. Whitelist Validation: Ensure that the correct event (RewardsUpdated) is emitted only after the state changes are successfully applied. This helps maintain an accurate on-chain history of updates. DONE
+7. Ensure that the _walletAddresses array contains unique addresses to prevent duplicate updates.TODO
+8. Validate that the _hyaxHoldingAmounts array contains non-negative values. DONE
+9. Provide informative error messages to help developers debug issues and identify potential vulnerabilities. DONE
 
 
+withdrawTokenRewards() DONE
+
+
+CONTINUE HEREEEEEEEEEEEEEEEE
 
 
 7. Create additional functionalities for smart contract
 
+withdrawTokensToBurn() DONE
 
-7. Create external script for rewards
+8. Create external script for rewards
+
+calculateWeeklyReward
+add all the tokens been holded by the investors and team members that have been whitelisted (m)
+take the amount of tokens that the investor is currently holding (n)
+divide (n)/(m) to get the pro-rata value that holder is entitled to (%)
+multiply that value by the weekly token rewards
+
 
 8. Test everything locally
 
@@ -139,18 +162,6 @@ npx hardhat compile --force
 Using the following hardhat testing template, generate the following test cases for the "XXXXXXXXXXXXXXXXXXXXXXX", for the solidity smart contract: UpgradeableHYAXRewards.sol
 
 ----------------------------
-
-QUESTIONS
-
-For team tokens. Should withdrawal be based on general date or in time per person?
-
-For investor holder tokens. Should withdrawal be based on general date or in time per person?
-
-Should we store on chain the bitcoin addresses of people? (Better nope: Gas an privacy concerns)
-
-Is there a maximum of team tokens a wallet is expected to hold? (Should be as team member. I.e. No more than 51%)
-
-Should we have a smart contract owner, whitelister address and updater address?
 
 
 

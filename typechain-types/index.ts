@@ -22,6 +22,8 @@ export type { IERC20 } from "./@openzeppelin/contracts/token/ERC20/IERC20";
 export { IERC20__factory } from "./factories/@openzeppelin/contracts/token/ERC20/IERC20__factory";
 export type { Pausable } from "./@openzeppelin/contracts/utils/Pausable";
 export { Pausable__factory } from "./factories/@openzeppelin/contracts/utils/Pausable__factory";
+export type { ReentrancyGuard } from "./@openzeppelin/contracts/utils/ReentrancyGuard";
+export { ReentrancyGuard__factory } from "./factories/@openzeppelin/contracts/utils/ReentrancyGuard__factory";
 export type { HYAXToken } from "./contracts/HYAXToken";
 export { HYAXToken__factory } from "./factories/contracts/HYAXToken__factory";
 export type { ERC20TokenInterface } from "./contracts/UpgradeableHYAXRewards.sol/ERC20TokenInterface";

@@ -89,7 +89,7 @@ Remove wallet from whitelist (WalletType)
 
 fundSmartcontract (FundingType)
 
-WithdrawLockedTokensForTeamMember ()
+withdrawLockedTokensForTeamMember ()
 
 withdrawLockedTokensForGrowth ()
 
@@ -98,8 +98,6 @@ updateValuesOfTokensRewards()
 withdrawTokenRewards(WalletType)
 
 withdrawTokensToBurn()
-
-updateWaitingTime()
 
 pause()
 
@@ -110,6 +108,19 @@ changeSmartContractOwner()
 ------------External Script------------------
 
 calculateTokenRewardsEarnedWeekly()
+
+
+QUESTIONS
+
+For team tokens. Should withdrawal be based on general date or in time per person?
+
+For investor holder tokens. Should withdrawal be based on general date or in time per person?
+
+Should we store on chain the bitcoin addresses of people? (Better nope: Gas an privacy concerns)
+
+Is there a maximum of team tokens a wallet is expected to hold? (Should be as team member. I.e. No more than 51%)
+
+Should we have a smart contract owner, whitelister address and updater address?
 
 
 
