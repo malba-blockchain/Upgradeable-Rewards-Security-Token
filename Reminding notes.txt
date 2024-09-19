@@ -4,15 +4,15 @@
 Lock: 4 years - 208 weeks
 ----
 Unlock roadmap
-Year 5: 20% / 20%
-Year 6: 20% / 40%
-Year 7: 20% / 60%
-Year 8: 20% / 80%
-Year 9: 20% / 100%
+Year 4: 20% / 20%
+Year 5: 20% / 40%
+Year 6: 20% / 60%
+Year 7: 20% / 80%
+Year 8: 20% / 100%
 
 The locked % can be seen from the platform and while it's locked the team member can get rewards
 
-------------TOKENS DE CRECIMIENTO------------ DONE
+------------TOKENS DE CRECIMIENTO------------
 
 4B tokens total
 1. 40% available (directly) = 1.6B tokens
@@ -28,7 +28,15 @@ Year 20: 5% / 100% - 120,000,000 / 2,400,000,000
 
 Distribution ONLY among users who hold HYAX in their wallet and have an account that approved hydraxis KYC.
 
-1.2B tokens distributed during 8 years. Every week the same amount.
+1. Investors lo tienen en su wallet. 1M HYAX 
+2. Team lo tiene bloqueado en el smart contract de tokens de equipo.
+
+AMBOS OBTIENEN TOKENS RECOMPENSA SEMANALES
+
+LAS RECOMPENSAS NO ESTÁN BLOQUEADAS: SE LIBERAN SEMANALMENTE.
+
+
+3. 1.2B rewards tokens distributed during 8 years. Every week the same amount.
 
 Year 1: 12.5% / 12.5% - 150,000,000 / 150,000,000 
 Year 2: 12.5% / 25% - 150,000,000 / 300,000,000 
@@ -40,6 +48,27 @@ Weeks in a year:
 52 weeks
 2,884,615 tokens per week
 
+Semana 0
+Jesus 500 (50%)
+Alejo 200 (20%)
+Kis 300 (30%)
+
+Semana 1
+Jesus 500 (25%)
+Alejo 200 (10%)
+Kis 300 (15%)
+Trump 1000 (50%)
+
+TotalHolding = 500+200+300+1000
+
+totalTokensPerWeek = 2.8 M
+
+Rewards alejo per week = Alejo/TotalHolding * totalTokensPerWeek = 0.56 M
+
+Rewards alejo per week = Alejo/TotalHolding * totalTokensPerWeek = 0.2535 M
+
+
+
 --------PROCESS (Tokens Equipo)---------
 
 1. Admin uses depositLockedTokensForTeam(address, value)
@@ -47,7 +76,26 @@ Weeks in a year:
 3. If the member wants to retire has to wait until the lock time per % has been completed
 4. Rewards for the team are calculated based on the total rewards/ amount of tokens each member is holding.
 
-Q. The member can extract his rewards from the smart contract whenever he wants to?
+Goal: Transparency
+
+80% - smart contract de rewards
+20& - wallet de option pool - transfer
+
+80% - smart contract de rewards
+20% - no minteado 
+
+Jesus 400
+Alejo 200
+Kis 300
+Kis (option) 100
+
+RETO:
+-Hay personas en la compañia con opciones de compra de tokens. 
+-Esos tokens no deberían poseer rewards.
+-Hay tokens que no están allocated
+
+
+Q. The member can extract his rewards from the smart contract whenever he wants to? YES
 
 ------PROCESS (Tokens Crecimiento)-------
 
@@ -65,8 +113,6 @@ An amount of tokens get issued for the admin to use them as he finds best.
 
 4. Rewards to holding are calculated on a weekly basis externally using ethers.js. Takes a snapshot and then calculates the values.
 
-Those values are updated on a weekly basis using typescript script
-
 5. Users can extract their rewards freely every week.
 
 
@@ -83,9 +129,15 @@ tokenGrowthTokens
 
 ------------METHODS------------------
 
+Wallet [hyaxAmount, rewards, dateOfWhitelisting, isTeam, isWhitelisted, isBlacklisted]
+
 Add wallet to whitelist (WalletType)
 
-Remove wallet from whitelist (WalletType)
+Remove wallet from whitelist (WalletType) isWhitelisted = false.
+
+UpdateWhiteListStatus() true - false
+
+UpdateBlackListStatus() true - false
 
 fundSmartcontract (FundingType)
 
@@ -97,13 +149,13 @@ updateValuesOfTokensRewards()
 
 withdrawTokenRewards(WalletType)
 
-withdrawTokensToBurn()
+withdrawTokensToBurn(TypeOfToken , amount) 
 
 pause()
 
 unpause()
 
-changeSmartContractOwner()
+changeSmartContractOwner() 
 
 ------------External Script------------------
 
@@ -112,23 +164,63 @@ calculateTokenRewardsEarnedWeekly()
 
 QUESTIONS
 
-For team tokens. Should withdrawal be based on general date or in time per person?
+1. For team tokens. Should withdrawal be based on general date or in time per person?
 
-For investor holder tokens. Should withdrawal be based on general date or in time per person?
+Cuando se empiece todo el mundo va a dar una misma fecha.
 
-Should we store on chain the bitcoin addresses of people? (Better nope: Gas an privacy concerns)
+Año 1 - Año 4 Liberado
+wallets - cantidad
+wallets - cantidad
+wallets - cantidad
+wallets - cantidad
 
-Is there a maximum of team tokens a wallet is expected to hold? (Should be as team member. I.e. No more than 51%)
+Rta. Tokens de equipo solo se asignan una vez en la historia.
+
+
+2. Should we store on chain the bitcoin addresses of people? (Better nope: Gas an privacy concerns)
+
+NOPE
+
+
+3. Is there a maximum of team tokens a wallet is expected to hold? (Should be as team member. I.e. No more than 51%)
+
+Si (cantidDeTokesAsignar = TOTAL TOKENS HYAX 10.000M) = ERROR
+
+
+
+Si eres wallet de equipo el smart contract no te mandaría < 1.5B tokens
+
+
+Jesus 30% DE TODOS LOS TOKENS
+
+TOKENS DE EQUIPO 1.5B tokens
+Jesus >0 && < 1.5B
+Alejo 100 && 
+Kis 700
+
+Existe algún limite más bajo que me permita mejorar la seguridad?
+
+Momento de liberar Jesus puede sacar todos los 2 B tokens
+
+Al calcular rewards 99.9% por semana
+
+---------------------------------------------------------------------------------
 
 Should we have a smart contract owner, whitelister address and updater address?
 
+Can rewards be retired instantly once sent? YES
 
 
+Cambiar la wallet que recibe los tokens de equipo?
 
 
+Upgradeable smart contract
 
+https://www.youtube.com/watch?v=JRXd2_0b0Zk
 
+https://docs.openzeppelin.com/learn/upgrading-smart-contracts
 
+https://i.sstatic.net/5VEOd.png
 
 
 

@@ -124,24 +124,66 @@ updateValuesOfTokenRewards(mapping rewards (address investorAddress –> uint256
 
 withdrawTokenRewards() DONE
 
-
-CONTINUE HEREEEEEEEEEEEEEEEE
-
-
 7. Create additional functionalities for smart contract
 
 withdrawTokensToBurn() DONE
 
-8. Create external script for rewards
+
+CONTINUE HEREEEEEEEEEEEEEEEE
+
+8. Add requirement updates. 
+
+8.1. There is a single date for team people to withdraw their tokens.
+-Admin sends tokens to smart contract
+-A timer starts to count the time once the tokens are sent
+-There is a function that returns the year based on the current date: e.g. 1, 2, 3, ...
+-Each team member stores the amount of times the extracted their team tokens: e.g. 1, 2, 3, 4
+-To withdraw tokens the condition must be met: 
+The value of the variable of the team member must be less to the number of the year.
+
+-Tries to withdraw before the first year DONE
+-Tries to withdraw two times after the first year DONE
+-Tries to withdraw two times after the second year DONE
+-Tries to withdraw five times after the fifth year DONE
+-Tries to withdraw six times after the fith year DONE
+
+8.2. Transparency goal: A part of the tokens could be sent to an options pool wallet. OK
+
+8.3. Token rewards can be extracted by people whenever they want DONE
+
+
+CONTINUE HEREEEEEEEEEEEEEEE
+
+FIX TESTS
+
+8.4. There is an isBlacklisted parameter added to the smart contract data
+
+8.7. Update whitelist status
+
+8.8. Update blacklist status	
+
+
+
+8.5. Bitcoin address WON'T be stored in the smart contract
+
+8.6. Max tokens a wallet can hold is maximum of total dedicated tokens
+
+
+
+
+#. Create external script for rewards
 
 calculateWeeklyReward
+Rewards are calculated based on snapshot taken from last week holdings
 add all the tokens been holded by the investors and team members that have been whitelisted (m)
 take the amount of tokens that the investor is currently holding (n)
 divide (n)/(m) to get the pro-rata value that holder is entitled to (%)
 multiply that value by the weekly token rewards
 
 
-8. Test everything locally
+
+
+. Test everything locally
 
 
 

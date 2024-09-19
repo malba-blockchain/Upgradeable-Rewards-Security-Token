@@ -66,11 +66,20 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
     event WalletAddedToWhitelist(address _sender, address _walletAddress, bool _isTeamWallet, string _bitcoinRewardsAddress, uint256 _hyaxHoldingAmount);
 
     /**
-     * @dev Emitted when a wallet is removed from the whitelist
-     * @param _sender The address that removed the wallet from the whitelist
-     * @param _walletAddress The address of the wallet removed from the whitelist
+     * @dev Emitted when a wallet whitelist status is updated
+     * @param _sender The address that updated the whitelist status
+     * @param _walletAddress The address of the wallet 
+     * @param _newStatus The new status of the wallet in the whitelist
      */
-    event WalletRemovedFromWhitelist(address _sender, address _walletAddress);
+    event WhitelistStatusUpdated(address _sender, address _walletAddress, bool _newStatus);
+
+    /**
+     * @dev Emitted when a wallet blacklist status is updated
+     * @param _sender The address that updated the blacklist status
+     * @param _walletAddress The address of the wallet 
+     * @param _newStatus The new status of the wallet in the blacklist
+     */
+    event BlacklistStatusUpdated(address _sender, address _walletAddress, bool _newStatus);
 
     /**
      * @dev Emitted when rewards are updated for multiple wallets
@@ -132,6 +141,8 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
 
     uint256 public teamTokensInSmartContract; // Current balance of team tokens in the contract
 
+    uint256 public teamTokensLastWithdrawalTime; // Timestamp of the last team tokens withdrawal
+
     uint256 public teamTokensStartFundingTime; // Timestamp when team tokens funding started
 
     bool public teamTokensFundingStarted; // Flag to indicate if team tokens funding has begun
@@ -177,12 +188,13 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         string bitcoinRewardsAddress;               // Bitcoin address for receiving rewards
 
         uint256 addedToWhitelistTime;               // Timestamp when the wallet was added to the whitelist
-        uint256 lastTokenWithdrawalTime;            // Timestamp of the last token withdrawal
+        uint8 tokenWithdrawalTimes;                  // Times that there have been a token withdrawal
         uint256 lastRewardsWithdrawalTime;          // Timestamp of the last rewards withdrawal
         uint256 lastRewardsUpdateTime;            // Timestamp of the last rewards update
 
         bool isTeamWallet;                          // Flag indicating if this is a team wallet
         bool isWhitelisted;                         // Flag indicating if the wallet is whitelisted
+        bool isBlacklisted;                         // Flag indicating if the wallet is blacklisted
     }
 
     uint256 public constant MAX_BATCH_SIZE_FOR_UPDATE_REWARDS = 100;
@@ -219,20 +231,24 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
 
         //Verify that the wallet is not already in the whitelist
         require(wallets[_walletAddress].isWhitelisted == false, "Wallet is already whitelisted");
+
+        //Verify that the wallet is not in a blacklist
+        require(wallets[_walletAddress].isBlacklisted == false, "Wallet has been blacklisted");
         
         //Add the wallet to the whitelist with the provided parameters
         wallets[_walletAddress].isWhitelisted = true; // Mark the wallet as whitelisted
+        wallets[_walletAddress].isBlacklisted = false; // Mark the wallet as not blacklisted
         wallets[_walletAddress].isTeamWallet = _isTeamWallet; // Set whether this is a team wallet or not
         wallets[_walletAddress].bitcoinRewardsAddress = _bitcoinRewardsAddress; // Store the Bitcoin address for rewards
 
         wallets[_walletAddress].addedToWhitelistTime = block.timestamp; // Set the time when the wallet was added to the whitelist
         
-        wallets[_walletAddress].lastTokenWithdrawalTime = 0; // Initialize the last token withdrawal time to zero
+        wallets[_walletAddress].tokenWithdrawalTimes = 0; // Initialize the token withdrawal times to zero
         wallets[_walletAddress].lastRewardsWithdrawalTime = 0; // Initialize the last rewards withdrawal time to zero
         
-        wallets[_walletAddress].currentRewardsAmount = 0; // Initialize the current rewards amount to 0
-        wallets[_walletAddress].totalHyaxRewardsAmount = 0; // Set the total HYAX rewards amount to 0
-        wallets[_walletAddress].rewardsWithdrawn = 0; // Initialize the rewards withdrawn to 0
+        wallets[_walletAddress].currentRewardsAmount = 0; // Initialize the current rewards amount to zero
+        wallets[_walletAddress].totalHyaxRewardsAmount = 0; // Set the total HYAX rewards amount to zero
+        wallets[_walletAddress].rewardsWithdrawn = 0; // Initialize the rewards withdrawn to zero
 
         if(_isTeamWallet){
             require(_hyaxHoldingAmountAtWhitelistTime > 0, "Team wallets must be added with a hyax holding amount greater than 0");
@@ -246,21 +262,39 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
     }
 
     /**
-     * @notice Removes a wallet from the whitelist
-     * @dev This function allows the owner or the whitelister address to remove a wallet from the whitelist
-     * @param _walletAddress The address of the wallet to be removed from the whitelist
+     * @notice Updates the status of a wallet in the whitelist
+     * @dev This function allows the owner or the whitelister address to update the status of a wallet in the whitelist
+     * @param _walletAddress The address of the wallet to be updated
      */ 
-    function removeWalletFromWhitelist(address _walletAddress) onlyOwnerOrWhitelister public {
+    function updateWhitelistStatus(address _walletAddress, bool _newStatus) onlyOwnerOrWhitelister public {
         
         //Verify that the wallet is in the whitelist
-        require(wallets[_walletAddress].isWhitelisted == true, "Wallet is not currently whitelisted");
+        require(wallets[_walletAddress].isWhitelisted != _newStatus, "Wallet already has that status");
 
-        //Remove the wallet from the whitelist
-        wallets[_walletAddress].isWhitelisted = false; // Mark the wallet as whitelisted
+        //Update the whitelist status
+        wallets[_walletAddress].isWhitelisted = _newStatus; 
 
-        //Emit an event to notify that the wallet was removed from the whitelist
-        emit WalletRemovedFromWhitelist(msg.sender, _walletAddress);
+        //Emit an event to notify that the wallet whitelist status has been updated
+        emit WhitelistStatusUpdated(msg.sender, _walletAddress, _newStatus);
     }
+
+        /**
+     * @notice Updates the status of a wallet in the blacklist
+     * @dev This function allows the owner or the whitelister address to update the status of a wallet in the blacklist
+     * @param _walletAddress The address of the wallet to be updated
+     */ 
+    function updateBlacklistStatus(address _walletAddress, bool _newStatus) onlyOwnerOrWhitelister public {
+        
+        //Verify that the wallet is in the blacklist
+        require(wallets[_walletAddress].isBlacklisted != _newStatus, "Wallet already has that status");
+
+        //Update the blacklist status
+        wallets[_walletAddress].isBlacklisted = _newStatus; 
+
+        //Emit an event to notify that the wallet blacklisted status has been updated
+        emit BlacklistStatusUpdated(msg.sender, _walletAddress, _newStatus);
+    }
+
 
     /**
      * @notice Funds the smart contract with tokens for different purposes
@@ -353,6 +387,12 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         _;
     }
 
+    modifier isNotBlacklisted(address _walletAddress) {
+        // Ensure that the sender is the owner or the white lister address
+        require(wallets[_walletAddress].isBlacklisted == false, "Wallet has been blacklisted");
+        _;
+    }
+
     /////////////GROWTH TOKENS FUNCTIONS///////////
     /**
      * @notice Allows the owner to withdraw growth tokens
@@ -420,7 +460,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
      * @custom:requirements The wallet must have a positive HYAX holding amount
      * @custom:events Emits a TeamTokensWithdrawn event upon successful withdrawal
      */
-    function withdrawTeamTokens() isWhitelisted(msg.sender) nonReentrant() public {
+    function withdrawTeamTokens() isWhitelisted(msg.sender) isNotBlacklisted(msg.sender) nonReentrant() public {
 
         // Check if the sender is a team wallet
         require(wallets[msg.sender].isTeamWallet == true, "Only team wallets can withdraw tokens using this function");
@@ -431,14 +471,14 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         // Ensure that at least four years have passed since the team wallet was added to the whitelist
         require(block.timestamp >= wallets[msg.sender].addedToWhitelistTime + TEAM_TOKENS_LOCKED_PERIOD , "Cannot withdraw before 4 years after being added to the whitelist");
         
-        // Ensure that at least one year has passed since the last withdrawal from this wallet
-        require(block.timestamp >= wallets[msg.sender].lastTokenWithdrawalTime + TOKENS_WITHDRAWAL_PERIOD, "Can only withdraw team tokens once per year");
-
         // Verify that not all team tokens have been withdrawn yet
         require(teamTokensWithdrawn < TEAM_TOKENS_TOTAL, "All team tokens have been withdrawn");
         
         // Verify that the wallet has a hyax holding amount as team tokens greater than 0 to withdraw
         require(wallets[msg.sender].hyaxHoldingAmount > 0, "No hyax holding amount to withdraw");
+
+        // Ensure that the number of token withdrawal times is greater than or equal to the calculated year for team tokens
+        require(wallets[msg.sender].tokenWithdrawalTimes <  calculateYearForTeamTokens(), "Can only withdraw team tokens once per year");
 
         // Set the initial withdrawable amount to the limit per year (20% of the hyax holding amount at whitelist time) 
         uint256 withdrawableAmount = wallets[msg.sender].hyaxHoldingAmountAtWhitelistTime / 5;
@@ -458,14 +498,33 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         // Update the team tokens in the smart contract
         teamTokensInSmartContract -= withdrawableAmount;
 
-        // Update the last withdrawal time
-        wallets[msg.sender].lastTokenWithdrawalTime = block.timestamp;
+        //Increase the times that the team member has done a token withdrawal
+        wallets[msg.sender].tokenWithdrawalTimes ++;
     
         // Transfer the calculated amount to the wallet
         require(hyaxToken.transfer(msg.sender, withdrawableAmount), "Failed to transfer team tokens");
 
         // Emit an event to notify that the team tokens were withdrawn    
         emit TeamTokensWithdrawn(msg.sender, withdrawableAmount);
+    }
+
+    function calculateYearForTeamTokens() public view returns (uint8)  {
+
+        uint256 timeElapsed = block.timestamp - teamTokensStartFundingTime;
+
+        if (timeElapsed >= 8 * 365 days) { //After 8 years elapsed since funding you get into year 8 to withdraw
+            return 5;
+        } else if (timeElapsed >= 7 * 365 days) { //After 7 years elapsed since funding you get into year 4 to withdraw
+            return 4;
+        } else if (timeElapsed >= 6 * 365 days) { //After 6 years elapsed since funding you get into year 3 to withdraw
+            return 3;
+        } else if (timeElapsed >= 5 * 365 days) { //After 5 years elapsed since funding you get into year 2 to withdraw
+            return 2;
+        } else if (timeElapsed >= 4 * 365 days) { //After 4 years elapsed since funding you get into year 1 to withdraw
+            return 1;
+        } else {
+            return 0;
+        }
     }
     
     /////////////HOLDER REWARDS FUNCTIONS///////////
@@ -501,7 +560,6 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
                 // Handle the error (e.g., emit an event to log failure)
                 emit RewardUpdateFailed(msg.sender, walletAddress, "Reward update failed for this wallet");
             }
-
         }
         // Emit an event to notify that the rewards were updated
         emit RewardsUpdated(msg.sender, _walletAddresses, _hyaxRewards);
@@ -523,6 +581,9 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
 
         // Validate that the wallet is whitelisted
         require(wallets[_walletAddress].isWhitelisted == true, "Wallet is not whitelisted");
+
+        // Validate that the wallet is not blacklisted
+        require(wallets[_walletAddress].isBlacklisted == false, "Wallet has been blacklisted");
 
         //Timestamp validation
         require(block.timestamp >= wallets[_walletAddress].lastRewardsUpdateTime + MIN_INTERVAL_FOR_UPDATE_REWARDS, "Too soon to update rewards for this wallet");
@@ -559,21 +620,21 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
     /*
      * @notice Allows whitelisted holders to withdraw their accumulated rewards
      * @dev This function is restricted to whitelisted addresses and implements a nonReentrant guard
-     * @dev Rewards can only be withdrawn once every REWARD_TOKENS_HOLDING_PERIOD (7 days)
+     * @dev Rewards can be withdrawn instantly once they are distributed
      * @dev The function checks for various conditions before allowing withdrawal
      * @dev Upon successful withdrawal, it updates relevant state variables and transfers tokens
      * @return None
      */
-    function withdrawHolderRewards() isWhitelisted(msg.sender) nonReentrant() public {
+    function withdrawRewardTokens() isWhitelisted(msg.sender) nonReentrant() public {
 
         //Check if the wallet is whitelisted
         require(wallets[msg.sender].isWhitelisted == true, "Wallet is not whitelisted");
 
+        // Validate that the wallet is not blacklisted
+        require(wallets[msg.sender].isBlacklisted == false, "Wallet has been blacklisted");
+
         // Check if rewards funding has started
         require(rewardTokensFundingStarted, "Funding has not started yet, no tokens to withdraw");
-        
-        // Ensure that at least 7 days have passed since the last rewards withdrawal
-        require(block.timestamp >= wallets[msg.sender].lastRewardsWithdrawalTime + REWARD_TOKENS_HOLDING_PERIOD, "Can only withdraw rewards once every 7 days");
         
         // Verify that not all reward tokens have been withdrawn yet
         require(rewardTokensWithdrawn < REWARD_TOKENS_TOTAL, "All reward tokens have been withdrawn");
@@ -593,14 +654,14 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         // Reset the current rewards amount
         wallets[msg.sender].currentRewardsAmount = 0;
 
+        // Update the last rewards withdrawal time
+        wallets[msg.sender].lastRewardsWithdrawalTime = block.timestamp;
+
         // Update the reward tokens in the smart contract
         rewardTokensInSmartContract -= withdrawableAmount;
 
         // Update the total reward tokens withdrawn
         rewardTokensWithdrawn += withdrawableAmount;
-
-        // Update the last rewards withdrawal time
-        wallets[msg.sender].lastRewardsWithdrawalTime = block.timestamp;
 
         // Transfer the calculated amount to the wallet
         require(hyaxToken.transfer(msg.sender, withdrawableAmount), "Failed to transfer reward tokens");

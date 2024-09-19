@@ -39,6 +39,7 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "TEAM_TOKENS_WITHDRAWAL_PER_YEAR"
       | "TOKENS_WITHDRAWAL_PERIOD"
       | "addWalletToWhitelist"
+      | "calculateYearForTeamTokens"
       | "fundSmartContract"
       | "growthTokensFunded"
       | "growthTokensFundingStarted"
@@ -51,7 +52,6 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "owner"
       | "pause"
       | "paused"
-      | "removeWalletFromWhitelist"
       | "renounceOwnership"
       | "rewardTokensDistributed"
       | "rewardTokensFunded"
@@ -63,25 +63,29 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "teamTokensFunded"
       | "teamTokensFundingStarted"
       | "teamTokensInSmartContract"
+      | "teamTokensLastWithdrawalTime"
       | "teamTokensStartFundingTime"
       | "teamTokensWithdrawn"
       | "transferOwnership"
       | "unpause"
+      | "updateBlacklistStatus"
       | "updateHyaxTokenAddress"
       | "updateRewardsBatch"
       | "updateRewardsSingle"
       | "updateRewardsUpdaterAddress"
       | "updateWhiteListerAddress"
+      | "updateWhitelistStatus"
       | "wallets"
       | "whiteListerAddress"
       | "withdrawGrowthTokens"
-      | "withdrawHolderRewards"
+      | "withdrawRewardTokens"
       | "withdrawTeamTokens"
       | "withdrawTokensToBurn"
   ): FunctionFragment;
 
   getEvent(
     nameOrSignatureOrTopic:
+      | "BlacklistStatusUpdated"
       | "FundingAdded"
       | "GrowthTokensWithdrawn"
       | "HolderRewardsWithdrawn"
@@ -93,7 +97,7 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "TokensToBurnWithdrawn"
       | "Unpaused"
       | "WalletAddedToWhitelist"
-      | "WalletRemovedFromWhitelist"
+      | "WhitelistStatusUpdated"
   ): EventFragment;
 
   encodeFunctionData(
@@ -149,6 +153,10 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     values: [AddressLike, boolean, string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "calculateYearForTeamTokens",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "fundSmartContract",
     values: [BigNumberish, BigNumberish]
   ): string;
@@ -184,10 +192,6 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "removeWalletFromWhitelist",
-    values: [AddressLike]
-  ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
@@ -233,6 +237,10 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "teamTokensLastWithdrawalTime",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "teamTokensStartFundingTime",
     values?: undefined
   ): string;
@@ -245,6 +253,10 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "updateBlacklistStatus",
+    values: [AddressLike, boolean]
+  ): string;
   encodeFunctionData(
     functionFragment: "updateHyaxTokenAddress",
     values: [AddressLike]
@@ -266,6 +278,10 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "updateWhitelistStatus",
+    values: [AddressLike, boolean]
+  ): string;
+  encodeFunctionData(
     functionFragment: "wallets",
     values: [AddressLike]
   ): string;
@@ -278,7 +294,7 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "withdrawHolderRewards",
+    functionFragment: "withdrawRewardTokens",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -343,6 +359,10 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "calculateYearForTeamTokens",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "fundSmartContract",
     data: BytesLike
   ): Result;
@@ -378,10 +398,6 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "removeWalletFromWhitelist",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -427,6 +443,10 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "teamTokensLastWithdrawalTime",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "teamTokensStartFundingTime",
     data: BytesLike
   ): Result;
@@ -439,6 +459,10 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "updateBlacklistStatus",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "updateHyaxTokenAddress",
     data: BytesLike
@@ -459,6 +483,10 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     functionFragment: "updateWhiteListerAddress",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateWhitelistStatus",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "wallets", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "whiteListerAddress",
@@ -469,7 +497,7 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "withdrawHolderRewards",
+    functionFragment: "withdrawRewardTokens",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -480,6 +508,28 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     functionFragment: "withdrawTokensToBurn",
     data: BytesLike
   ): Result;
+}
+
+export namespace BlacklistStatusUpdatedEvent {
+  export type InputTuple = [
+    _sender: AddressLike,
+    _walletAddress: AddressLike,
+    _newStatus: boolean
+  ];
+  export type OutputTuple = [
+    _sender: string,
+    _walletAddress: string,
+    _newStatus: boolean
+  ];
+  export interface OutputObject {
+    _sender: string;
+    _walletAddress: string;
+    _newStatus: boolean;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export namespace FundingAddedEvent {
@@ -656,12 +706,21 @@ export namespace WalletAddedToWhitelistEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace WalletRemovedFromWhitelistEvent {
-  export type InputTuple = [_sender: AddressLike, _walletAddress: AddressLike];
-  export type OutputTuple = [_sender: string, _walletAddress: string];
+export namespace WhitelistStatusUpdatedEvent {
+  export type InputTuple = [
+    _sender: AddressLike,
+    _walletAddress: AddressLike,
+    _newStatus: boolean
+  ];
+  export type OutputTuple = [
+    _sender: string,
+    _walletAddress: string,
+    _newStatus: boolean
+  ];
   export interface OutputObject {
     _sender: string;
     _walletAddress: string;
+    _newStatus: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -747,6 +806,8 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     "nonpayable"
   >;
 
+  calculateYearForTeamTokens: TypedContractMethod<[], [bigint], "view">;
+
   fundSmartContract: TypedContractMethod<
     [_fundingType: BigNumberish, _amount: BigNumberish],
     [void],
@@ -775,12 +836,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
 
   paused: TypedContractMethod<[], [boolean], "view">;
 
-  removeWalletFromWhitelist: TypedContractMethod<
-    [_walletAddress: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
 
   rewardTokensDistributed: TypedContractMethod<[], [bigint], "view">;
@@ -803,6 +858,8 @@ export interface UpgradeableHYAXRewards extends BaseContract {
 
   teamTokensInSmartContract: TypedContractMethod<[], [bigint], "view">;
 
+  teamTokensLastWithdrawalTime: TypedContractMethod<[], [bigint], "view">;
+
   teamTokensStartFundingTime: TypedContractMethod<[], [bigint], "view">;
 
   teamTokensWithdrawn: TypedContractMethod<[], [bigint], "view">;
@@ -814,6 +871,12 @@ export interface UpgradeableHYAXRewards extends BaseContract {
   >;
 
   unpause: TypedContractMethod<[], [void], "nonpayable">;
+
+  updateBlacklistStatus: TypedContractMethod<
+    [_walletAddress: AddressLike, _newStatus: boolean],
+    [void],
+    "nonpayable"
+  >;
 
   updateHyaxTokenAddress: TypedContractMethod<
     [_hyaxTokenAddress: AddressLike],
@@ -845,6 +908,12 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     "nonpayable"
   >;
 
+  updateWhitelistStatus: TypedContractMethod<
+    [_walletAddress: AddressLike, _newStatus: boolean],
+    [void],
+    "nonpayable"
+  >;
+
   wallets: TypedContractMethod<
     [arg0: AddressLike],
     [
@@ -860,6 +929,7 @@ export interface UpgradeableHYAXRewards extends BaseContract {
         bigint,
         bigint,
         boolean,
+        boolean,
         boolean
       ] & {
         hyaxHoldingAmount: bigint;
@@ -869,11 +939,12 @@ export interface UpgradeableHYAXRewards extends BaseContract {
         rewardsWithdrawn: bigint;
         bitcoinRewardsAddress: string;
         addedToWhitelistTime: bigint;
-        lastTokenWithdrawalTime: bigint;
+        tokenWithdrawalTimes: bigint;
         lastRewardsWithdrawalTime: bigint;
         lastRewardsUpdateTime: bigint;
         isTeamWallet: boolean;
         isWhitelisted: boolean;
+        isBlacklisted: boolean;
       }
     ],
     "view"
@@ -883,7 +954,7 @@ export interface UpgradeableHYAXRewards extends BaseContract {
 
   withdrawGrowthTokens: TypedContractMethod<[], [void], "nonpayable">;
 
-  withdrawHolderRewards: TypedContractMethod<[], [void], "nonpayable">;
+  withdrawRewardTokens: TypedContractMethod<[], [void], "nonpayable">;
 
   withdrawTeamTokens: TypedContractMethod<[], [void], "nonpayable">;
 
@@ -946,6 +1017,9 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "calculateYearForTeamTokens"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
     nameOrSignature: "fundSmartContract"
   ): TypedContractMethod<
     [_fundingType: BigNumberish, _amount: BigNumberish],
@@ -986,9 +1060,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     nameOrSignature: "paused"
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
-    nameOrSignature: "removeWalletFromWhitelist"
-  ): TypedContractMethod<[_walletAddress: AddressLike], [void], "nonpayable">;
-  getFunction(
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
@@ -1022,6 +1093,9 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     nameOrSignature: "teamTokensInSmartContract"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
+    nameOrSignature: "teamTokensLastWithdrawalTime"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
     nameOrSignature: "teamTokensStartFundingTime"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
@@ -1033,6 +1107,13 @@ export interface UpgradeableHYAXRewards extends BaseContract {
   getFunction(
     nameOrSignature: "unpause"
   ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "updateBlacklistStatus"
+  ): TypedContractMethod<
+    [_walletAddress: AddressLike, _newStatus: boolean],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "updateHyaxTokenAddress"
   ): TypedContractMethod<
@@ -1069,6 +1150,13 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "updateWhitelistStatus"
+  ): TypedContractMethod<
+    [_walletAddress: AddressLike, _newStatus: boolean],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "wallets"
   ): TypedContractMethod<
     [arg0: AddressLike],
@@ -1085,6 +1173,7 @@ export interface UpgradeableHYAXRewards extends BaseContract {
         bigint,
         bigint,
         boolean,
+        boolean,
         boolean
       ] & {
         hyaxHoldingAmount: bigint;
@@ -1094,11 +1183,12 @@ export interface UpgradeableHYAXRewards extends BaseContract {
         rewardsWithdrawn: bigint;
         bitcoinRewardsAddress: string;
         addedToWhitelistTime: bigint;
-        lastTokenWithdrawalTime: bigint;
+        tokenWithdrawalTimes: bigint;
         lastRewardsWithdrawalTime: bigint;
         lastRewardsUpdateTime: bigint;
         isTeamWallet: boolean;
         isWhitelisted: boolean;
+        isBlacklisted: boolean;
       }
     ],
     "view"
@@ -1110,7 +1200,7 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     nameOrSignature: "withdrawGrowthTokens"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "withdrawHolderRewards"
+    nameOrSignature: "withdrawRewardTokens"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "withdrawTeamTokens"
@@ -1123,6 +1213,13 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     "nonpayable"
   >;
 
+  getEvent(
+    key: "BlacklistStatusUpdated"
+  ): TypedContractEvent<
+    BlacklistStatusUpdatedEvent.InputTuple,
+    BlacklistStatusUpdatedEvent.OutputTuple,
+    BlacklistStatusUpdatedEvent.OutputObject
+  >;
   getEvent(
     key: "FundingAdded"
   ): TypedContractEvent<
@@ -1201,14 +1298,25 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     WalletAddedToWhitelistEvent.OutputObject
   >;
   getEvent(
-    key: "WalletRemovedFromWhitelist"
+    key: "WhitelistStatusUpdated"
   ): TypedContractEvent<
-    WalletRemovedFromWhitelistEvent.InputTuple,
-    WalletRemovedFromWhitelistEvent.OutputTuple,
-    WalletRemovedFromWhitelistEvent.OutputObject
+    WhitelistStatusUpdatedEvent.InputTuple,
+    WhitelistStatusUpdatedEvent.OutputTuple,
+    WhitelistStatusUpdatedEvent.OutputObject
   >;
 
   filters: {
+    "BlacklistStatusUpdated(address,address,bool)": TypedContractEvent<
+      BlacklistStatusUpdatedEvent.InputTuple,
+      BlacklistStatusUpdatedEvent.OutputTuple,
+      BlacklistStatusUpdatedEvent.OutputObject
+    >;
+    BlacklistStatusUpdated: TypedContractEvent<
+      BlacklistStatusUpdatedEvent.InputTuple,
+      BlacklistStatusUpdatedEvent.OutputTuple,
+      BlacklistStatusUpdatedEvent.OutputObject
+    >;
+
     "FundingAdded(uint8,uint256)": TypedContractEvent<
       FundingAddedEvent.InputTuple,
       FundingAddedEvent.OutputTuple,
@@ -1330,15 +1438,15 @@ export interface UpgradeableHYAXRewards extends BaseContract {
       WalletAddedToWhitelistEvent.OutputObject
     >;
 
-    "WalletRemovedFromWhitelist(address,address)": TypedContractEvent<
-      WalletRemovedFromWhitelistEvent.InputTuple,
-      WalletRemovedFromWhitelistEvent.OutputTuple,
-      WalletRemovedFromWhitelistEvent.OutputObject
+    "WhitelistStatusUpdated(address,address,bool)": TypedContractEvent<
+      WhitelistStatusUpdatedEvent.InputTuple,
+      WhitelistStatusUpdatedEvent.OutputTuple,
+      WhitelistStatusUpdatedEvent.OutputObject
     >;
-    WalletRemovedFromWhitelist: TypedContractEvent<
-      WalletRemovedFromWhitelistEvent.InputTuple,
-      WalletRemovedFromWhitelistEvent.OutputTuple,
-      WalletRemovedFromWhitelistEvent.OutputObject
+    WhitelistStatusUpdated: TypedContractEvent<
+      WhitelistStatusUpdatedEvent.InputTuple,
+      WhitelistStatusUpdatedEvent.OutputTuple,
+      WhitelistStatusUpdatedEvent.OutputObject
     >;
   };
 }
