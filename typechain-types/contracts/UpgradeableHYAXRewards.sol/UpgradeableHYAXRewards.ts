@@ -31,9 +31,9 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "MAX_BATCH_SIZE_FOR_UPDATE_REWARDS"
       | "MIN_INTERVAL_FOR_UPDATE_REWARDS"
       | "REWARD_TOKENS_HOLDING_PERIOD"
+      | "REWARD_TOKENS_PER_WEEK"
+      | "REWARD_TOKENS_PER_YEAR"
       | "REWARD_TOKENS_TOTAL"
-      | "REWARD_TOKENS_WITHDRAWAL_PER_WEEK"
-      | "REWARD_TOKENS_WITHDRAWAL_PER_YEAR"
       | "TEAM_TOKENS_LOCKED_PERIOD"
       | "TEAM_TOKENS_TOTAL"
       | "TEAM_TOKENS_WITHDRAWAL_PER_YEAR"
@@ -88,9 +88,9 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "BlacklistStatusUpdated"
       | "FundingAdded"
       | "GrowthTokensWithdrawn"
-      | "HolderRewardsWithdrawn"
       | "OwnershipTransferred"
       | "Paused"
+      | "RewardTokensWithdrawn"
       | "RewardUpdateFailed"
       | "RewardsUpdated"
       | "TeamTokensWithdrawn"
@@ -121,15 +121,15 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "REWARD_TOKENS_PER_WEEK",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "REWARD_TOKENS_PER_YEAR",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "REWARD_TOKENS_TOTAL",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "REWARD_TOKENS_WITHDRAWAL_PER_WEEK",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "REWARD_TOKENS_WITHDRAWAL_PER_YEAR",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -150,7 +150,7 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "addWalletToWhitelist",
-    values: [AddressLike, boolean, string, BigNumberish]
+    values: [AddressLike, boolean, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "calculateYearForTeamTokens",
@@ -327,15 +327,15 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "REWARD_TOKENS_PER_WEEK",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "REWARD_TOKENS_PER_YEAR",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "REWARD_TOKENS_TOTAL",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "REWARD_TOKENS_WITHDRAWAL_PER_WEEK",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "REWARD_TOKENS_WITHDRAWAL_PER_YEAR",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -558,19 +558,6 @@ export namespace GrowthTokensWithdrawnEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace HolderRewardsWithdrawnEvent {
-  export type InputTuple = [_walletAddress: AddressLike, _amount: BigNumberish];
-  export type OutputTuple = [_walletAddress: string, _amount: bigint];
-  export interface OutputObject {
-    _walletAddress: string;
-    _amount: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
 export namespace OwnershipTransferredEvent {
   export type InputTuple = [previousOwner: AddressLike, newOwner: AddressLike];
   export type OutputTuple = [previousOwner: string, newOwner: string];
@@ -589,6 +576,19 @@ export namespace PausedEvent {
   export type OutputTuple = [account: string];
   export interface OutputObject {
     account: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace RewardTokensWithdrawnEvent {
+  export type InputTuple = [_walletAddress: AddressLike, _amount: BigNumberish];
+  export type OutputTuple = [_walletAddress: string, _amount: bigint];
+  export interface OutputObject {
+    _walletAddress: string;
+    _amount: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -683,21 +683,18 @@ export namespace WalletAddedToWhitelistEvent {
     _sender: AddressLike,
     _walletAddress: AddressLike,
     _isTeamWallet: boolean,
-    _bitcoinRewardsAddress: string,
     _hyaxHoldingAmount: BigNumberish
   ];
   export type OutputTuple = [
     _sender: string,
     _walletAddress: string,
     _isTeamWallet: boolean,
-    _bitcoinRewardsAddress: string,
     _hyaxHoldingAmount: bigint
   ];
   export interface OutputObject {
     _sender: string;
     _walletAddress: string;
     _isTeamWallet: boolean;
-    _bitcoinRewardsAddress: string;
     _hyaxHoldingAmount: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
@@ -781,11 +778,11 @@ export interface UpgradeableHYAXRewards extends BaseContract {
 
   REWARD_TOKENS_HOLDING_PERIOD: TypedContractMethod<[], [bigint], "view">;
 
+  REWARD_TOKENS_PER_WEEK: TypedContractMethod<[], [bigint], "view">;
+
+  REWARD_TOKENS_PER_YEAR: TypedContractMethod<[], [bigint], "view">;
+
   REWARD_TOKENS_TOTAL: TypedContractMethod<[], [bigint], "view">;
-
-  REWARD_TOKENS_WITHDRAWAL_PER_WEEK: TypedContractMethod<[], [bigint], "view">;
-
-  REWARD_TOKENS_WITHDRAWAL_PER_YEAR: TypedContractMethod<[], [bigint], "view">;
 
   TEAM_TOKENS_LOCKED_PERIOD: TypedContractMethod<[], [bigint], "view">;
 
@@ -799,7 +796,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     [
       _walletAddress: AddressLike,
       _isTeamWallet: boolean,
-      _bitcoinRewardsAddress: string,
       _hyaxHoldingAmountAtWhitelistTime: BigNumberish
     ],
     [void],
@@ -923,7 +919,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
         bigint,
         bigint,
         bigint,
-        string,
         bigint,
         bigint,
         bigint,
@@ -937,7 +932,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
         totalHyaxRewardsAmount: bigint;
         currentRewardsAmount: bigint;
         rewardsWithdrawn: bigint;
-        bitcoinRewardsAddress: string;
         addedToWhitelistTime: bigint;
         tokenWithdrawalTimes: bigint;
         lastRewardsWithdrawalTime: bigint;
@@ -984,13 +978,13 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     nameOrSignature: "REWARD_TOKENS_HOLDING_PERIOD"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
+    nameOrSignature: "REWARD_TOKENS_PER_WEEK"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "REWARD_TOKENS_PER_YEAR"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
     nameOrSignature: "REWARD_TOKENS_TOTAL"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "REWARD_TOKENS_WITHDRAWAL_PER_WEEK"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "REWARD_TOKENS_WITHDRAWAL_PER_YEAR"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "TEAM_TOKENS_LOCKED_PERIOD"
@@ -1010,7 +1004,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     [
       _walletAddress: AddressLike,
       _isTeamWallet: boolean,
-      _bitcoinRewardsAddress: string,
       _hyaxHoldingAmountAtWhitelistTime: BigNumberish
     ],
     [void],
@@ -1167,7 +1160,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
         bigint,
         bigint,
         bigint,
-        string,
         bigint,
         bigint,
         bigint,
@@ -1181,7 +1173,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
         totalHyaxRewardsAmount: bigint;
         currentRewardsAmount: bigint;
         rewardsWithdrawn: bigint;
-        bitcoinRewardsAddress: string;
         addedToWhitelistTime: bigint;
         tokenWithdrawalTimes: bigint;
         lastRewardsWithdrawalTime: bigint;
@@ -1235,13 +1226,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     GrowthTokensWithdrawnEvent.OutputObject
   >;
   getEvent(
-    key: "HolderRewardsWithdrawn"
-  ): TypedContractEvent<
-    HolderRewardsWithdrawnEvent.InputTuple,
-    HolderRewardsWithdrawnEvent.OutputTuple,
-    HolderRewardsWithdrawnEvent.OutputObject
-  >;
-  getEvent(
     key: "OwnershipTransferred"
   ): TypedContractEvent<
     OwnershipTransferredEvent.InputTuple,
@@ -1254,6 +1238,13 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     PausedEvent.InputTuple,
     PausedEvent.OutputTuple,
     PausedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RewardTokensWithdrawn"
+  ): TypedContractEvent<
+    RewardTokensWithdrawnEvent.InputTuple,
+    RewardTokensWithdrawnEvent.OutputTuple,
+    RewardTokensWithdrawnEvent.OutputObject
   >;
   getEvent(
     key: "RewardUpdateFailed"
@@ -1339,17 +1330,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
       GrowthTokensWithdrawnEvent.OutputObject
     >;
 
-    "HolderRewardsWithdrawn(address,uint256)": TypedContractEvent<
-      HolderRewardsWithdrawnEvent.InputTuple,
-      HolderRewardsWithdrawnEvent.OutputTuple,
-      HolderRewardsWithdrawnEvent.OutputObject
-    >;
-    HolderRewardsWithdrawn: TypedContractEvent<
-      HolderRewardsWithdrawnEvent.InputTuple,
-      HolderRewardsWithdrawnEvent.OutputTuple,
-      HolderRewardsWithdrawnEvent.OutputObject
-    >;
-
     "OwnershipTransferred(address,address)": TypedContractEvent<
       OwnershipTransferredEvent.InputTuple,
       OwnershipTransferredEvent.OutputTuple,
@@ -1370,6 +1350,17 @@ export interface UpgradeableHYAXRewards extends BaseContract {
       PausedEvent.InputTuple,
       PausedEvent.OutputTuple,
       PausedEvent.OutputObject
+    >;
+
+    "RewardTokensWithdrawn(address,uint256)": TypedContractEvent<
+      RewardTokensWithdrawnEvent.InputTuple,
+      RewardTokensWithdrawnEvent.OutputTuple,
+      RewardTokensWithdrawnEvent.OutputObject
+    >;
+    RewardTokensWithdrawn: TypedContractEvent<
+      RewardTokensWithdrawnEvent.InputTuple,
+      RewardTokensWithdrawnEvent.OutputTuple,
+      RewardTokensWithdrawnEvent.OutputObject
     >;
 
     "RewardUpdateFailed(address,address,string)": TypedContractEvent<
@@ -1427,7 +1418,7 @@ export interface UpgradeableHYAXRewards extends BaseContract {
       UnpausedEvent.OutputObject
     >;
 
-    "WalletAddedToWhitelist(address,address,bool,string,uint256)": TypedContractEvent<
+    "WalletAddedToWhitelist(address,address,bool,uint256)": TypedContractEvent<
       WalletAddedToWhitelistEvent.InputTuple,
       WalletAddedToWhitelistEvent.OutputTuple,
       WalletAddedToWhitelistEvent.OutputObject

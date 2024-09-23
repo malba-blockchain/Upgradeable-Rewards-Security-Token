@@ -1,0 +1,10 @@
+Security vulnerabilities: Looking for common issues like reentrancy attacks, integer overflows, insecure handling of external calls, DoS attacks.
+
+
+Logic errors: Ensuring the business logic works as expected and adheres to the contract's intended functionality.
+
+
+Best practices: Ensuring the contract follows industry best practices, such as efficient gas usage, proper access control, and code readability.
+
+
+Code quality: Ensuring that the code is clean, understandable, and follows good design patterns, which makes it easier to maintain and audit in the future.

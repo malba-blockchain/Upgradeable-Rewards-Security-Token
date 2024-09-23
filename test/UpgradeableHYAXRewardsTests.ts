@@ -46,7 +46,7 @@ describe("Testing Use Case #1: Constructor", function () {
 });
 
 
-describe("Testing Use Case #2: Add team wallet to Whitelist", function () {
+describe("Testing Use Case #2: Update wallet whitelist status", function () {
 
     async function deployUpgradeableHYAXRewardsFixture() {
         const [owner, addr1, addr2, whitelister] = await ethers.getSigners();
@@ -69,7 +69,7 @@ describe("Testing Use Case #2: Add team wallet to Whitelist", function () {
 
         // Test that unauthorized address cannot add wallet to whitelist
         await expect(
-            upgradeableHYAXRewards.connect(addr1).addWalletToWhitelist(addr1.address, true, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", ethers.parseUnits("1000000", 18))
+            upgradeableHYAXRewards.connect(addr1).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18))
         ).to.be.revertedWith("Function reserved only for the whitelister or the owner");
     });
 
@@ -78,17 +78,17 @@ describe("Testing Use Case #2: Add team wallet to Whitelist", function () {
 
         // Add the wallet to the whitelist
         await upgradeableHYAXRewards.connect(owner)
-            .addWalletToWhitelist(addr1.address, true, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", ethers.parseUnits("1000000", 18));
+            .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
         
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount, 
-            rewardsWithdrawn, bitcoinRewardsAddress, addedToWhitelistTime, tokenWithdrawalTimes, 
+            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
             lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr1.address);
 
         console.log("\n   [Log]: Wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:", 
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:", 
-            currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "bitcoinRewardsAddress:", bitcoinRewardsAddress, "\n   ",
+            currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
             "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet, 
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
@@ -105,11 +105,11 @@ describe("Testing Use Case #2: Add team wallet to Whitelist", function () {
 
         // Try to add the wallet to the whitelist
         await upgradeableHYAXRewards.connect(whitelister)
-            .addWalletToWhitelist(addr1.address, true, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", ethers.parseUnits("1000000", 18));
+            .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount, 
-            rewardsWithdrawn, bitcoinRewardsAddress, addedToWhitelistTime, tokenWithdrawalTimes, 
+            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
             lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr1.address);
 
@@ -125,11 +125,11 @@ describe("Testing Use Case #2: Add team wallet to Whitelist", function () {
 
         // Add the wallet to the whitelist
         await upgradeableHYAXRewards.connect(owner)
-        .addWalletToWhitelist(addr1.address, true, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", ethers.parseUnits("1000000", 18));
+        .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
     
         // Test that unauthorized address cannot add wallet to whitelist
         await expect(
-            upgradeableHYAXRewards.connect(owner).addWalletToWhitelist(addr1.address, true, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", ethers.parseUnits("1000000", 18))
+            upgradeableHYAXRewards.connect(owner).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18))
         ).to.be.revertedWith("Wallet is already whitelisted");
     });
 
@@ -138,18 +138,94 @@ describe("Testing Use Case #2: Add team wallet to Whitelist", function () {
 
         // Try to add the wallet to the whitelist with an hyax holding amount of 0
         await expect(
-            upgradeableHYAXRewards.connect(owner).addWalletToWhitelist(addr1.address, true, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", ethers.parseUnits("0", 18))
+            upgradeableHYAXRewards.connect(owner).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("0", 18))
         ).to.be.revertedWith("Team wallets must be added with a hyax holding amount greater than 0");
 
         // Try to add the wallet to the whitelist with an hyax holding amount of 0
         await expect(
-            upgradeableHYAXRewards.connect(owner).addWalletToWhitelist(addr1.address, true, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", ethers.parseUnits("1500000001", 18))
+            upgradeableHYAXRewards.connect(owner).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1500000001", 18))
         ).to.be.revertedWith("Team wallets must be added with a hyax holding amount less than the total team tokens");
 
     });
+
+    it("2.6. Should fail to remove a wallet because it doesnt have an authorized role", async function () {
+        const { upgradeableHYAXRewards, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        
+        // Test that unauthorized address cannot add wallet to whitelist
+        await expect(
+            upgradeableHYAXRewards.connect(addr1).updateWhitelistStatus(addr1.address, false)
+        ).to.be.revertedWith("Function reserved only for the whitelister or the owner");
+    });
+
+    it("2.7. Should successfully remove a team wallet from the whitelist as owner", async function () {
+        const { upgradeableHYAXRewards, owner, addr1, whitelister } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Add the wallet to the whitelist
+        await upgradeableHYAXRewards.connect(whitelister).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18))
+
+        // Remove the wallet from the whitelist
+        await upgradeableHYAXRewards.connect(owner).updateWhitelistStatus(addr1.address, false);
+
+        //Get the wallet data of the address
+        const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount, 
+            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
+            lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted]
+            = await upgradeableHYAXRewards.wallets(addr1.address);
+
+        console.log("\n   [Log]: Wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:", 
+            hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:", 
+            currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet, 
+            "isWhitelisted:", isWhitelisted);
+
+        // Check if the wallet is a team wallet
+        expect(isTeamWallet).to.equal(true);
+
+        // Check if the wallet is in the whitelist
+        expect(isWhitelisted).to.equal(false);
+    });
+
+    it("2.8. Should successfully remove a team wallet from the whitelist as whitelister", async function () {
+        const { upgradeableHYAXRewards, whitelister, owner, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Add the wallet to the whitelist
+        await upgradeableHYAXRewards.connect(owner).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18))
+
+        // Remove the wallet from the whitelist
+        await upgradeableHYAXRewards.connect(whitelister).updateWhitelistStatus(addr1.address, false);
+
+        //Get the wallet data of the address
+        const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount, 
+            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
+            lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted]
+            = await upgradeableHYAXRewards.wallets(addr1.address);
+        
+        // Check if the wallet is a team wallet
+        expect(isTeamWallet).to.equal(true);
+
+        // Check if the wallet is in the whitelist
+        expect(isWhitelisted).to.equal(false);
+    });
+
+    it("2.9. Should fail to remove a wallet because it is not currently whitelisted", async function () {
+        const { upgradeableHYAXRewards, whitelister, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Add the wallet to the whitelist
+        await upgradeableHYAXRewards.connect(whitelister).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18))
+
+        // Remove the wallet from the whitelist
+        await upgradeableHYAXRewards.connect(whitelister).updateWhitelistStatus(addr1.address, false);
+
+        // Test that unauthorized address cannot add wallet to whitelist
+        await expect(
+            upgradeableHYAXRewards.connect(whitelister).updateWhitelistStatus(addr1.address, false)
+        ).to.be.revertedWith("Wallet has already been updated to that status");
+    });
 });
 
-describe("Testing Use Case 3: Remove team wallet from Whitelist", function () {
+
+describe("Testing Use Case #3: Update wallet blacklist status", function () {
 
     async function deployUpgradeableHYAXRewardsFixture() {
         const [owner, addr1, addr2, whitelister] = await ethers.getSigners();
@@ -163,79 +239,159 @@ describe("Testing Use Case 3: Remove team wallet from Whitelist", function () {
         //Update the whitelister address in the contract
         await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelister.address);
 
-        // Add the wallet to the whitelist
-        await upgradeableHYAXRewards.connect(whitelister).addWalletToWhitelist(addr1.address, true, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", ethers.parseUnits("1000000", 18))
+        //Add wallet to the whitelist
+        await upgradeableHYAXRewards.connect(whitelister).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18))
 
         // Fixtures can return anything you consider useful for your tests
         return { upgradeableHYAXRewards, owner, addr1, addr2, whitelister, hyaxToken };
     }
 
-    it("3.1. Should fail to remove a wallet because it doesnt have an authorized role", async function () {
+    it("3.1. Should fail to add a wallet because it doesnt have an authorized role", async function () {
         const { upgradeableHYAXRewards, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
-        // Test that unauthorized address cannot add wallet to whitelist
+        // Test that unauthorized address cannot add wallet to blacklist
         await expect(
-            upgradeableHYAXRewards.connect(addr1).removeWalletFromWhitelist(addr1.address)
+            upgradeableHYAXRewards.connect(addr1).updateBlacklistStatus(addr1.address, true)
         ).to.be.revertedWith("Function reserved only for the whitelister or the owner");
     });
 
-    it("3.2. Should successfully remove a team wallet from the whitelist as owner", async function () {
+    it("3.2. Should successfully add a team wallet to the blacklist as owner", async function () {
         const { upgradeableHYAXRewards, owner, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
-        // Remove the wallet from the whitelist
-        await upgradeableHYAXRewards.connect(owner).removeWalletFromWhitelist(addr1.address);
-
+        //Add wallet to the blacklist
+        await upgradeableHYAXRewards.connect(owner).updateBlacklistStatus(addr1.address, true);
+        
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount, 
-            rewardsWithdrawn, bitcoinRewardsAddress, addedToWhitelistTime, tokenWithdrawalTimes, 
-            lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted]
+            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
+            lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr1.address);
 
         console.log("\n   [Log]: Wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:", 
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:", 
-            currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "bitcoinRewardsAddress:", bitcoinRewardsAddress, "\n   ",
+            currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
             "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet, 
-            "isWhitelisted:", isWhitelisted);
+            "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
+
+        // Check if the wallet is in the whitelist
+        expect(isWhitelisted).to.equal(true);
+
+        // Check if the wallet is in the blacklist
+        expect(isBlacklisted).to.equal(true);
+
+        // Check if the wallet is a team wallet
+        expect(isTeamWallet).to.equal(true);
+    });
+
+    it("3.3.Should successfully add a team wallet to the blacklist as whitelister", async function () {
+        const { upgradeableHYAXRewards, addr1, addr2, whitelister } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        
+        //Add wallet to the blacklist
+        await upgradeableHYAXRewards.connect(whitelister).updateBlacklistStatus(addr1.address, true);
+        
+        //Get the wallet data of the address
+        const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount, 
+            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
+            lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
+            = await upgradeableHYAXRewards.wallets(addr1.address);
+
+        // Check if the wallet is in the whitelist
+        expect(isWhitelisted).to.equal(true);
+
+        // Check if the wallet is in the blacklist
+        expect(isBlacklisted).to.equal(true);
+
+        // Check if the wallet is a team wallet
+        expect(isTeamWallet).to.equal(true);
+    });
+
+    it("3.4. Should fail to add a wallet because it has already been added", async function () {
+        const { upgradeableHYAXRewards, owner, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //Add wallet to the blacklist
+        await upgradeableHYAXRewards.connect(owner).updateBlacklistStatus(addr1.address, true);
+    
+        // Test that unauthorized address cannot add wallet to blacklist
+        await expect(
+            upgradeableHYAXRewards.connect(owner).updateBlacklistStatus(addr1.address, true)
+        ).to.be.revertedWith("Wallet has already been updated to that status");
+    });
+
+    it("3.5. Should fail to remove a wallet from the black list because it doesnt have an authorized role", async function () {
+        const { upgradeableHYAXRewards, owner, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Test that unauthorized address cannot remove wallet from whitelist
+        await expect(
+            upgradeableHYAXRewards.connect(addr1).updateBlacklistStatus(addr1.address, false)
+        ).to.be.revertedWith("Function reserved only for the whitelister or the owner");
+    });
+
+    it("3.6. Should successfully remove a team wallet from the blacklist as owner", async function () {
+        const { upgradeableHYAXRewards, owner, whitelister, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Add the wallet to the blacklist
+        await upgradeableHYAXRewards.connect(whitelister).updateBlacklistStatus(addr1.address, true);
+
+        // Remove the wallet from the blacklist
+        await upgradeableHYAXRewards.connect(owner).updateBlacklistStatus(addr1.address, false);
+
+        //Get the wallet data of the address
+        const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount, 
+            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
+            lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
+            = await upgradeableHYAXRewards.wallets(addr1.address);
+
+        console.log("\n   [Log]: Wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:", 
+            hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:", 
+            currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet, 
+            "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
 
         // Check if the wallet is a team wallet
         expect(isTeamWallet).to.equal(true);
 
+        // Check if the wallet is in the blacklist
+        expect(isBlacklisted).to.equal(false);
+
         // Check if the wallet is in the whitelist
-        expect(isWhitelisted).to.equal(false);
+        expect(isWhitelisted).to.equal(true);
     });
 
-    it("3.3. Should successfully remove a team wallet from the whitelist as whitelister", async function () {
+    it("3.7. Should successfully remove a team wallet from the blacklist as whitelister", async function () {
         const { upgradeableHYAXRewards, whitelister, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
-        // Remove the wallet from the whitelist
-        await upgradeableHYAXRewards.connect(whitelister).removeWalletFromWhitelist(addr1.address);
+        // Add the wallet to the blacklist
+        await upgradeableHYAXRewards.connect(whitelister).updateBlacklistStatus(addr1.address, true);
+
+        // Remove the wallet from the blacklist
+        await upgradeableHYAXRewards.connect(whitelister).updateBlacklistStatus(addr1.address, false);
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount, 
-            rewardsWithdrawn, bitcoinRewardsAddress, addedToWhitelistTime, tokenWithdrawalTimes, 
-            lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted]
+            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
+            lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr1.address);
         
         // Check if the wallet is a team wallet
         expect(isTeamWallet).to.equal(true);
 
+        // Check if the wallet is in the blacklist
+        expect(isBlacklisted).to.equal(false);
+
         // Check if the wallet is in the whitelist
-        expect(isWhitelisted).to.equal(false);
+        expect(isWhitelisted).to.equal(true);
     });
 
-    it("3.4. Should fail to remove a wallet because it is not currently whitelisted", async function () {
+    it("3.8. Should fail to remove a wallet from blacklist because it is not currently blacklisted", async function () {
         const { upgradeableHYAXRewards, whitelister, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
-
-        // Remove the wallet from the whitelist
-        await upgradeableHYAXRewards.connect(whitelister).removeWalletFromWhitelist(addr1.address);
 
         // Test that unauthorized address cannot add wallet to whitelist
         await expect(
-            upgradeableHYAXRewards.connect(whitelister).removeWalletFromWhitelist(addr1.address)
-        ).to.be.revertedWith("Wallet is not currently whitelisted");
+            upgradeableHYAXRewards.connect(whitelister).updateBlacklistStatus(addr1.address, false)
+        ).to.be.revertedWith("Wallet has already been updated to that status");
     });
-
 });
 
 
@@ -1241,7 +1397,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
         // Add the wallet to the whitelist
         await upgradeableHYAXRewards.connect(whiteLister)
-            .addWalletToWhitelist(addr1.address, true, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", ethers.parseUnits("1000000", 18));
+            .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
         // Try to withdraw growth tokens
         await expect(
@@ -1279,7 +1435,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
         // Add the wallet to the whitelist
         await upgradeableHYAXRewards.connect(whiteLister)
-            .addWalletToWhitelist(addr1.address, false, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", ethers.parseUnits("1000000", 18));
+            .addWalletToWhitelist(addr1.address, false, ethers.parseUnits("1000000", 18));
 
         // Try to withdraw growth tokens
         await expect(
@@ -1300,7 +1456,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
         // Add the wallet to the whitelist
         await upgradeableHYAXRewards.connect(whiteLister)
-            .addWalletToWhitelist(addr1.address, true, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", ethers.parseUnits("1000000", 18));
+            .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
         // Try to withdraw growth tokens
         await expect(
@@ -1334,7 +1490,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
         // Add the wallet to the whitelist
         await upgradeableHYAXRewards.connect(whiteLister)
-            .addWalletToWhitelist(addr1.address, true, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", ethers.parseUnits("1000000", 18));
+            .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
         const fourYears = 1460 * 24 * 60 * 60; // Four years in seconds
 
@@ -1368,7 +1524,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         console.log("\n   [Log]: TeamTokensWithdrawn:", teamTokensWithdrawn);
 
         // Check if the correct amount of tokens was withdrawn for the wallet
-        const [newHyaxHoldingAmount, , , , , , ,tokenWithdrawalTimes , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
+        const [newHyaxHoldingAmount, , , , , ,tokenWithdrawalTimes , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
         console.log("   [Log]: NewHyaxHoldingAmount:", newHyaxHoldingAmount);
         console.log("   [Log]: PrevHyaxHoldingAmount:", prevHyaxHoldingAmount);
         expect(prevHyaxHoldingAmount - newHyaxHoldingAmount).to.equal(ethers.parseUnits("200000", 18));
@@ -1406,7 +1562,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
         // Add the wallet to the whitelist
         await upgradeableHYAXRewards.connect(whiteLister)
-            .addWalletToWhitelist(addr1.address, true, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", ethers.parseUnits("1000000", 18));
+            .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
         const fourYears = 1460 * 24 * 60 * 60; // 4 years in seconds
 
@@ -1442,7 +1598,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
         // Add the wallet to the whitelist
         await upgradeableHYAXRewards.connect(whiteLister)
-            .addWalletToWhitelist(addr1.address, true, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", ethers.parseUnits("1000000", 18));
+            .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
         const fourYears = 1460 * 24 * 60 * 60; // 4 years in seconds
 
@@ -1467,7 +1623,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         console.log("   [Log]: PrevTeamMemberWalletTokenBalance:", prevTeamMemberWalletTokenBalance);
 
         // Check if the correct amount of tokens was withdrawn for the wallet
-        const [prevHyaxHoldingAmount, , , , , , , , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
+        const [prevHyaxHoldingAmount, , , , , , , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
 
         // Withdraw team tokens for the wallet  
         await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
@@ -1483,7 +1639,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         expect(teamTokensWithdrawn).to.equal(ethers.parseUnits("400000", 18));
 
         // Check if the correct amount of tokens was withdrawn for the wallet
-        const [newHyaxHoldingAmount, , , , , , ,tokenWithdrawalTimes , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
+        const [newHyaxHoldingAmount, , , , , ,tokenWithdrawalTimes , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
         expect(prevHyaxHoldingAmount - newHyaxHoldingAmount).to.equal(ethers.parseUnits("200000", 18));
         console.log("\n   [Log]: NewHyaxHoldingAmount:", newHyaxHoldingAmount);
         console.log("   [Log]: PrevHyaxHoldingAmount:", prevHyaxHoldingAmount);
@@ -1524,7 +1680,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
         // Add the wallet to the whitelist with 15 Billion tokens as the amount
         await upgradeableHYAXRewards.connect(whiteLister)
-            .addWalletToWhitelist(addr1.address, true, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", ethers.parseUnits("1500000000", 18));
+            .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1500000000", 18));
 
         const prevSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
 
@@ -1556,7 +1712,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         }
 
         // Verify that the last withdrawal time was updated correctly
-        const [ , , , , , , , tokenWithdrawalTimes , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
+        const [ , , , , , , tokenWithdrawalTimes , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
         console.log("\n   [Log]: Token Withdrawal Times:", tokenWithdrawalTimes);
         expect(tokenWithdrawalTimes).to.equal(5);
         
@@ -1604,7 +1760,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
         // Add the wallet to the whitelist with 1 Million tokens as the amount
         await upgradeableHYAXRewards.connect(whiteLister)
-            .addWalletToWhitelist(addr1.address, true, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", ethers.parseUnits("10000000", 18));
+            .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("10000000", 18));
 
         const prevSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
         console.log("\n   [Log]: PrevSmartContractBalance:", prevSmartContractBalance);
@@ -1638,7 +1794,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         }
 
         // Verify that the last withdrawal time was updated correctly
-        const [newHyaxHoldingAmount, , , , , , , tokenWithdrawalTimes , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
+        const [newHyaxHoldingAmount, , , , , , tokenWithdrawalTimes , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
         console.log("\n   [Log]: Last Token Withdrawal Time:", tokenWithdrawalTimes);
         expect(tokenWithdrawalTimes).to.equal(5);
         
@@ -1686,7 +1842,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
         // Add the wallet to the whitelist
         await upgradeableHYAXRewards.connect(whiteLister)
-            .addWalletToWhitelist(addr1.address, true, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", ethers.parseUnits("1000000", 18));
+            .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
         const fourYears = 1460 * 24 * 60 * 60; // 4 years
 
@@ -1708,7 +1864,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         console.log("   [Log]: PrevTeamMemberWalletTokenBalance:", prevTeamMemberWalletTokenBalance);
 
         // Check if the correct amount of tokens was withdrawn for the wallet
-        const [prevHyaxHoldingAmount, , , , , , , , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
+        const [prevHyaxHoldingAmount, , , , , , , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
 
         console.log("   [Log]: Current year:", await upgradeableHYAXRewards.calculateYearForTeamTokens());
 
@@ -1724,7 +1880,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         console.log("\n   [Log]: TeamTokensWithdrawn:", teamTokensWithdrawn);
 
         // Check if the correct amount of tokens was withdrawn for the wallet
-        const [newHyaxHoldingAmount, , , , , , ,tokenWithdrawalTimes , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
+        const [newHyaxHoldingAmount, , , , , ,tokenWithdrawalTimes , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
         console.log("   [Log]: NewHyaxHoldingAmount:", newHyaxHoldingAmount);
         console.log("   [Log]: PrevHyaxHoldingAmount:", prevHyaxHoldingAmount);
         expect(prevHyaxHoldingAmount - newHyaxHoldingAmount).to.equal(ethers.parseUnits("400000", 18));
@@ -1762,7 +1918,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
         // Add the wallet to the whitelist
         await upgradeableHYAXRewards.connect(whiteLister)
-            .addWalletToWhitelist(addr1.address, true, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", ethers.parseUnits("1000000", 18));
+            .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
         const fourYears = 1460 * 24 * 60 * 60; // 4 years
 
@@ -1784,7 +1940,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         console.log("   [Log]: PrevTeamMemberWalletTokenBalance:", prevTeamMemberWalletTokenBalance);
 
         // Check if the correct amount of tokens was withdrawn for the wallet
-        const [prevHyaxHoldingAmount, , , , , , , , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
+        const [prevHyaxHoldingAmount, , , , , , , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
 
         console.log("   [Log]: Current year:", await upgradeableHYAXRewards.calculateYearForTeamTokens());
 
@@ -1809,7 +1965,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         console.log("\n   [Log]: TeamTokensWithdrawn:", teamTokensWithdrawn);
 
         // Check if the correct amount of tokens was withdrawn for the wallet
-        const [newHyaxHoldingAmount, , , , , , ,tokenWithdrawalTimes , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
+        const [newHyaxHoldingAmount, , , , , ,tokenWithdrawalTimes , , , ] = await upgradeableHYAXRewards.wallets(addr1.address);
         console.log("   [Log]: NewHyaxHoldingAmount:", newHyaxHoldingAmount);
         console.log("   [Log]: PrevHyaxHoldingAmount:", prevHyaxHoldingAmount);
         expect(prevHyaxHoldingAmount - newHyaxHoldingAmount).to.equal(ethers.parseUnits("1000000", 18));
@@ -1834,7 +1990,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
     });
 
-    it("9.11. Should revert after trying to withdraw tokens six times after five years since being added to the whitelist", async function () {
+    it("9.12. Should revert after trying to withdraw tokens six times after five years since being added to the whitelist", async function () {
         const { upgradeableHYAXRewards, owner, addr1, hyaxToken, whiteLister } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
@@ -1847,7 +2003,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
         // Add the wallet to the whitelist
         await upgradeableHYAXRewards.connect(whiteLister)
-            .addWalletToWhitelist(addr1.address, true, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", ethers.parseUnits("1000000", 18));
+            .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
         const fourYears = 1460 * 24 * 60 * 60; // 4 years
 

@@ -129,8 +129,6 @@ withdrawTokenRewards() DONE
 withdrawTokensToBurn() DONE
 
 
-CONTINUE HEREEEEEEEEEEEEEEEE
-
 8. Add requirement updates. 
 
 8.1. There is a single date for team people to withdraw their tokens.
@@ -151,39 +149,78 @@ The value of the variable of the team member must be less to the number of the y
 
 8.3. Token rewards can be extracted by people whenever they want DONE
 
+8.4. There is an isBlacklisted parameter added to the smart contract data DONE
 
-CONTINUE HEREEEEEEEEEEEEEEE
+8.7. Update whitelist status DONE
 
-FIX TESTS
-
-8.4. There is an isBlacklisted parameter added to the smart contract data
-
-8.7. Update whitelist status
-
-8.8. Update blacklist status	
+8.8. Update blacklist status DONE
 
 
+8.5. Bitcoin address WON'T be stored in the smart contract DONE
 
-8.5. Bitcoin address WON'T be stored in the smart contract
-
-8.6. Max tokens a wallet can hold is maximum of total dedicated tokens
+8.6. Max tokens a wallet can hold is maximum of total dedicated tokens DONE
 
 
 
-
-#. Create external script for rewards
+9. Create external script for rewards
 
 calculateWeeklyReward
 Rewards are calculated based on snapshot taken from last week holdings
 add all the tokens been holded by the investors and team members that have been whitelisted (m)
-take the amount of tokens that the investor is currently holding (n)
+take the amount of tokens that the investor was holding last week (n)
 divide (n)/(m) to get the pro-rata value that holder is entitled to (%)
 multiply that value by the weekly token rewards
+---
+
+https://amoy.polygonscan.com/address/0x37db03be6e7e967e7925d508ebd57bdfee392d62#code
+
+npx hardhat run scripts/updateWeeklyRewards.ts
+
+
+9.1. Get the address and the abi of the smart contract DONE
+
+9.2. Get the list of the smart contract token holders DONE
+
+CONTINUE HEREEEEEEEEEEEEEE (WATCH LAST CHATGPT MESSAGE GUIDE FOR THIS SCRIPT)
+
+9.3. Query the blockchain for last week holdings of investors CURRENTLY whitelisted DONE
+
+Query the blockchain for last week holdings of team members CURRENTLY whitelisted
+
+Add all the holdings up. DONE
+
+Create a mapping of addresses and values DONE
+
+the amount of the reward is the amount of tokens that the investor was holding last week (n) / the tokens been holded by the investors and team members that have been whitelisted (m)
+
+Store the amount of weekly reward in the array/mapping
+
+Add up all the rewards to distribute and check is less than the smart contract value REWARD_TOKENS_PER_WEEK
+
+Create a batch transaction by 20 and send it
 
 
 
 
-. Test everything locally
+10. Add all required tests based on what's left to test
+
+
+
+-Fund smart contract with reward tokens
+-Fund smart contract with reward tokens after having already funded the first time
+-updateRewardsSingle
+-updateRewardsBatch
+-withdrawRewardTokens
+-calculateYearForTeamTokens
+-withdrawTokensToBurn
+-updateWhiteListerAddress
+-updateRewardsUpdaterAddress
+-updateHyaxTokenAddress
+-pause
+-unpause
+-transferOwnership
+
+
 
 
 
