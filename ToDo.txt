@@ -181,25 +181,69 @@ npx hardhat run scripts/updateWeeklyRewards.ts
 
 9.2. Get the list of the smart contract token holders DONE
 
-CONTINUE HEREEEEEEEEEEEEEE (WATCH LAST CHATGPT MESSAGE GUIDE FOR THIS SCRIPT)
-
 9.3. Query the blockchain for last week holdings of investors CURRENTLY whitelisted DONE
 
 Query the blockchain for last week holdings of team members CURRENTLY whitelisted
 
-Add all the holdings up. DONE
+9.4. Add all the holdings up. DONE
 
-Create a mapping of addresses and values DONE
+9.5. Create a mapping of addresses and values DONE
 
 the amount of the reward is the amount of tokens that the investor was holding last week (n) / the tokens been holded by the investors and team members that have been whitelisted (m)
 
-Store the amount of weekly reward in the array/mapping
+Store the amount of weekly reward in the array/mapping DONE
 
-Add up all the rewards to distribute and check is less than the smart contract value REWARD_TOKENS_PER_WEEK
+Add up all the rewards to distribute and check is less than the smart contract value REWARD_TOKENS_PER_WEEK DONE
 
-Create a batch transaction by 20 and send it
+9.6. Create a batch transaction by 20 and send it 
+
+-Launch HYAX smart contract for tokens DONE
+-Distribute tokens among 5 investor wallets. And 3 team wallets.
+--Send HYAX to smart contract
+--Add investor to whitelist
+--Approve transfer from buyer token
 
 
+Investor wallets
+0x6Fbc023ACCBA56c1b32bDaFA2F27D4cd58145AB1 100 WBTC Approved 1 WBTC Transfered
+0x9a4B007a10E1d1EC63157c8D69eBa76F30B4a2B4 100 WBTC Approved 3 WBTC Transfered
+0x34795B6a05543Fe097C8BbBc221e3119f27B793E 100 WBTC Approved 5 WBTC Transfered
+0xb44e0C06718534F27847e607B6AE9368798fB974 100 WBTC Approved 10 WBTC Transfered
+0xEDfcDEf54AE487Bd2F49e88E5b447cC26eB48e47 100 WBTC Approved 7 WBTC Transfered
+
+---
+Team wallets
+0x350441F8a82680a785FFA9d3EfEa60BB4cA417f8
+0x01c2f012de19e6436744c3F81f56E9e70C93a8C3
+0x7dE9a234E67b9Ac172c803555f5aA7fFf3DB5581
+
+---
+Approve
+0xCd1fA2C8626B023197158aC84C5DF56EDD1F3f0C Proxy
+0x378a1DC6b11E1cfD1Bfd7183085dc0C79FCE1a47 Implementation
+100000000000000000000 100 WBTC
+
+
+-Launch rewards basic smart contract   0x7B008f7a8d377A351d7934632128d738a2200cf8
+
+npx hardhat run --network polygonAmoy scripts/deploy_testnet_Rewards_contract.ts
+
+npm install --save-dev @nomicfoundation/hardhat-verify
+
+npx hardhat verify --network polygonAmoy 0x7B008f7a8d377A351d7934632128d738a2200cf8 0xCd1fA2C8626B023197158aC84C5DF56EDD1F3f0C
+
+-Set up rewards basic smart contract
+
+500000000000000000000000000 500 M
+1000000000000000000000000000 1B
+
+CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+--Update whitelister and rewards updater address
+--Add team addresses to whitelist
+--Find out what else do you need to set up
+
+
+-Create a batch transaction for updates and send it
 
 
 10. Add all required tests based on what's left to test

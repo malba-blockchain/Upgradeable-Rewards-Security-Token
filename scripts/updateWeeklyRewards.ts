@@ -20,8 +20,6 @@ const REWARD_TOKENS_PER_YEAR = 150000000 * 10**18; // 150 Million tokens per yea
 const REWARD_TOKENS_PER_WEEK =  REWARD_TOKENS_PER_YEAR / 52; // 150 Million tokens divided by 52 weeks
 
 
-
-
 //Create a provider to connect to the blockchain and be able to query it
 const alchemyProvider = new ethers.JsonRpcProvider(process.env.REACT_APP_POLYGON_AMOY_RPC_URL);
 
@@ -43,7 +41,7 @@ async function getAllTokenHolders(): Promise<Set<string>> {
     //Now add the filter the restriction of until 1 week ago
     const oneWeekAgoTimestamp = Date.now() - 7 * 24 * 60 * 60 * 1000;
     (transferEventFilter as any).fromBlock = 0;
-    (transferEventFilter as any).toBlock = oneWeekAgoTimestamp;
+    //(transferEventFilter as any).toBlock = oneWeekAgoTimestamp; //BLOCK FROM A WEEK AGO
 
     //Get the whole list of transfer events, query filter helps determine the range of blocks to to the query
     const transferEvents = await contract.queryFilter(transferEventFilter);
@@ -74,7 +72,9 @@ async function getAllWhitelistedTokenHolders(): Promise<Set<string>> {
 
     for (const tokenHolder of allTokenHolders) {
         //Check the address is in the whitelist
-        if (await contract.investorsWhiteList(tokenHolder) == true) {
+        const [isWhiteListed, isQualifiedInvestor, totalHyaxBoughtByInvestor, totalUsdDepositedByInvestor] 
+            = await contract.investorData(tokenHolder);
+        if (isWhiteListed == true) {
             whitelistedTokenHolders.add(tokenHolder);
         }
     }
@@ -96,7 +96,10 @@ async function getTokenBalancesAndTotalHoldings(): Promise<{ balances: Map<strin
 
     const blocksInAWeek = Math.floor(secondsInAWeek / AVERAGE_BLOCK_TIME_IN_BLOCKCHAIN);
 
-    const targetBlockNumber = currentBlock - blocksInAWeek;
+    //const targetBlockNumber = currentBlock - blocksInAWeek; //BLOCK IN A WEEK AGO
+
+    const targetBlockNumber = currentBlock;
+
     console.log("[Log]: Block target number: ", targetBlockNumber);
 
     const block = await alchemy.core.getBlock(targetBlockNumber);
@@ -138,14 +141,14 @@ async function calculateRewardsForWallets(): Promise<{ balances: Map<string, [nu
 
         const amountRewards = percentageRewards * REWARD_TOKENS_PER_WEEK;
 
-        console.log("Address: ", balanceTokenHolder[0], ". Rewards: ",amountRewards ,". Percentage: ", percentageRewards);
+        console.log("Address: ", balanceTokenHolder[0], ". Rewards: ",amountRewards ,". Percentage: ", percentageRewards*100, "%");
 
         totalRewards += amountRewards;
 
         totalPercentage += percentageRewards;
     }
 
-    console.log("Percentage rewards: ", totalPercentage);
+    console.log("\nPercentage rewards: ", totalPercentage*100, "%");
     console.log("Expected rewards:", REWARD_TOKENS_PER_WEEK);
     console.log("Distributed rewards: ", totalRewards);
 
