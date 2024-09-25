@@ -213,9 +213,9 @@ Investor wallets
 
 ---
 Team wallets
-0x350441F8a82680a785FFA9d3EfEa60BB4cA417f8
-0x01c2f012de19e6436744c3F81f56E9e70C93a8C3
-0x7dE9a234E67b9Ac172c803555f5aA7fFf3DB5581
+0x350441F8a82680a785FFA9d3EfEa60BB4cA417f8 3000000000000000000000000 3M HYAX 100 WBTC
+0x01c2f012de19e6436744c3F81f56E9e70C93a8C3 2000000000000000000000000 2M HYAX
+0x7dE9a234E67b9Ac172c803555f5aA7fFf3DB5581 5000000000000000000000000 5M HYAX
 
 ---
 Approve
@@ -237,13 +237,17 @@ npx hardhat verify --network polygonAmoy 0x7B008f7a8d377A351d7934632128d738a2200
 500000000000000000000000000 500 M
 1000000000000000000000000000 1B
 
-CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
---Update whitelister and rewards updater address
---Add team addresses to whitelist
---Find out what else do you need to set up
+--Update whitelister and rewards updater address DONE
+--Add team addresses to whitelist DONE
+--Find out what else do you need to set up DONE
 
+CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
--Create a batch transaction for updates and send it
+-Create a single transaction for updates and send it
+--Set up connection to write to smart contract basic test like update whitelisteraddress
+--Setup single update transaction
+--Setup batch transaction
+
 
 
 10. Add all required tests based on what's left to test
