@@ -241,16 +241,39 @@ npx hardhat verify --network polygonAmoy 0x7B008f7a8d377A351d7934632128d738a2200
 --Add team addresses to whitelist DONE
 --Find out what else do you need to set up DONE
 
-CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+
+npx hardhat run scripts/updateWeeklyRewards.ts
 
 -Create a single transaction for updates and send it
 --Set up connection to write to smart contract basic test like update whitelisteraddress
---Setup single update transaction
+--Setup single update transaction DONE
 --Setup batch transaction
+
+
+CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+
+There is an error in the batch update. But the single update works perfectly. Perhaps the type of parameter?
+
+Take a look, then try to test locally
+
+0x6Fbc023ACCBA56c1b32bDaFA2F27D4cd58145AB1 I
+0x9a4B007a10E1d1EC63157c8D69eBa76F30B4a2B4 I
+0x34795B6a05543Fe097C8BbBc221e3119f27B793E I
+0xb44e0C06718534F27847e607B6AE9368798fB974 I
+0xEDfcDEf54AE487Bd2F49e88E5b447cC26eB48e47 I
+0x350441F8a82680a785FFA9d3EfEa60BB4cA417f8 (T)
+0x01c2f012de19e6436744c3F81f56E9e70C93a8C3 (T)
+0x7dE9a234E67b9Ac172c803555f5aA7fFf3DB5581 (T)
 
 
 
 10. Add all required tests based on what's left to test
+
+FAIL CASES
+If a single transaction update fails, everything fails. Make sure it executes everything right and the one that fails gets emited as event.
+
+If the wallet gets updated from whitelist to false, its possible to add it again. Which shouldn't happen.
+
 
 
 

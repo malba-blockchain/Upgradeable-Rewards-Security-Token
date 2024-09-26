@@ -106,7 +106,7 @@ describe("Testing Use Case #2: Update wallet whitelist status", function () {
         // Try to add the wallet to the whitelist
         await upgradeableHYAXRewards.connect(whitelister)
             .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
-
+        
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount, 
             rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 

@@ -4,9 +4,7 @@ import { Alchemy, Network } from "alchemy-sdk";
 
 dotenv.config();
 
-
 // Define the constant values to interact with the smart contract
-
 const SMART_CONTRACT_NETWORK = Network.MATIC_AMOY;
 
 const AVERAGE_BLOCK_TIME_IN_BLOCKCHAIN = 2.1;
@@ -19,7 +17,6 @@ const REWARD_TOKENS_PER_YEAR = 150000000 * 10**18; // 150 Million tokens per yea
 
 const REWARD_TOKENS_PER_WEEK =  REWARD_TOKENS_PER_YEAR / 52; // 150 Million tokens divided by 52 weeks
 
-
 //Create a provider to connect to the blockchain and be able to query it
 const alchemyProvider = new ethers.JsonRpcProvider(process.env.REACT_APP_POLYGON_AMOY_RPC_URL);
 
@@ -29,11 +26,16 @@ const tokenContract = new ethers.Contract(TOKEN_SMART_CONTRACT_ADDRESS, TOKEN_SM
 //Create an instance of the rewards contract to interact with it
 const rewardsContract = new ethers.Contract(REWARDS_SMART_CONTRACT_ADDRESS, REWARDS_SMART_CONTRACT_ABI, alchemyProvider);
 
+// Create a wallet instance using the private key from .env
+const whitelisterWalletInstance = new ethers.Wallet(process.env.REACT_APP_WHITELISTER_PRIVATE_KEY || "");
+
+// Connect the wallet to the provider
+const whitelisterWallet = whitelisterWalletInstance.connect(alchemyProvider);
+
 const alchemy = new Alchemy({
     apiKey: process.env.REACT_APP_ALCHEMY_API_KEY, // Replace with your Alchemy API key
     network: SMART_CONTRACT_NETWORK, // Adjust the network if needed
 });
-
 
 // Function to get all unique holders of a token by querying the Transfer events.
 async function getAllTokenHolders(): Promise<Set<string>> {
@@ -229,7 +231,7 @@ async function getTokenBalancesAndTotalHoldingsTeam(): Promise<{ balances: Map<s
    return { balances: whitelistedTeamAddressesAndBalances, totalTokenHoldings: totalTeamHoldingsLastWeek }
 }
 
-async function calculateRewardsForTeamWallets(): Promise<{ balances: Map<string, [bigint, number]>, totalRewards: bigint }> {
+async function calculateRewardsForAllWallets(): Promise<{ balances: Map<string, [bigint, number]>, totalRewards: bigint }> {
     
     let totalRewards = BigInt(0); 
 
@@ -238,16 +240,23 @@ async function calculateRewardsForTeamWallets(): Promise<{ balances: Map<string,
     //Mapping stores rewards per wallet and percentage of those rewards
     let rewardsForWallets = new Map<string, [bigint, number]>();
 
-    const tokenHoldingsInvestors = (await getTokenBalancesAndTotalHoldings()).totalTokenHoldings;
+    // Fetch token balances and total holdings for investors
+    const tokenBalancesAndTotalHoldings = await getTokenBalancesAndTotalHoldings();
 
-    const tokenHoldingsTeam = (await getTokenBalancesAndTotalHoldingsTeam()).totalTokenHoldings;
+    const tokenHoldingsInvestors = tokenBalancesAndTotalHoldings.totalTokenHoldings;
 
-
-    const tokenBalancesInvestors = (await getTokenBalancesAndTotalHoldings()).balances;
+    const tokenBalancesInvestors = tokenBalancesAndTotalHoldings.balances;
     
-    const tokenBalancesTeam = (await getTokenBalancesAndTotalHoldingsTeam()).balances;
+
+    // Fetch token balances and total holdings for team wallets
+    const tokenBalancesAndTotalHoldingsTeam = await getTokenBalancesAndTotalHoldingsTeam();
+
+    const tokenHoldingsTeam = tokenBalancesAndTotalHoldingsTeam.totalTokenHoldings;
+    
+    const tokenBalancesTeam = tokenBalancesAndTotalHoldingsTeam.balances;
 
 
+    // Combine token balances of investors and team wallets into a single set
     const totalTokenBalances = new Set([...tokenBalancesInvestors, ...tokenBalancesTeam]);
 
     const totalTokenHoldings = tokenHoldingsInvestors + tokenHoldingsTeam;
@@ -259,7 +268,7 @@ async function calculateRewardsForTeamWallets(): Promise<{ balances: Map<string,
 
         // Convert the product of percentageRewards and REWARD_TOKENS_PER_WEEK to a string to avoid overflow
         const amountRewards = BigInt(percentageRewards * REWARD_TOKENS_PER_WEEK);
-        
+ 
         console.log("\nAddress: ", balanceTokenHolder[0], ". Token rewards: ", Number(ethers.formatEther(amountRewards.toString())) ,
             ". Percentage: ", percentageRewards*100, "%");
         
@@ -276,6 +285,75 @@ async function calculateRewardsForTeamWallets(): Promise<{ balances: Map<string,
 
     return { balances: rewardsForWallets, totalRewards: totalRewards }
 }
+
+async function updateRewardsSingle(): Promise<string> {
+
+    const walletToBeUpdated = "0x7dE9a234E67b9Ac172c803555f5aA7fFf3DB5581";
+
+    console.log("\nUpdater wallet address: ", whitelisterWallet.address); // Log the deployer wallet's address
+
+    console.log("\nUpdater wallet balance: ", await alchemyProvider.getBalance(whitelisterWallet.address)); // Log the deployer wallet's balance
+
+    //await rewardsContract.connect(whitelisterWallet).updateRewardsSingle(walletToBeUpdated, "50823357270723456401408");
+    
+    const [ hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, 
+            currentRewardsAmount, rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
+            lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
+            = await rewardsContract.wallets(walletToBeUpdated);
+
+    console.log("\nUpdated wallet: ", walletToBeUpdated);
+    console.log("Updated wallet totalHyaxRewardsAmount: ", totalHyaxRewardsAmount);
+    console.log("Updated wallet currentRewardsAmount: ", currentRewardsAmount);
+    console.log("Updated wallet rewardsWithdrawn: ", rewardsWithdrawn);
+    console.log("Updated wallet lastRewardsWithdrawalTime: ", lastRewardsWithdrawalTime);
+    console.log("Updated wallet lastRewardsUpdateTime: ", lastRewardsUpdateTime);
+
+    return totalHyaxRewardsAmount;
+}
+
+async function updateRewardsBatch(): Promise<string> {
+
+    console.log("\nUpdater wallet address: ", whitelisterWallet.address); // Log the deployer wallet's address
+
+    console.log("\nUpdater wallet balance: ", await alchemyProvider.getBalance(whitelisterWallet.address)); // Log the deployer wallet's balance
+
+    const calculatedRewardsForAllWallets = await calculateRewardsForAllWallets();
+
+    const totalRewards = calculatedRewardsForAllWallets.totalRewards;
+
+    const rewardsForWallets = calculatedRewardsForAllWallets.balances;
+
+    if (totalRewards <= REWARD_TOKENS_PER_WEEK) {
+        //await rewardsContract.connect(whitelisterWallet).updateRewardsBatch(walletToBeUpdated, "50823357270723456401408");
+
+        const walletAddresses = Array.from(rewardsForWallets.keys());
+
+        const walletRewards = Array.from(rewardsForWallets.values()).map(([rewardAmount]) => rewardAmount);
+
+        console.log("walletAddresses");
+        console.log(walletAddresses);
+
+        console.log("walletRewards");
+        console.log(walletRewards);
+
+        if (walletAddresses.length == walletRewards.length) {
+            
+            const result = await rewardsContract.connect(whitelisterWallet).updateRewardsBatch(walletAddresses, walletRewards);
+
+            console.log("Waiting for batch transaction to finish...");
+
+            console.log(result);
+        }
+        else {
+            console.log("[ERROR]: There is a mismatch in the list of number of wallets and number of rewards to do the batch update");
+        }
+    }
+    else {
+        console.log("[ERROR]: The calculated rewards to distribute are greater than the limited allowed per week by the smart contract");
+    }
+    return "";
+}
+
 
 async function main() {
     /*
@@ -303,7 +381,7 @@ async function main() {
     console.log("\nTotal team holdings last week");
     const totalTeamTokenHoldings = (await getTokenBalancesAndTotalHoldingsTeam()).totalTokenHoldings;
     console.log(totalTeamTokenHoldings);
-    */
+
 
     console.log("\nList of whitelisted token holders and their balances");  
     const tokenBalances = (await getTokenBalancesAndTotalHoldings()).balances;
@@ -312,8 +390,13 @@ async function main() {
     console.log("\nList of whitelisted team token holders and their balances");  
     const tokenTeamBalances = (await getTokenBalancesAndTotalHoldingsTeam()).balances;
     console.log(tokenTeamBalances);
+    */
 
-    await calculateRewardsForTeamWallets();
+    //await calculateRewardsForTeamWallets();
+
+    //await updateRewardsSingle();
+
+    await updateRewardsBatch();
 
 }
 
