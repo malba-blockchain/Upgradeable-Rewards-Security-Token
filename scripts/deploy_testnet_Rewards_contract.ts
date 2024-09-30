@@ -32,7 +32,7 @@ async function main() {
     //txSmartContractDeployment.to = null; // Ensure the transaction is for deploying a contract, not sending to an address
     txSmartContractDeployment.value = ethers.parseEther("0"); // Set the transaction value to 0 Ether
     txSmartContractDeployment.gasLimit = BigInt(5000000); // Set the gas limit for the deployment
-    txSmartContractDeployment.maxPriorityFeePerGas = ethers.parseUnits("20", "gwei"); // Set the maximum priority fee per gas
+    txSmartContractDeployment.maxPriorityFeePerGas = ethers.parseUnits("25", "gwei"); // Set the maximum priority fee per gas
     txSmartContractDeployment.maxFeePerGas = ethers.parseUnits("25", "gwei"); // Set the maximum fee per gas
     txSmartContractDeployment.nonce = await provider.getTransactionCount(deployerWallet.address, "latest"), // Set the nonce for the transaction
     txSmartContractDeployment.type = 2; // Set the transaction type to EIP-1559 (type 2)

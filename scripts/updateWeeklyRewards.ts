@@ -77,9 +77,12 @@ async function getAllWhitelistedTokenHolders(): Promise<Set<string>> {
 
     for (const tokenHolder of allTokenHolders) {
         //Check the address is in the whitelist
-        const [isWhiteListed, isQualifiedInvestor, totalHyaxBoughtByInvestor, totalUsdDepositedByInvestor] 
-            = await tokenContract.investorData(tokenHolder);
-        if (isWhiteListed == true) {
+        const [ hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, 
+            currentRewardsAmount, rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
+            lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
+            = await rewardsContract.wallets(tokenHolder);
+
+        if (isWhitelisted == true && isBlacklisted == false ) {
             whitelistedTokenHolders.add(tokenHolder);
         }
     }
@@ -261,14 +264,17 @@ async function calculateRewardsForAllWallets(): Promise<{ balances: Map<string, 
 
     const totalTokenHoldings = tokenHoldingsInvestors + tokenHoldingsTeam;
 
-
     for (const balanceTokenHolder of totalTokenBalances) {
 
         const percentageRewards = balanceTokenHolder[1] / totalTokenHoldings;
 
         // Convert the product of percentageRewards and REWARD_TOKENS_PER_WEEK to a string to avoid overflow
-        const amountRewards = BigInt(percentageRewards * REWARD_TOKENS_PER_WEEK);
- 
+        let amountRewards = BigInt(percentageRewards * REWARD_TOKENS_PER_WEEK);
+
+        // Zero out the first 18 digits from the right in order to eliminate the decimal part.
+        const divisor = BigInt(10 ** 18); // 18 digits
+        amountRewards = (amountRewards / divisor) * divisor; // Remove lower 18 digits and append zeros
+
         console.log("\nAddress: ", balanceTokenHolder[0], ". Token rewards: ", Number(ethers.formatEther(amountRewards.toString())) ,
             ". Percentage: ", percentageRewards*100, "%");
         
@@ -280,21 +286,23 @@ async function calculateRewardsForAllWallets(): Promise<{ balances: Map<string, 
     }
 
     console.log("\nPercentage rewards: ", totalPercentage*100, "%");
-    console.log("Expected rewards:", REWARD_TOKENS_PER_WEEK);
-    console.log("Distributed rewards: ",  Number(ethers.formatEther(totalRewards.toString())) );
+    console.log("Expected rewards:", BigInt(REWARD_TOKENS_PER_WEEK));
+    console.log("Distributed rewards: ",  BigInt(totalRewards.toString()));
 
     return { balances: rewardsForWallets, totalRewards: totalRewards }
 }
 
 async function updateRewardsSingle(): Promise<string> {
 
-    const walletToBeUpdated = "0x7dE9a234E67b9Ac172c803555f5aA7fFf3DB5581";
+    const walletToBeUpdated = "0xEDfcDEf54AE487Bd2F49e88E5b447cC26eB48e47";
+
+    const rewardAmout = "762328839212548017356800";
 
     console.log("\nUpdater wallet address: ", whitelisterWallet.address); // Log the deployer wallet's address
 
     console.log("\nUpdater wallet balance: ", await alchemyProvider.getBalance(whitelisterWallet.address)); // Log the deployer wallet's balance
 
-    //await rewardsContract.connect(whitelisterWallet).updateRewardsSingle(walletToBeUpdated, "50823357270723456401408");
+    //await rewardsContract.connect(whitelisterWallet).updateRewardsSingle(walletToBeUpdated, rewardAmout);
     
     const [ hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, 
             currentRewardsAmount, rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
@@ -338,11 +346,11 @@ async function updateRewardsBatch(): Promise<string> {
 
         if (walletAddresses.length == walletRewards.length) {
             
-            const result = await rewardsContract.connect(whitelisterWallet).updateRewardsBatch(walletAddresses, walletRewards);
-
+            const tx = await rewardsContract.connect(whitelisterWallet).updateRewardsBatch(walletAddresses, walletRewards);
             console.log("Waiting for batch transaction to finish...");
+            const receipt = await tx.wait();
 
-            console.log(result);
+            console.log(receipt);
         }
         else {
             console.log("[ERROR]: There is a mismatch in the list of number of wallets and number of rewards to do the batch update");

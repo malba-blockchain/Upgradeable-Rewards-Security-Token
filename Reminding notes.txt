@@ -225,7 +225,34 @@ https://docs.openzeppelin.com/learn/upgrading-smart-contracts
 https://i.sstatic.net/5VEOd.png
 --------------------------------------------------------------------------------
 
-BLACKLIST ALSO FOR THE TOKEN SMART CONTRACT?
+Blacklist also for the token smart contract?
+-Blacklist para token smart contract.
+
 
 PROXY ALSO FOR THE TOKEN SMART CONTRACT?
+Proxy also for the token smart contract?
 
+
+UPDATED
+
+1. Capacidad de restaurar los tokens de una wallet de un miembro del equipo en caso de perdida.
+Add wallet & remove wallet
+
+2. No existe fecha limite para reclamar los rewards de la wallet ni para los tokens de equipo.
+
+3. Funcionalidad de quemar tokens en el smart contract
+
+4. Posibilidad de hacer updates. 
+
+5. Hacerlo multichain.
+
+
+Mostrar en algún lugar el futuro contrato. 
+
+ToDo
+Hacer estimación con y sin proxy.
+
+
+
+
+---------------------------------------------------------

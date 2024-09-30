@@ -95,6 +95,13 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
      */
     event RewardUpdateFailed(address _sender, address _walletAddress, string _errorMessage);
 
+    /**
+     * @dev Emitted when a function is called, logging the sender and origin of the transaction
+     * @param _sender The address that initiated the transaction
+     * @param _origin The origin of the transaction (tx.origin)
+     */
+    event LogSenderAndOrigin(address _sender, address _origin);
+
     ////////////////// SMART CONTRACT VARIABLES //////////////////
 
     address public hyaxTokenAddress;
@@ -249,6 +256,11 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
             wallets[_walletAddress].hyaxHoldingAmountAtWhitelistTime = _hyaxHoldingAmountAtWhitelistTime; // Set the wallet's HYAX holding amount
             wallets[_walletAddress].hyaxHoldingAmount = _hyaxHoldingAmountAtWhitelistTime; // Set the wallet's HYAX holding amount
         }
+        else {
+            require(_hyaxHoldingAmountAtWhitelistTime == 0, "Non team wallets can not be added with a holding amout");
+            wallets[_walletAddress].hyaxHoldingAmountAtWhitelistTime = 0; // Set the wallet's HYAX holding amount
+            wallets[_walletAddress].hyaxHoldingAmount = 0; // Set the wallet's HYAX holding amount
+        }
 
         //Emit an event to notify that the wallet was added to the whitelist
         emit WalletAddedToWhitelist(msg.sender, _walletAddress, _isTeamWallet, _hyaxHoldingAmountAtWhitelistTime);
@@ -364,12 +376,14 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
     modifier onlyOwnerOrWhitelister {
         // Ensure that the sender is the owner or the whitelister address
         require(msg.sender == owner() || msg.sender == whiteListerAddress, "Function reserved only for the whitelister or the owner");
+        emit LogSenderAndOrigin(msg.sender, tx.origin);
         _;
     }
 
     modifier onlyOwnerOrRewardsUpdater{
         // Ensure that the sender is the owner or the rewards updater address
         require(msg.sender == owner() || msg.sender == rewardsUpdaterAddress, "Function reserved only for the rewards updater or the owner");
+        emit LogSenderAndOrigin(msg.sender, tx.origin);
         _;
     }
 
@@ -384,7 +398,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         require(wallets[_walletAddress].isBlacklisted == false, "Wallet has been blacklisted");
         _;
     }
-
+    
     /////////////GROWTH TOKENS FUNCTIONS///////////
     /**
      * @notice Allows the owner to withdraw growth tokens
@@ -545,10 +559,10 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
 
             //Try to update the rewards for the current wallet
             try this.updateRewardsSingle(walletAddress, hyaxRewards) {
-
-            } catch {
-                // Handle the error (e.g., emit an event to log failure)
-                emit RewardUpdateFailed(msg.sender, walletAddress, "Reward update failed for this wallet");
+            
+            } catch Error(string memory _errorMessage) {
+            
+            emit RewardUpdateFailed(msg.sender, walletAddress, _errorMessage);
             }
         }
         // Emit an event to notify that the rewards were updated
