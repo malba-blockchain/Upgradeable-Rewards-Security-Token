@@ -88,6 +88,7 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "BlacklistStatusUpdated"
       | "FundingAdded"
       | "GrowthTokensWithdrawn"
+      | "LogSenderAndOrigin"
       | "OwnershipTransferred"
       | "Paused"
       | "RewardTokensWithdrawn"
@@ -551,6 +552,19 @@ export namespace GrowthTokensWithdrawnEvent {
   export interface OutputObject {
     _walletAddress: string;
     _amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace LogSenderAndOriginEvent {
+  export type InputTuple = [_sender: AddressLike, _origin: AddressLike];
+  export type OutputTuple = [_sender: string, _origin: string];
+  export interface OutputObject {
+    _sender: string;
+    _origin: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -1226,6 +1240,13 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     GrowthTokensWithdrawnEvent.OutputObject
   >;
   getEvent(
+    key: "LogSenderAndOrigin"
+  ): TypedContractEvent<
+    LogSenderAndOriginEvent.InputTuple,
+    LogSenderAndOriginEvent.OutputTuple,
+    LogSenderAndOriginEvent.OutputObject
+  >;
+  getEvent(
     key: "OwnershipTransferred"
   ): TypedContractEvent<
     OwnershipTransferredEvent.InputTuple,
@@ -1328,6 +1349,17 @@ export interface UpgradeableHYAXRewards extends BaseContract {
       GrowthTokensWithdrawnEvent.InputTuple,
       GrowthTokensWithdrawnEvent.OutputTuple,
       GrowthTokensWithdrawnEvent.OutputObject
+    >;
+
+    "LogSenderAndOrigin(address,address)": TypedContractEvent<
+      LogSenderAndOriginEvent.InputTuple,
+      LogSenderAndOriginEvent.OutputTuple,
+      LogSenderAndOriginEvent.OutputObject
+    >;
+    LogSenderAndOrigin: TypedContractEvent<
+      LogSenderAndOriginEvent.InputTuple,
+      LogSenderAndOriginEvent.OutputTuple,
+      LogSenderAndOriginEvent.OutputObject
     >;
 
     "OwnershipTransferred(address,address)": TypedContractEvent<

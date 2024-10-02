@@ -294,16 +294,22 @@ async function calculateRewardsForAllWallets(): Promise<{ balances: Map<string, 
 
 async function updateRewardsSingle(): Promise<string> {
 
-    const walletToBeUpdated = "0xEDfcDEf54AE487Bd2F49e88E5b447cC26eB48e47";
+    const walletToBeUpdated = "0x34795B6a05543Fe097C8BbBc221e3119f27B793E";
 
-    const rewardAmout = "762328839212548017356800";
+    const rewardAmout = "1602867000000000000000000";
 
     console.log("\nUpdater wallet address: ", whitelisterWallet.address); // Log the deployer wallet's address
 
     console.log("\nUpdater wallet balance: ", await alchemyProvider.getBalance(whitelisterWallet.address)); // Log the deployer wallet's balance
 
-    //await rewardsContract.connect(whitelisterWallet).updateRewardsSingle(walletToBeUpdated, rewardAmout);
-    
+    const tx = await rewardsContract.connect(whitelisterWallet).updateRewardsSingle(walletToBeUpdated, rewardAmout);
+
+    console.log("Waiting for single transaction to finish...");
+
+    const receipt = await tx.wait();
+
+    console.log(receipt);
+
     const [ hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, 
             currentRewardsAmount, rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
             lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
@@ -351,6 +357,7 @@ async function updateRewardsBatch(): Promise<string> {
             const receipt = await tx.wait();
 
             console.log(receipt);
+            
         }
         else {
             console.log("[ERROR]: There is a mismatch in the list of number of wallets and number of rewards to do the batch update");

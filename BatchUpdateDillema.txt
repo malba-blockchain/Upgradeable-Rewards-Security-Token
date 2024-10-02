@@ -1,0 +1,26 @@
+MINIMIZAR LA NECESIDAD DE INTERACCIÓN CON EL SISTEMA
+
+Las transacciones se ejecutan a completitud o se revierten.
+
+Actualizar los rewards de los token holders
+
+Actualizar una sola dirección
+-Facil. Ya lo hice.
+
+Actualizar un batch entero
+-Mando un batch de pares [wallet] [amount]
+-Proceso un par a la vez
+-Usando la funcionalidad de actualizar una sola dirección
+
+-Puede pasar que en el batch exista un error.
+-Para lidiar con esos errores. Usamos try catch. Ejecutar actualizaciones atomicas.
+-Para ejecutar el try catch, se tiene que mandar usando el comando this porque el try solo funciona con llamadas externas
+
+Requerimiento de hacerlo nonReentrant: Si no lo haces te expones a ataques de drenado de fondos.
+
+Si yo hago una llamada a un non reentrant desde otro reentrant, falla.
+
+Conclusión:
+Puedo permitirme hacer single update non-reentrant porque:
+1. Los únicos con acceso son el owner, el updater y el smart contract, y
+2. al actualizar una wallet se bloquea para no poder actualizarse hasta la próxima semana

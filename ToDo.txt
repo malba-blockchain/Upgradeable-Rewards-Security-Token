@@ -227,13 +227,14 @@ Approve
 -Launch rewards basic smart contract   
 v1: 0x7B008f7a8d377A351d7934632128d738a2200cf8
 v2: 0xcdd08884D34f2c6Ac7f6DB00D4eB50faAfbbb8F0
+v3: 0x57ba336A233a9a1F1404f73Ce46F444618209a61
+v4: 0x391f57D9E044599aC4d7A3a340f7343c98824D41
 
 npx hardhat run --network polygonAmoy scripts/deploy_testnet_Rewards_contract.ts
 
 npm install --save-dev @nomicfoundation/hardhat-verify
 
-npx hardhat verify --network polygonAmoy 0xcdd08884D34f2c6Ac7f6DB00D4eB50faAfbbb8F0 0xCd1fA2C8626B023197158aC84C5DF56EDD1F3f0C
-
+npx hardhat verify --network polygonAmoy 0x391f57D9E044599aC4d7A3a340f7343c98824D41 0xCd1fA2C8626B023197158aC84C5DF56EDD1F3f0C
 
 
 -Set up rewards basic smart contract
@@ -242,17 +243,18 @@ npx hardhat verify --network polygonAmoy 0xcdd08884D34f2c6Ac7f6DB00D4eB50faAfbbb
 1000000000000000000000000000 1B
 
 --Update whitelister and rewards updater address DONE
+0x01c2f012de19e6436744c3F81f56E9e70C93a8C3
 --Add team addresses to whitelist DONE
---Fund the rewards basic smart contract with tokens for the team. Can be by minting new tokens. DON'T FORGET TO APPROVE!
+--Fund the rewards basic smart contract with tokens for the team. (GrowthTokens, TeamTokens, or RewardTokens) Can be by minting new tokens. DON'T FORGET TO APPROVE!DONE 
 --Add investor wallets to whitelist of rewards contract
 
 
 npx hardhat run scripts/updateWeeklyRewards.ts
 
--Create a single transaction for updates and send it
---Set up connection to write to smart contract basic test like update whitelisteraddress
+-Create a single transaction for updates and send it 
+--Set up connection to write to smart contract basic test like update whitelisteraddress 
 --Setup single update transaction DONE
---Setup batch transaction
+--Setup batch transaction 
 
 
 CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
@@ -261,11 +263,12 @@ There is an error in the batch update. But the single update works perfectly. Pe
 
 I KNOW THE PROBLEM IS BECAUSE THE SMART CONTRACT IS TAKING THE CONTEXT OF THE SMART CONTRACT AND NOW HE IS THE MSG.SENDER INSTEAD OF THE OWNER OR REWARDS UPDATER.
 
-TAKE A LOOK AT CLAUDE EXPLANATION.
+YOU KNOW WHAT'S THE PROBLEM. SO DEPLOY A LOCAL TEST VERSION AND DEBUG THE SHIT OUT OF THAT SUCKER.
 
-I NEED IT TO GO THROUGH ALL THE SECURITY CHECKS BUT GUARANTEEING THAT'S THE OWNER OR REWARDS UPDATER WHO DOES THE INITIAL CALL
-
-Take a look, then try to test locally
+-Fund smart contract with reward tokens DONE
+-Fund smart contract with reward tokens after having already funded the first time DONE
+-updateRewardsSingle DONE
+-updateRewardsBatch DONE
 
 0x6Fbc023ACCBA56c1b32bDaFA2F27D4cd58145AB1 I  
 0x9a4B007a10E1d1EC63157c8D69eBa76F30B4a2B4 I
@@ -277,7 +280,6 @@ Take a look, then try to test locally
 0x7dE9a234E67b9Ac172c803555f5aA7fFf3DB5581 (T) Updated
 
 
-
 10. Add all required tests based on what's left to test
 
 FAIL CASES
@@ -286,12 +288,6 @@ If a single transaction update fails, everything fails. Make sure it executes ev
 If the wallet gets updated from whitelist to false, its possible to add it again. Which shouldn't happen.
 
 
-
-
--Fund smart contract with reward tokens
--Fund smart contract with reward tokens after having already funded the first time
--updateRewardsSingle
--updateRewardsBatch
 -withdrawRewardTokens
 -calculateYearForTeamTokens
 -withdrawTokensToBurn
@@ -301,8 +297,6 @@ If the wallet gets updated from whitelist to false, its possible to add it again
 -pause
 -unpause
 -transferOwnership
-
-
 
 
 

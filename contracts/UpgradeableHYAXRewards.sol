@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "hardhat/console.sol";
 
  /**
  * @title ERC20TokenInterface
@@ -257,7 +258,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
             wallets[_walletAddress].hyaxHoldingAmount = _hyaxHoldingAmountAtWhitelistTime; // Set the wallet's HYAX holding amount
         }
         else {
-            require(_hyaxHoldingAmountAtWhitelistTime == 0, "Non team wallets can not be added with a holding amout");
+            require(_hyaxHoldingAmountAtWhitelistTime == 0, "Non team wallets can only be added with holding amount equal to 0");
             wallets[_walletAddress].hyaxHoldingAmountAtWhitelistTime = 0; // Set the wallet's HYAX holding amount
             wallets[_walletAddress].hyaxHoldingAmount = 0; // Set the wallet's HYAX holding amount
         }
@@ -283,7 +284,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         emit WhitelistStatusUpdated(msg.sender, _walletAddress, _newStatus);
     }
 
-        /**
+    /**
      * @notice Updates the status of a wallet in the blacklist
      * @dev This function allows the owner or the whitelister address to update the status of a wallet in the blacklist
      * @param _walletAddress The address of the wallet to be updated
@@ -380,9 +381,14 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         _;
     }
 
-    modifier onlyOwnerOrRewardsUpdater{
-        // Ensure that the sender is the owner or the rewards updater address
-        require(msg.sender == owner() || msg.sender == rewardsUpdaterAddress, "Function reserved only for the rewards updater or the owner");
+    modifier onlyOwnerOrRewardsUpdater {
+        // Ensure that the sender is the owner, the rewards updater address or the contract itself
+        require(
+            msg.sender == owner() || 
+            msg.sender == rewardsUpdaterAddress || 
+            msg.sender == address(this),
+            "Function reserved only for the rewards updater, the owner, or the contract itself"
+        );
         emit LogSenderAndOrigin(msg.sender, tx.origin);
         _;
     }
@@ -533,84 +539,87 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
     
     /////////////REWARD TOKENS FUNCTIONS///////////
 
-    /*
-     * @notice Allows the rewards updater or the owner to update the rewards for a list of wallets
-     * @dev This function can only be called by the rewards updater or the owner
-     * @param _walletAddresses The list of wallet addresses to update the rewards for
-     * @param _hyaxHoldingAmounts The list of HYAX holding amounts for the wallets
-     * @custom:events Emits a RewardsUpdated event upon successful update
+    /**
+     * @notice Updates the rewards for a batch of wallets
+     * @dev This function updates the rewards for a list of wallets in a single transaction.
+     * @param _walletAddresses The list of wallet addresses to update rewards for.
+     * @param _hyaxRewards The list of HYAX rewards to be updated for each wallet.
      */
-    function updateRewardsBatch(address[] calldata _walletAddresses, uint256[] calldata _hyaxRewards) onlyOwnerOrRewardsUpdater nonReentrant() public {
-
+    function updateRewardsBatch(address[] calldata _walletAddresses, uint256[] calldata _hyaxRewards) public onlyOwnerOrRewardsUpdater nonReentrant {
+        
         // Validate the batch size limit
         require(_walletAddresses.length <= MAX_BATCH_SIZE_FOR_UPDATE_REWARDS, "Batch size exceeds limit. Max batch size is 100");
+        console.log("Enters 1.1");
 
         // Validate the length of the arrays
         require(_walletAddresses.length == _hyaxRewards.length, "Array lengths must match.");
+        console.log("Enters 1.2");
 
         // Iterate through the list of wallets
         for (uint256 i = 0; i < _walletAddresses.length; i++) {
+            console.log("Enters 1.3");
 
-            //Get the wallet address for the current iteration
-            address walletAddress = _walletAddresses[i];
-
-            //Get the hyax rewards for the current iteration
-            uint256 hyaxRewards = _hyaxRewards[i];
-
-            //Try to update the rewards for the current wallet
-            try this.updateRewardsSingle(walletAddress, hyaxRewards) {
-            
+            //Try to update the rewards for the current wallet address
+            try this.updateRewardsSingle(_walletAddresses[i], _hyaxRewards[i]) {
+                // Success case 
+                console.log("Enters 1.4");
             } catch Error(string memory _errorMessage) {
-            
-            emit RewardUpdateFailed(msg.sender, walletAddress, _errorMessage);
+                emit RewardUpdateFailed(msg.sender, _walletAddresses[i], _errorMessage);
             }
+            console.log("Enters 1.5");
         }
+        console.log("Enters 1.6");
         // Emit an event to notify that the rewards were updated
         emit RewardsUpdated(msg.sender, _walletAddresses, _hyaxRewards);
     }
 
     /**
-     * @notice Updates rewards for a single wallet
-     * @dev This function can only be called by the rewards updater or the owner
-     * @dev Implements nonReentrant guard to prevent reentrancy attacks
-     * @param _walletAddress The address of the wallet to update rewards for
-     * @param _hyaxRewards The amount of HYAX rewards to add
-     * @custom:requirements Wallet must be whitelisted
-     * @custom:requirements Minimum interval between updates must have passed
-     * @custom:requirements Rewards must not exceed weekly withdrawal limit
-     * @custom:requirements Contract must have sufficient tokens to distribute
-     * @custom:requirements Wallet must have positive HYAX balance (or holding amount for team wallets)
+     * @notice Updates the rewards for a single wallet internally
+     * @dev This function updates the rewards for a single wallet address internally.
+     * @param _walletAddress The address of the wallet to update rewards for.
+     * @param _hyaxRewards The amount of HYAX rewards to update for the wallet.
      */
-    function updateRewardsSingle(address _walletAddress, uint256 _hyaxRewards) onlyOwnerOrRewardsUpdater nonReentrant() public {
+     function updateRewardsSingle(address _walletAddress, uint256 _hyaxRewards) public onlyOwnerOrRewardsUpdater {
+     
+        console.log("Enters 2.2");      
 
         // Validate that the wallet is whitelisted
         require(wallets[_walletAddress].isWhitelisted == true, "Wallet is not whitelisted");
+        console.log("Enters 2.3");
 
         // Validate that the wallet is not blacklisted
         require(wallets[_walletAddress].isBlacklisted == false, "Wallet has been blacklisted");
-
+        console.log("Enters 2.4");
+    
         //Timestamp validation
         require(block.timestamp >= wallets[_walletAddress].lastRewardsUpdateTime + MIN_INTERVAL_FOR_UPDATE_REWARDS, "Too soon to update rewards for this wallet");
+        console.log("Enters 2.5");
 
         // Ensure rewards don't exceed the weekly withdrawal limit
         require(_hyaxRewards <= REWARD_TOKENS_PER_WEEK, "A single wallet cannot have rewards higher than the weekly limit");
+        console.log("Enters 2.6");
 
         // Check if there are sufficient tokens in the contract to distribute as rewards
         require(rewardTokensDistributed + _hyaxRewards <= rewardTokensInSmartContract, "Insufficient reward tokens to distribute as rewards");
+        console.log("Enters 2.7");
 
         // Update the total rewards distributed
         rewardTokensDistributed += _hyaxRewards;
+        console.log("Enters 2.8");
 
         // Update the last rewards update time
         wallets[_walletAddress].lastRewardsUpdateTime = block.timestamp;
+        console.log("Enters 2.9");
 
         // Update the total rewards for the wallet
         wallets[_walletAddress].totalHyaxRewardsAmount += _hyaxRewards;
+        console.log("Enters 2.10");
 
         // Update the current rewards amount for the wallet
         wallets[_walletAddress].currentRewardsAmount += _hyaxRewards;
+        console.log("Enters 2.11");
     }
-
+    
     /*
      * @notice Allows whitelisted holders to withdraw their accumulated rewards
      * @dev This function is restricted to whitelisted addresses and implements a nonReentrant guard

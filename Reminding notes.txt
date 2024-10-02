@@ -240,7 +240,7 @@ Add wallet & remove wallet
 
 2. No existe fecha limite para reclamar los rewards de la wallet ni para los tokens de equipo.
 
-3. Funcionalidad de quemar tokens en el smart contract
+3. Funcionalidad de quemar tokens en el smart contract XXXXXXX? No entra.
 
 4. Posibilidad de hacer updates. 
 
@@ -252,7 +252,9 @@ Mostrar en algún lugar el futuro contrato.
 ToDo
 Hacer estimación con y sin proxy.
 
-
-
-
 ---------------------------------------------------------
+
+Arbitrum blockchain y ethereum blockchain.
+
+
+
