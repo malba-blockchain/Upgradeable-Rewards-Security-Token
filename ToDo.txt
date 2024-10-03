@@ -254,21 +254,12 @@ npx hardhat run scripts/updateWeeklyRewards.ts
 -Create a single transaction for updates and send it 
 --Set up connection to write to smart contract basic test like update whitelisteraddress 
 --Setup single update transaction DONE
---Setup batch transaction 
+--Setup batch transaction  
 
 
 CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
 There is an error in the batch update. But the single update works perfectly. Perhaps the type of parameter?
-
-I KNOW THE PROBLEM IS BECAUSE THE SMART CONTRACT IS TAKING THE CONTEXT OF THE SMART CONTRACT AND NOW HE IS THE MSG.SENDER INSTEAD OF THE OWNER OR REWARDS UPDATER.
-
-YOU KNOW WHAT'S THE PROBLEM. SO DEPLOY A LOCAL TEST VERSION AND DEBUG THE SHIT OUT OF THAT SUCKER.
-
--Fund smart contract with reward tokens DONE
--Fund smart contract with reward tokens after having already funded the first time DONE
--updateRewardsSingle DONE
--updateRewardsBatch DONE
 
 0x6Fbc023ACCBA56c1b32bDaFA2F27D4cd58145AB1 I  
 0x9a4B007a10E1d1EC63157c8D69eBa76F30B4a2B4 I
@@ -282,13 +273,51 @@ YOU KNOW WHAT'S THE PROBLEM. SO DEPLOY A LOCAL TEST VERSION AND DEBUG THE SHIT O
 
 10. Add all required tests based on what's left to test
 
+-Fund smart contract with reward tokens DONE
+-Fund smart contract with reward tokens after having already funded the first time DONE
+
+-updateRewardsSingle non team wallets
+12.1. Fail because its not in whitelist DONE
+12.2. Fail because is blacklisted DONE
+12.3. Fail because rewards exceed the weekly limit DONE
+12.4. Fail because there are no enough tokens in the contract for rewards DONE
+12.5. Successfull update DONE
+12.6. Fail because tried to do it in less than 1 week DONE
+
+
+-updateRewardsBatch non team wallets
+--Fail all 3 updates because wallets are not whitelisted
+--Fail only 2 updates because wallets are not whitelisted
+--Fail only 1 update because the wallet is not whitelisted
+--Fail all 3 updates because wallets are blacklisted
+--Fail only 2 updates because wallets are blacklisted
+--Fail only 1 update because the wallet is blacklisted
+--Fail because the rewards exceed the weekly limit
+--Fail because there are not enough tokens in the contract for rewards.
+--Fail because there is array mismatch
+--Successful full update
+--Fail because tried to do it in less than 1 week
+
+
+-withdrawRewardTokens non team wallets
+14.1. Fail because funding has not started yet DONE
+14.2. Fail because wallet is not whitelisted DONE
+14.3. Fail because wallet is blacklisted DONE
+14.4. Fail because there are not rewards available for that wallet DONE
+14.5. Fail because there are not tokens in the contract to withdraw DONE
+14.6. Successfully withdraw reward tokens DONE
+14.7. Fail because all reward tokens have been withdrawn DONE
+
+
 FAIL CASES
 If a single transaction update fails, everything fails. Make sure it executes everything right and the one that fails gets emited as event.
 
 If the wallet gets updated from whitelist to false, its possible to add it again. Which shouldn't happen.
 
+Run test cases with for loops and increasing evm time to simulate the end of the days.
 
--withdrawRewardTokens
+-updateRewardsSingle for team wallets
+-updateRewardsBatch for team wallets
 -calculateYearForTeamTokens
 -withdrawTokensToBurn
 -updateWhiteListerAddress
@@ -297,8 +326,6 @@ If the wallet gets updated from whitelist to false, its possible to add it again
 -pause
 -unpause
 -transferOwnership
-
-
 
 
 ---------INITIAL LOCAL DEPLOYMENT---------

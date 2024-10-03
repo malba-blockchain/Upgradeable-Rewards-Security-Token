@@ -549,26 +549,26 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         
         // Validate the batch size limit
         require(_walletAddresses.length <= MAX_BATCH_SIZE_FOR_UPDATE_REWARDS, "Batch size exceeds limit. Max batch size is 100");
-        console.log("Enters 1.1");
+        //console.log("Enters 1.1");
 
         // Validate the length of the arrays
         require(_walletAddresses.length == _hyaxRewards.length, "Array lengths must match.");
-        console.log("Enters 1.2");
+        //console.log("Enters 1.2");
 
         // Iterate through the list of wallets
         for (uint256 i = 0; i < _walletAddresses.length; i++) {
-            console.log("Enters 1.3");
+            //console.log("Enters 1.3");
 
             //Try to update the rewards for the current wallet address
             try this.updateRewardsSingle(_walletAddresses[i], _hyaxRewards[i]) {
                 // Success case 
-                console.log("Enters 1.4");
+                //console.log("Enters 1.4");
             } catch Error(string memory _errorMessage) {
                 emit RewardUpdateFailed(msg.sender, _walletAddresses[i], _errorMessage);
             }
-            console.log("Enters 1.5");
+            //console.log("Enters 1.5");
         }
-        console.log("Enters 1.6");
+        //console.log("Enters 1.6");
         // Emit an event to notify that the rewards were updated
         emit RewardsUpdated(msg.sender, _walletAddresses, _hyaxRewards);
     }
@@ -580,44 +580,44 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
      * @param _hyaxRewards The amount of HYAX rewards to update for the wallet.
      */
      function updateRewardsSingle(address _walletAddress, uint256 _hyaxRewards) public onlyOwnerOrRewardsUpdater {
-     
-        console.log("Enters 2.2");      
+        
+        //console.log("Enters 2.2");      
 
         // Validate that the wallet is whitelisted
         require(wallets[_walletAddress].isWhitelisted == true, "Wallet is not whitelisted");
-        console.log("Enters 2.3");
+        //console.log("Enters 2.3");
 
         // Validate that the wallet is not blacklisted
         require(wallets[_walletAddress].isBlacklisted == false, "Wallet has been blacklisted");
-        console.log("Enters 2.4");
+        //console.log("Enters 2.4");
     
         //Timestamp validation
         require(block.timestamp >= wallets[_walletAddress].lastRewardsUpdateTime + MIN_INTERVAL_FOR_UPDATE_REWARDS, "Too soon to update rewards for this wallet");
-        console.log("Enters 2.5");
+        //console.log("Enters 2.5");
 
         // Ensure rewards don't exceed the weekly withdrawal limit
         require(_hyaxRewards <= REWARD_TOKENS_PER_WEEK, "A single wallet cannot have rewards higher than the weekly limit");
-        console.log("Enters 2.6");
+        //console.log("Enters 2.6");
 
         // Check if there are sufficient tokens in the contract to distribute as rewards
-        require(rewardTokensDistributed + _hyaxRewards <= rewardTokensInSmartContract, "Insufficient reward tokens to distribute as rewards");
-        console.log("Enters 2.7");
+        require(_hyaxRewards <= rewardTokensInSmartContract, "Insufficient reward tokens to distribute as rewards");
+        //console.log("Enters 2.7");
 
         // Update the total rewards distributed
         rewardTokensDistributed += _hyaxRewards;
-        console.log("Enters 2.8");
+        //console.log("Enters 2.8");
 
         // Update the last rewards update time
         wallets[_walletAddress].lastRewardsUpdateTime = block.timestamp;
-        console.log("Enters 2.9");
+        //console.log("Enters 2.9");
 
         // Update the total rewards for the wallet
         wallets[_walletAddress].totalHyaxRewardsAmount += _hyaxRewards;
-        console.log("Enters 2.10");
+        //console.log("Enters 2.10");
 
         // Update the current rewards amount for the wallet
         wallets[_walletAddress].currentRewardsAmount += _hyaxRewards;
-        console.log("Enters 2.11");
+        //console.log("Enters 2.11");
     }
     
     /*
