@@ -28,7 +28,6 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     nameOrSignature:
       | "GROWTH_TOKENS_TOTAL"
       | "GROWTH_TOKENS_WITHDRAWAL_PER_YEAR"
-      | "MAX_BATCH_SIZE_FOR_UPDATE_REWARDS"
       | "MIN_INTERVAL_FOR_UPDATE_REWARDS"
       | "REWARD_TOKENS_HOLDING_PERIOD"
       | "REWARD_TOKENS_PER_WEEK"
@@ -49,6 +48,7 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "growthTokensWithdrawn"
       | "hyaxToken"
       | "hyaxTokenAddress"
+      | "maximumBatchSizeForUpdateRewards"
       | "owner"
       | "pause"
       | "paused"
@@ -70,6 +70,7 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "unpause"
       | "updateBlacklistStatus"
       | "updateHyaxTokenAddress"
+      | "updateMaximumBatchSizeForUpdateRewards"
       | "updateRewardsBatch"
       | "updateRewardsSingle"
       | "updateRewardsUpdaterAddress"
@@ -93,7 +94,7 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "Paused"
       | "RewardTokensWithdrawn"
       | "RewardUpdateFailed"
-      | "RewardsUpdated"
+      | "RewardUpdateSuccess"
       | "TeamTokensWithdrawn"
       | "TokensToBurnWithdrawn"
       | "Unpaused"
@@ -107,10 +108,6 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "GROWTH_TOKENS_WITHDRAWAL_PER_YEAR",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "MAX_BATCH_SIZE_FOR_UPDATE_REWARDS",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -190,6 +187,10 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     functionFragment: "hyaxTokenAddress",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "maximumBatchSizeForUpdateRewards",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
@@ -263,6 +264,10 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "updateMaximumBatchSizeForUpdateRewards",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "updateRewardsBatch",
     values: [AddressLike[], BigNumberish[]]
   ): string;
@@ -313,10 +318,6 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "GROWTH_TOKENS_WITHDRAWAL_PER_YEAR",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "MAX_BATCH_SIZE_FOR_UPDATE_REWARDS",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -396,6 +397,10 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     functionFragment: "hyaxTokenAddress",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "maximumBatchSizeForUpdateRewards",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
@@ -466,6 +471,10 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "updateHyaxTokenAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateMaximumBatchSizeForUpdateRewards",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -632,21 +641,21 @@ export namespace RewardUpdateFailedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace RewardsUpdatedEvent {
+export namespace RewardUpdateSuccessEvent {
   export type InputTuple = [
     _sender: AddressLike,
-    _walletAddresses: AddressLike[],
-    _hyaxHoldingAmounts: BigNumberish[]
+    _walletAddress: AddressLike,
+    _hyaxReward: BigNumberish
   ];
   export type OutputTuple = [
     _sender: string,
-    _walletAddresses: string[],
-    _hyaxHoldingAmounts: bigint[]
+    _walletAddress: string,
+    _hyaxReward: bigint
   ];
   export interface OutputObject {
     _sender: string;
-    _walletAddresses: string[];
-    _hyaxHoldingAmounts: bigint[];
+    _walletAddress: string;
+    _hyaxReward: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -786,8 +795,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
 
   GROWTH_TOKENS_WITHDRAWAL_PER_YEAR: TypedContractMethod<[], [bigint], "view">;
 
-  MAX_BATCH_SIZE_FOR_UPDATE_REWARDS: TypedContractMethod<[], [bigint], "view">;
-
   MIN_INTERVAL_FOR_UPDATE_REWARDS: TypedContractMethod<[], [bigint], "view">;
 
   REWARD_TOKENS_HOLDING_PERIOD: TypedContractMethod<[], [bigint], "view">;
@@ -840,6 +847,8 @@ export interface UpgradeableHYAXRewards extends BaseContract {
 
   hyaxTokenAddress: TypedContractMethod<[], [string], "view">;
 
+  maximumBatchSizeForUpdateRewards: TypedContractMethod<[], [bigint], "view">;
+
   owner: TypedContractMethod<[], [string], "view">;
 
   pause: TypedContractMethod<[], [void], "nonpayable">;
@@ -890,6 +899,12 @@ export interface UpgradeableHYAXRewards extends BaseContract {
 
   updateHyaxTokenAddress: TypedContractMethod<
     [_hyaxTokenAddress: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  updateMaximumBatchSizeForUpdateRewards: TypedContractMethod<
+    [_maximumBatchSizeForUpdateRewards: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -983,9 +998,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     nameOrSignature: "GROWTH_TOKENS_WITHDRAWAL_PER_YEAR"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
-    nameOrSignature: "MAX_BATCH_SIZE_FOR_UPDATE_REWARDS"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
     nameOrSignature: "MIN_INTERVAL_FOR_UPDATE_REWARDS"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
@@ -1058,6 +1070,9 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     nameOrSignature: "hyaxTokenAddress"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
+    nameOrSignature: "maximumBatchSizeForUpdateRewards"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
@@ -1125,6 +1140,13 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     nameOrSignature: "updateHyaxTokenAddress"
   ): TypedContractMethod<
     [_hyaxTokenAddress: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "updateMaximumBatchSizeForUpdateRewards"
+  ): TypedContractMethod<
+    [_maximumBatchSizeForUpdateRewards: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -1275,11 +1297,11 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     RewardUpdateFailedEvent.OutputObject
   >;
   getEvent(
-    key: "RewardsUpdated"
+    key: "RewardUpdateSuccess"
   ): TypedContractEvent<
-    RewardsUpdatedEvent.InputTuple,
-    RewardsUpdatedEvent.OutputTuple,
-    RewardsUpdatedEvent.OutputObject
+    RewardUpdateSuccessEvent.InputTuple,
+    RewardUpdateSuccessEvent.OutputTuple,
+    RewardUpdateSuccessEvent.OutputObject
   >;
   getEvent(
     key: "TeamTokensWithdrawn"
@@ -1406,15 +1428,15 @@ export interface UpgradeableHYAXRewards extends BaseContract {
       RewardUpdateFailedEvent.OutputObject
     >;
 
-    "RewardsUpdated(address,address[],uint256[])": TypedContractEvent<
-      RewardsUpdatedEvent.InputTuple,
-      RewardsUpdatedEvent.OutputTuple,
-      RewardsUpdatedEvent.OutputObject
+    "RewardUpdateSuccess(address,address,uint256)": TypedContractEvent<
+      RewardUpdateSuccessEvent.InputTuple,
+      RewardUpdateSuccessEvent.OutputTuple,
+      RewardUpdateSuccessEvent.OutputObject
     >;
-    RewardsUpdated: TypedContractEvent<
-      RewardsUpdatedEvent.InputTuple,
-      RewardsUpdatedEvent.OutputTuple,
-      RewardsUpdatedEvent.OutputObject
+    RewardUpdateSuccess: TypedContractEvent<
+      RewardUpdateSuccessEvent.InputTuple,
+      RewardUpdateSuccessEvent.OutputTuple,
+      RewardUpdateSuccessEvent.OutputObject
     >;
 
     "TeamTokensWithdrawn(address,uint256)": TypedContractEvent<

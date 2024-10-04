@@ -286,17 +286,18 @@ There is an error in the batch update. But the single update works perfectly. Pe
 
 
 -updateRewardsBatch non team wallets
---Fail all 3 updates because wallets are not whitelisted
---Fail only 2 updates because wallets are not whitelisted
---Fail only 1 update because the wallet is not whitelisted
---Fail all 3 updates because wallets are blacklisted
---Fail only 2 updates because wallets are blacklisted
---Fail only 1 update because the wallet is blacklisted
---Fail because the rewards exceed the weekly limit
---Fail because there are not enough tokens in the contract for rewards.
---Fail because there is array mismatch
---Successful full update
---Fail because tried to do it in less than 1 week
+13.1. Fail all 3 updates because wallets are not whitelisted DONE
+13.2. Fail only 2 updates because wallets are not whitelisted DONE
+13.3. Fail only 1 update because the wallet is not whitelisted DONE
+13.4. Fail all 3 updates because wallets are blacklisted DONE
+13.5. Fail only 2 updates because wallets are blacklisted DONE
+13.6. Fail only 1 update because the wallet is blacklisted DONE
+13.7. Fail because the rewards exceed the weekly limit 
+13.8. Fail because the batch exceeds the maximum size defined for updates 
+13.9. Fail because there are not enough tokens in the contract for rewards 
+13.10. Fail because there is array mismatch 
+13.11. Successful full update 
+13.12. Fail because tried to do it in less than 1 week 
 
 
 -withdrawRewardTokens non team wallets

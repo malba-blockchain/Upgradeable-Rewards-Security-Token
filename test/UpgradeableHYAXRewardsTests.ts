@@ -2559,19 +2559,254 @@ describe("Testing Use Case #13: Update rewards for a batch of non team wallets",
 
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         await upgradeableHYAXRewards.fundSmartContract(2, fundingAmount);
+        // Fixtures can return anything you consider useful for your tests
+        return { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress };
+    }
 
+    it("13.1. Should revert all 3 internal updates because wallets are not whitelisted", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+    
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor];
+        
+        // Call the updateRewards function
+        const updateRewardsBatchTx = await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+        const updateRewardsBatchReceipt = await updateRewardsBatchTx.wait();
+        const events = updateRewardsBatchReceipt?.logs || [];
+
+        let numberOfFailedUpdates = 0;
+
+        for (const event of events) {
+            //'Wallet is not whitelisted'
+            if(event.fragment.name === "RewardUpdateFailed") {
+                expect(event.args[2]).to.equal('Wallet is not whitelisted');
+                numberOfFailedUpdates++;
+            }
+        }
+        //There should be 3 events where the wallet is not whitelisted
+        expect(numberOfFailedUpdates).to.equal(3);
+    });
+
+    it("13.2. Should revert only 2 internal updates because wallets are not whitelisted", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+    
+        //Add only one wallet to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, false, 0);
+
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor];
+
+        // Call the updateRewards function
+        const updateRewardsBatchTx = await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+        const updateRewardsBatchReceipt = await updateRewardsBatchTx.wait();
+        const events = updateRewardsBatchReceipt?.logs || [];
+
+        let numberOfFailedUpdates = 0;
+        let numberOfSuccessfulUpdates = 0;
+
+        for (const event of events) {
+            //'Wallet is not whitelisted'
+            if(event.fragment.name === "RewardUpdateFailed") {
+                expect(event.args[2]).to.equal('Wallet is not whitelisted');
+                numberOfFailedUpdates++;
+            }
+            else if(event.fragment.name === "RewardUpdateSuccess") {
+                numberOfSuccessfulUpdates++;
+            }
+        }
+        //There should be 2 events where the wallet is not whitelisted
+        expect(numberOfFailedUpdates).to.equal(2);
+
+        //There should be 1 event where the wallet is whitelisted
+        expect(numberOfSuccessfulUpdates).to.equal(1);
+    });
+
+    it("13.3. Should revert only 1 internal update because the wallet is not whitelisted", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+    
+        //Add only two  wallets to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, false, 0);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, false, 0);
+ 
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor];
+
+        // Call the updateRewards function
+        const updateRewardsBatchTx = await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+        const updateRewardsBatchReceipt = await updateRewardsBatchTx.wait();
+        const events = updateRewardsBatchReceipt?.logs || [];
+
+        let numberOfFailedUpdates = 0;
+        let numberOfSuccessfulUpdates = 0;
+
+        for (const event of events) {
+            //'Wallet is not whitelisted'
+            if(event.fragment.name === "RewardUpdateFailed") {
+                expect(event.args[2]).to.equal('Wallet is not whitelisted');
+                numberOfFailedUpdates++;
+            }
+            else if(event.fragment.name === "RewardUpdateSuccess") {
+                numberOfSuccessfulUpdates++;
+            }
+        }
+        //There should be 2 events where the wallet is not whitelisted
+        expect(numberOfFailedUpdates).to.equal(1);
+
+        //There should be 1 event where the wallet is whitelisted
+        expect(numberOfSuccessfulUpdates).to.equal(2);
+    });
+
+    it("13.4. Should revert all 3 internal updates because wallets are blacklisted", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        
         //Add the whitelisted addresses
         await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, false, 0);
         await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, false, 0);
         await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, false, 0);
 
-        // Fixtures can return anything you consider useful for your tests
-        return { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress };
-    }
+        // Add the wallet to the blacklist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr1.address, true);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr2.address, true);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr3.address, true);
+
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor];
+
+        // Call the updateRewards function
+        const updateRewardsBatchTx = await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+        const updateRewardsBatchReceipt = await updateRewardsBatchTx.wait();
+        const events = updateRewardsBatchReceipt?.logs || [];
+
+        let numberOfFailedUpdates = 0;
+
+        for (const event of events) {
+            //'Wallet is not whitelisted'
+            if(event.fragment.name === "RewardUpdateFailed") {
+                expect(event.args[2]).to.equal('Wallet has been blacklisted');
+                numberOfFailedUpdates++;
+            }
+        }
+        //There should be 3 events where the wallets are blacklisted
+        expect(numberOfFailedUpdates).to.equal(3);
+    });
+
+    it("13.5. Should revert 2 internal updates because 2 wallets are blacklisted", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
     
-    it("13.1. Should update the rewards for a batch of non team wallets", async function () {
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, false, 0);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, false, 0);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, false, 0);
+
+        // Add the wallet to the blacklist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr1.address, true);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr2.address, true);
+
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor];
+        
+        // Call the updateRewards function
+        const updateRewardsBatchTx = await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+        const updateRewardsBatchReceipt = await updateRewardsBatchTx.wait();
+        const events = updateRewardsBatchReceipt?.logs || [];
+
+        let numberOfFailedUpdates = 0;
+        let numberOfSuccessfulUpdates = 0;
+
+        for (const event of events) {
+            //'Wallet is not whitelisted'
+            if(event.fragment.name === "RewardUpdateFailed") {
+                expect(event.args[2]).to.equal('Wallet has been blacklisted');
+                numberOfFailedUpdates++;
+            }
+            else if(event.fragment.name === "RewardUpdateSuccess") {
+                numberOfSuccessfulUpdates++;
+            }
+        }
+        //There should be 2 events where the wallets are blacklisted
+        expect(numberOfFailedUpdates).to.equal(2);
+
+        //There should be 1 event where the wallet is whitelisted
+        expect(numberOfSuccessfulUpdates).to.equal(1);
+    });
+
+    it("13.6. Should revert 1 internal update because 1 wallet is blacklisted", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+    
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, false, 0);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, false, 0);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, false, 0);
+        
+        // Add the wallet to the blacklist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr2.address, true);
+
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor];
+        
+        // Call the updateRewards function
+        const updateRewardsBatchTx = await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+        const updateRewardsBatchReceipt = await updateRewardsBatchTx.wait();
+        const events = updateRewardsBatchReceipt?.logs || [];
+
+        let numberOfFailedUpdates = 0;
+        let numberOfSuccessfulUpdates = 0;
+
+        for (const event of events) {
+            //'Wallet is not whitelisted'
+            if(event.fragment.name === "RewardUpdateFailed") {
+                expect(event.args[2]).to.equal('Wallet has been blacklisted');
+                numberOfFailedUpdates++;
+            }
+            else if(event.fragment.name === "RewardUpdateSuccess") {
+                numberOfSuccessfulUpdates++;
+            }
+        }
+        //There should be 1 events where the wallet is blacklisted
+        expect(numberOfFailedUpdates).to.equal(1);
+
+        //There should be 2 events where the wallet is whitelisted
+        expect(numberOfSuccessfulUpdates).to.equal(2);
+    });
+    
+    it("13.10. Should successfully update the rewards for a batch of non team wallets", async function () {
         const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
         
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, false, 0);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, false, 0);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, false, 0);
+
         const walletAddresses = [addr1.address, addr2.address, addr3.address];
 
         let totalRewards = 2884615384615384615384615;

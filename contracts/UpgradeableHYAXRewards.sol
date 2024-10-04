@@ -81,12 +81,12 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
     event BlacklistStatusUpdated(address _sender, address _walletAddress, bool _newStatus);
 
     /**
-     * @dev Emitted when rewards are updated for multiple wallets
-     * @param _sender The address that updated the rewards
-     * @param _walletAddresses An array of wallet addresses that had their rewards updated
-     * @param _hyaxHoldingAmounts An array of the updated HYAX holding amounts for each wallet
+     * @dev Emitted when a reward update is successful for a specific wallet
+     * @param _sender The address that attempted to update the rewards
+     * @param _walletAddress The address of the wallet for which the update was successful
+     * @param _hyaxReward The amount of HYAX rewards updated for the wallet
      */
-    event RewardsUpdated(address _sender, address[] _walletAddresses, uint256[] _hyaxHoldingAmounts);
+    event RewardUpdateSuccess(address _sender, address _walletAddress, uint256 _hyaxReward);
 
     /**
      * @dev Emitted when a reward update fails for a specific wallet
@@ -199,11 +199,11 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         bool isWhitelisted;                         // Flag indicating if the wallet is whitelisted
         bool isBlacklisted;                         // Flag indicating if the wallet is blacklisted
     }
-
-    uint256 public constant MAX_BATCH_SIZE_FOR_UPDATE_REWARDS = 100;
     
     uint256 public constant MIN_INTERVAL_FOR_UPDATE_REWARDS = 6 days;
 
+    uint8 public maximumBatchSizeForUpdateRewards = 100;
+    
     mapping(address => WalletData) public wallets;
 
     ////////////////// SMART CONTRACT CONSTRUCTOR /////////////////
@@ -548,7 +548,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
     function updateRewardsBatch(address[] calldata _walletAddresses, uint256[] calldata _hyaxRewards) public onlyOwnerOrRewardsUpdater nonReentrant {
         
         // Validate the batch size limit
-        require(_walletAddresses.length <= MAX_BATCH_SIZE_FOR_UPDATE_REWARDS, "Batch size exceeds limit. Max batch size is 100");
+        require(_walletAddresses.length <= maximumBatchSizeForUpdateRewards, "Batch size exceeds limit. Max batch size is 100");
         //console.log("Enters 1.1");
 
         // Validate the length of the arrays
@@ -561,16 +561,11 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
 
             //Try to update the rewards for the current wallet address
             try this.updateRewardsSingle(_walletAddresses[i], _hyaxRewards[i]) {
-                // Success case 
                 //console.log("Enters 1.4");
             } catch Error(string memory _errorMessage) {
                 emit RewardUpdateFailed(msg.sender, _walletAddresses[i], _errorMessage);
             }
-            //console.log("Enters 1.5");
         }
-        //console.log("Enters 1.6");
-        // Emit an event to notify that the rewards were updated
-        emit RewardsUpdated(msg.sender, _walletAddresses, _hyaxRewards);
     }
 
     /**
@@ -618,6 +613,8 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         // Update the current rewards amount for the wallet
         wallets[_walletAddress].currentRewardsAmount += _hyaxRewards;
         //console.log("Enters 2.11");
+
+        emit RewardUpdateSuccess(msg.sender, _walletAddress, _hyaxRewards);
     }
     
     /*
@@ -742,6 +739,15 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
     function updateHyaxTokenAddress(address _hyaxTokenAddress) onlyOwner() public {
         hyaxTokenAddress = _hyaxTokenAddress;
         hyaxToken = ERC20TokenInterface(hyaxTokenAddress);
+    }
+
+    /**
+     * @notice Updates the maximum batch size for update rewards
+     * @dev This function can only be called by the owner
+     * @param _maximumBatchSizeForUpdateRewards The maximum batch size for update rewards
+     */
+    function updateMaximumBatchSizeForUpdateRewards(uint8 _maximumBatchSizeForUpdateRewards) onlyOwner() public {
+        maximumBatchSizeForUpdateRewards = _maximumBatchSizeForUpdateRewards;
     }
 
      /**
