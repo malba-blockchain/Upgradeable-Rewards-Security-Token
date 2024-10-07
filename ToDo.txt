@@ -254,12 +254,7 @@ npx hardhat run scripts/updateWeeklyRewards.ts
 -Create a single transaction for updates and send it 
 --Set up connection to write to smart contract basic test like update whitelisteraddress 
 --Setup single update transaction DONE
---Setup batch transaction  
-
-
-CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-
-There is an error in the batch update. But the single update works perfectly. Perhaps the type of parameter?
+--Setup batch transaction DONE
 
 0x6Fbc023ACCBA56c1b32bDaFA2F27D4cd58145AB1 I  
 0x9a4B007a10E1d1EC63157c8D69eBa76F30B4a2B4 I
@@ -277,37 +272,63 @@ There is an error in the batch update. But the single update works perfectly. Pe
 -Fund smart contract with reward tokens after having already funded the first time DONE
 
 -updateRewardsSingle non team wallets
-12.1. Fail because its not in whitelist DONE
-12.2. Fail because is blacklisted DONE
-12.3. Fail because rewards exceed the weekly limit DONE
-12.4. Fail because there are no enough tokens in the contract for rewards DONE
+12.1. Revert because its not in whitelist DONE
+12.2. Revert because is blacklisted DONE
+12.3. Revert because rewards exceed the weekly limit DONE
+12.4. Revert because there are no enough tokens in the contract for rewards DONE
 12.5. Successfull update DONE
-12.6. Fail because tried to do it in less than 1 week DONE
+12.6. Revert because tried to do it in less than 1 week DONE
 
 
 -updateRewardsBatch non team wallets
-13.1. Fail all 3 updates because wallets are not whitelisted DONE
-13.2. Fail only 2 updates because wallets are not whitelisted DONE
-13.3. Fail only 1 update because the wallet is not whitelisted DONE
-13.4. Fail all 3 updates because wallets are blacklisted DONE
-13.5. Fail only 2 updates because wallets are blacklisted DONE
-13.6. Fail only 1 update because the wallet is blacklisted DONE
-13.7. Fail because the rewards exceed the weekly limit 
-13.8. Fail because the batch exceeds the maximum size defined for updates 
-13.9. Fail because there are not enough tokens in the contract for rewards 
-13.10. Fail because there is array mismatch 
-13.11. Successful full update 
-13.12. Fail because tried to do it in less than 1 week 
+13.1. Revert all 3 updates because wallets are not whitelisted DONE
+13.2. Revert only 2 updates because wallets are not whitelisted DONE
+13.3. Revert only 1 update because the wallet is not whitelisted DONE
+13.4. Revert all 3 updates because wallets are blacklisted DONE
+13.5. Revert only 2 updates because wallets are blacklisted DONE
+13.6. Revert only 1 update because the wallet is blacklisted DONE
+13.7. Revert because the rewards exceed the weekly limit DONE
+13.8. Revert because the batch exceeds the maximum size defined for updates DONE
+13.9. Revert because there are not enough tokens in the smart contract for rewards DONE
+13.10. Revert because there is array mismatch DONE
+13.11. Successful full update DONE
+13.12. Revert because tried to do it in less than 1 week DONE
 
 
 -withdrawRewardTokens non team wallets
-14.1. Fail because funding has not started yet DONE
-14.2. Fail because wallet is not whitelisted DONE
-14.3. Fail because wallet is blacklisted DONE
-14.4. Fail because there are not rewards available for that wallet DONE
-14.5. Fail because there are not tokens in the contract to withdraw DONE
+14.1. Revert because funding has not started yet DONE
+14.2. Revert because wallet is not whitelisted DONE
+14.3. Revert because wallet is blacklisted DONE
+14.4. Revert because there are not rewards available for that wallet DONE
+14.5. Revert because there are not tokens in the contract to withdraw DONE
 14.6. Successfully withdraw reward tokens DONE
-14.7. Fail because all reward tokens have been withdrawn DONE
+14.7. Revert because all reward tokens have been withdrawn DONE
+
+
+CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+
+TEST CASES
+-updateRewardsSingle for team wallets DONE
+-updateRewardsBatch for team wallets DONE
+-withdraw rewards for team wallets DONE
+
+-calculateYearForTeamTokens: Fix the days on the testing. I.e. Day 1 - Day 364
+
+
+-withdrawTokensToBurn
+-updateWhiteListerAddress
+-updateRewardsUpdaterAddress
+-updateHyaxTokenAddress
+-pause
+-unpause
+-transferOwnership
+
+
+UPDATED 
+1. Blacklist also for the token smart contract.
+
+2. Capacidad de restaurar los tokens de una wallet de un miembro del equipo en caso de perdida.
+Add wallet & remove wallet
 
 
 FAIL CASES
@@ -317,16 +338,8 @@ If the wallet gets updated from whitelist to false, its possible to add it again
 
 Run test cases with for loops and increasing evm time to simulate the end of the days.
 
--updateRewardsSingle for team wallets
--updateRewardsBatch for team wallets
--calculateYearForTeamTokens
--withdrawTokensToBurn
--updateWhiteListerAddress
--updateRewardsUpdaterAddress
--updateHyaxTokenAddress
--pause
--unpause
--transferOwnership
+DON'T FORGET
+Updates are made based on the tokens of a week ago.
 
 
 ---------INITIAL LOCAL DEPLOYMENT---------

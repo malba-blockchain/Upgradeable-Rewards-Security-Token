@@ -2798,8 +2798,147 @@ describe("Testing Use Case #13: Update rewards for a batch of non team wallets",
         //There should be 2 events where the wallet is whitelisted
         expect(numberOfSuccessfulUpdates).to.equal(2);
     });
+
+     it("13.7. Should revert because the rewards to deliver exceed the weekly limit", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
     
-    it("13.10. Should successfully update the rewards for a batch of non team wallets", async function () {
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, false, 0);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, false, 0);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, false, 0);
+
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        //The last wallet has rewards that exceed the weekly limit by 10%
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*1.1) / divisor) * divisor]; 
+
+          // Call the updateRewards function
+          const updateRewardsBatchTx = await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+          const updateRewardsBatchReceipt = await updateRewardsBatchTx.wait();
+          const events = updateRewardsBatchReceipt?.logs || [];
+  
+          let numberOfFailedUpdates = 0;
+          let numberOfSuccessfulUpdates = 0;
+  
+          for (const event of events) {
+              //'Wallet is not whitelisted'
+              if(event.fragment.name === "RewardUpdateFailed") {
+                  expect(event.args[2]).to.equal('A single wallet cannot have rewards higher than the weekly limit');
+                  numberOfFailedUpdates++;
+              }
+              else if(event.fragment.name === "RewardUpdateSuccess") {
+                  numberOfSuccessfulUpdates++;
+              }
+          }
+          //There should be 1 events where the wallet is blacklisted
+          expect(numberOfFailedUpdates).to.equal(1);
+  
+          //There should be 2 events where the wallet is whitelisted
+          expect(numberOfSuccessfulUpdates).to.equal(2);
+    });
+
+    it("13.8. Revert because the batch exceeds the maximum batch size defined for updates", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+    
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, false, 0);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, false, 0);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, false, 0);
+
+        //Update the maximum batch size for update rewards
+        await upgradeableHYAXRewards.connect(owner).updateMaximumBatchSizeForUpdateRewards(2);
+
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor];
+
+        // Call the updateRewards function
+        await expect(
+            upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards)
+        ).to.be.revertedWith('Batch size exceeds the defined limit');
+    });
+
+    it("13.9. Should revert because there are not enough tokens in the smart contract to fund the rewards", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+    
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, false, 0);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, false, 0);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, false, 0);
+
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        //The last wallet has rewards that exceed the weekly limit by 10%
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor]; 
+
+        //Withdraw all the reward tokens from the smart contract 
+        const withdrawAmount = ethers.parseUnits("1000000000", 18); //(1B) 1,000,000,000 reward Tokens
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.withdrawTokensToBurn(2, withdrawAmount);
+
+          // Call the updateRewards function
+          const updateRewardsBatchTx = await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+          const updateRewardsBatchReceipt = await updateRewardsBatchTx.wait();
+          const events = updateRewardsBatchReceipt?.logs || [];
+            
+          let numberOfFailedUpdates = 0;
+          let numberOfSuccessfulUpdates = 0;
+  
+          for (const event of events) {
+              //'Wallet is not whitelisted'
+              if(event.fragment.name === "RewardUpdateFailed") {
+                  expect(event.args[2]).to.equal('Insufficient reward tokens to distribute as rewards');
+                  numberOfFailedUpdates++;
+              }
+              else if(event.fragment.name === "RewardUpdateSuccess") {
+                  numberOfSuccessfulUpdates++;
+              }
+          }
+          //There should be 3 events where the update reverted
+          expect(numberOfFailedUpdates).to.equal(3);
+  
+          //There should be 0 events where the update was successful
+          expect(numberOfSuccessfulUpdates).to.equal(0);
+    });
+
+    it("13.10. Should revert because there is an array mismatch", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+    
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, false, 0);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, false, 0);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, false, 0);
+
+        const walletAddresses = [addr1.address, addr2.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        //The last wallet has rewards that exceed the weekly limit by 10%
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor]; 
+
+        // Call the updateRewards function
+        await expect(
+            upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards)
+        ).to.be.revertedWith('Array lengths must match');
+    });
+
+    
+    it("13.11. Should successfully update the rewards for a batch of non team wallets", async function () {
         const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
         
         //Add the whitelisted addresses
@@ -2835,6 +2974,52 @@ describe("Testing Use Case #13: Update rewards for a batch of non team wallets",
             console.log("   [Log]: Updated wallet lastRewardsUpdateTime: ", lastRewardsUpdateTime);
         }
     });
+
+    it("13.12. Should revert because tried to update the rewards of a wallet in less than 1 week", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, false, 0);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, false, 0);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, false, 0);
+
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        //The last wallet has rewards that exceed the weekly limit by 10%
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor]; 
+
+        //Initial successful update of wallet rewards
+        await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+
+          // Call the updateRewards function
+          const updateRewardsBatchTx = await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+          const updateRewardsBatchReceipt = await updateRewardsBatchTx.wait();
+          const events = updateRewardsBatchReceipt?.logs || [];
+            
+          let numberOfFailedUpdates = 0;
+          let numberOfSuccessfulUpdates = 0;
+  
+          for (const event of events) {
+              //'Wallet is not whitelisted'
+              if(event.fragment.name === "RewardUpdateFailed") {
+                  expect(event.args[2]).to.equal('Too soon to update rewards for this wallet');
+                  numberOfFailedUpdates++;
+              }
+              else if(event.fragment.name === "RewardUpdateSuccess") {
+                  numberOfSuccessfulUpdates++;
+              }
+          }
+          //There should be 3 events where the update reverted
+          expect(numberOfFailedUpdates).to.equal(3);
+  
+          //There should be 0 events where the update was successful
+          expect(numberOfSuccessfulUpdates).to.equal(0);
+    });
+
 });
 
 describe("Testing Use Case #14: Withdraw Rewards Tokens of non team wallets", function () {
@@ -3077,6 +3262,1207 @@ describe("Testing Use Case #14: Withdraw Rewards Tokens of non team wallets", fu
         //Calculate reward tokens that are currently left. Margin error of 160 tokens due to rounding
         const rewardTokensLeftToWithdraw = await upgradeableHYAXRewards.REWARD_TOKENS_TOTAL() - await upgradeableHYAXRewards.rewardTokensWithdrawn();
         console.log("   [Log]: RewardTokensLeftToWithdraw:", ethers.formatEther(rewardTokensLeftToWithdraw.toString())); 
-
     });
+});
+
+
+describe("Testing Use Case #15: Update rewards for a single team wallet", function () {
+    async function deployUpgradeableHYAXRewardsFixture() {
+        const [owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress ] = await ethers.getSigners();
+        
+        //Deploy the HYAX token mock
+        const hyaxToken = await ethers.deployContract("HYAXToken");
+
+        //Deploy the UpgradeableHYAXRewards contract
+        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+
+        // Update the whitelister address
+        await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
+
+        // Update the rewards updater address
+        await upgradeableHYAXRewards.connect(owner).updateRewardsUpdaterAddress(rewardsUpdaterAddress.address);
+
+        // Fund the smart contract with reward tokens
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 reward Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.fundSmartContract(2, fundingAmount);
+
+        // Fixtures can return anything you consider useful for your tests
+        return { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress };
+    }
+
+    it("15.1. Should revert the update of the rewards because the wallet is not whitelisted", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const walletAddress = addr1.address;
+        const rewardAmount = "2884615000000000000000000";
+
+        // Try to update the rewards of a non whitelisted wallet
+        await expect(
+            upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(walletAddress, rewardAmount)
+        ).to.be.revertedWith('Wallet is not whitelisted');
+    });
+
+    it("15.2. Should revert the update of the rewards because the wallet is blacklisted", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const walletAddress = addr1.address;
+        const rewardAmount = "2884615000000000000000000";
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        // Add the team wallet to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+
+        // Add the wallet to the blacklist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr1.address, true);
+
+        // Try to update the rewards of a blacklisted wallet
+        await expect(
+            upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(walletAddress, rewardAmount)
+        ).to.be.revertedWith('Wallet has been blacklisted');
+    });
+
+    it("15.3. Should revert the update of the rewards because the rewards exceed the weekly limit", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const walletAddress = addr1.address;
+        const rewardAmount = "2884616000000000000000000";
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        // Add the team wallet to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+
+        // Try to update the rewards of a wallet that exceeds the weekly limit
+        await expect(
+            upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(walletAddress, rewardAmount)
+        ).to.be.revertedWith('A single wallet cannot have rewards higher than the weekly limit');
+    });
+
+    it("15.4. Should revert the update of the rewards because there are not enough reward tokens in the smart contract", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const walletAddress = addr1.address;
+        const rewardAmount = "2884615000000000000000000";
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        // Add the team wallet to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+
+        //Withdraw all the reward tokens from the smart contract
+        await upgradeableHYAXRewards.connect(owner).withdrawTokensToBurn(2, ethers.parseUnits("1000000000", 18));
+        
+        // Try to update the rewards of a wallet
+        await expect(
+            upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(walletAddress, rewardAmount)
+        ).to.be.revertedWith('Insufficient reward tokens to distribute as rewards');
+    });
+
+    it("15.5. Should update the rewards for a single wallet", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const walletAddress = addr1.address;
+        const rewardAmount = "2884615000000000000000000";
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, true, oneMillionTokens);
+
+        // Call the updateRewards function
+        await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(walletAddress, rewardAmount);
+
+        const [ hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, 
+            currentRewardsAmount, rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
+            lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
+            = await upgradeableHYAXRewards.wallets(walletAddress);
+        
+        console.log("\n   [Log]: Updated wallet: ", walletAddress);
+        console.log("   [Log]: Updated wallet totalHyaxRewardsAmount: ", totalHyaxRewardsAmount);
+        console.log("   [Log]: Updated wallet currentRewardsAmount: ", currentRewardsAmount);
+        console.log("   [Log]: Updated wallet rewardsWithdrawn: ", rewardsWithdrawn);
+        console.log("   [Log]: Updated wallet lastRewardsWithdrawalTime: ", lastRewardsWithdrawalTime);
+        console.log("   [Log]: Updated wallet lastRewardsUpdateTime: ", lastRewardsUpdateTime);
+
+        expect(currentRewardsAmount).to.equal(rewardAmount);
+    });
+
+    it("15.6. Should revert the update of the rewards because tried to update rewards before the minimum interval", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const walletAddress = addr1.address;
+        const rewardAmount = "2884615000000000000000000";
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+
+        // Call the updateRewards function
+        await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(walletAddress, rewardAmount);
+
+        // Try to update the rewards of a wallet before the minimum interval
+        await expect(
+            upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(walletAddress, rewardAmount)
+        ).to.be.revertedWith('Too soon to update rewards for this wallet');
+    });
+});
+
+
+describe("Testing Use Case #16: Update rewards for a batch of team wallets", function () {
+    async function deployUpgradeableHYAXRewardsFixture() {
+        const [owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress ] = await ethers.getSigners();
+        
+        //Deploy the HYAX token mock
+        const hyaxToken = await ethers.deployContract("HYAXToken");
+
+        //Deploy the UpgradeableHYAXRewards contract
+        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+
+        // Update the whitelister address
+        await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
+
+        // Update the rewards updater address
+        await upgradeableHYAXRewards.connect(owner).updateRewardsUpdaterAddress(rewardsUpdaterAddress.address);
+
+        // Fund the smart contract with reward tokens
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 reward Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.fundSmartContract(2, fundingAmount);
+        // Fixtures can return anything you consider useful for your tests
+        return { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress };
+    }
+
+    it("16.1. Should revert all 3 internal updates because the team wallets are not whitelisted", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+    
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor];
+        
+        // Call the updateRewards function
+        const updateRewardsBatchTx = await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+        const updateRewardsBatchReceipt = await updateRewardsBatchTx.wait();
+        const events = updateRewardsBatchReceipt?.logs || [];
+
+        let numberOfFailedUpdates = 0;
+
+        for (const event of events) {
+            //'Wallet is not whitelisted'
+            if(event.fragment.name === "RewardUpdateFailed") {
+                expect(event.args[2]).to.equal('Wallet is not whitelisted');
+                numberOfFailedUpdates++;
+            }
+        }
+        //There should be 3 events where the wallet is not whitelisted
+        expect(numberOfFailedUpdates).to.equal(3);
+    });
+
+    it("16.2. Should revert only 2 internal updates because the team wallets are not whitelisted", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+    
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        //Add only one wallet to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, true, oneMillionTokens);
+
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor];
+
+        // Call the updateRewards function
+        const updateRewardsBatchTx = await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+        const updateRewardsBatchReceipt = await updateRewardsBatchTx.wait();
+        const events = updateRewardsBatchReceipt?.logs || [];
+
+        let numberOfFailedUpdates = 0;
+        let numberOfSuccessfulUpdates = 0;
+
+        for (const event of events) {
+            //'Wallet is not whitelisted'
+            if(event.fragment.name === "RewardUpdateFailed") {
+                expect(event.args[2]).to.equal('Wallet is not whitelisted');
+                numberOfFailedUpdates++;
+            }
+            else if(event.fragment.name === "RewardUpdateSuccess") {
+                numberOfSuccessfulUpdates++;
+            }
+        }
+        //There should be 2 events where the wallet is not whitelisted
+        expect(numberOfFailedUpdates).to.equal(2);
+
+        //There should be 1 event where the wallet is whitelisted
+        expect(numberOfSuccessfulUpdates).to.equal(1);
+    });
+
+    it("16.3. Should revert only 1 internal update because the team wallet is not whitelisted", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+    
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        //Add only two  wallets to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, true, oneMillionTokens);
+ 
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor];
+
+        // Call the updateRewards function
+        const updateRewardsBatchTx = await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+        const updateRewardsBatchReceipt = await updateRewardsBatchTx.wait();
+        const events = updateRewardsBatchReceipt?.logs || [];
+
+        let numberOfFailedUpdates = 0;
+        let numberOfSuccessfulUpdates = 0;
+
+        for (const event of events) {
+            //'Wallet is not whitelisted'
+            if(event.fragment.name === "RewardUpdateFailed") {
+                expect(event.args[2]).to.equal('Wallet is not whitelisted');
+                numberOfFailedUpdates++;
+            }
+            else if(event.fragment.name === "RewardUpdateSuccess") {
+                numberOfSuccessfulUpdates++;
+            }
+        }
+        //There should be 2 events where the wallet is not whitelisted
+        expect(numberOfFailedUpdates).to.equal(1);
+
+        //There should be 1 event where the wallet is whitelisted
+        expect(numberOfSuccessfulUpdates).to.equal(2);
+    });
+
+    it("16.4. Should revert all 3 internal updates because the team wallets are blacklisted", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, true, oneMillionTokens);
+
+        // Add the wallet to the blacklist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr1.address, true);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr2.address, true);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr3.address, true);
+
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor];
+
+        // Call the updateRewards function
+        const updateRewardsBatchTx = await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+        const updateRewardsBatchReceipt = await updateRewardsBatchTx.wait();
+        const events = updateRewardsBatchReceipt?.logs || [];
+
+        let numberOfFailedUpdates = 0;
+
+        for (const event of events) {
+            //'Wallet is not whitelisted'
+            if(event.fragment.name === "RewardUpdateFailed") {
+                expect(event.args[2]).to.equal('Wallet has been blacklisted');
+                numberOfFailedUpdates++;
+            }
+        }
+        //There should be 3 events where the wallets are blacklisted
+        expect(numberOfFailedUpdates).to.equal(3);
+    });
+
+    it("16.5. Should revert 2 internal updates because 2 team wallets are blacklisted", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+    
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, true, oneMillionTokens);
+
+        // Add the wallet to the blacklist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr1.address, true);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr2.address, true);
+
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor];
+        
+        // Call the updateRewards function
+        const updateRewardsBatchTx = await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+        const updateRewardsBatchReceipt = await updateRewardsBatchTx.wait();
+        const events = updateRewardsBatchReceipt?.logs || [];
+
+        let numberOfFailedUpdates = 0;
+        let numberOfSuccessfulUpdates = 0;
+
+        for (const event of events) {
+            //'Wallet is not whitelisted'
+            if(event.fragment.name === "RewardUpdateFailed") {
+                expect(event.args[2]).to.equal('Wallet has been blacklisted');
+                numberOfFailedUpdates++;
+            }
+            else if(event.fragment.name === "RewardUpdateSuccess") {
+                numberOfSuccessfulUpdates++;
+            }
+        }
+        //There should be 2 events where the wallets are blacklisted
+        expect(numberOfFailedUpdates).to.equal(2);
+
+        //There should be 1 event where the wallet is whitelisted
+        expect(numberOfSuccessfulUpdates).to.equal(1);
+    });
+
+    it("16.6. Should revert 1 internal update because 1 team wallet is blacklisted", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+    
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, true, oneMillionTokens);
+        
+        // Add the wallet to the blacklist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr2.address, true);
+
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor];
+        
+        // Call the updateRewards function
+        const updateRewardsBatchTx = await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+        const updateRewardsBatchReceipt = await updateRewardsBatchTx.wait();
+        const events = updateRewardsBatchReceipt?.logs || [];
+
+        let numberOfFailedUpdates = 0;
+        let numberOfSuccessfulUpdates = 0;
+
+        for (const event of events) {
+            //'Wallet is not whitelisted'
+            if(event.fragment.name === "RewardUpdateFailed") {
+                expect(event.args[2]).to.equal('Wallet has been blacklisted');
+                numberOfFailedUpdates++;
+            }
+            else if(event.fragment.name === "RewardUpdateSuccess") {
+                numberOfSuccessfulUpdates++;
+            }
+        }
+        //There should be 1 events where the wallet is blacklisted
+        expect(numberOfFailedUpdates).to.equal(1);
+
+        //There should be 2 events where the wallet is whitelisted
+        expect(numberOfSuccessfulUpdates).to.equal(2);
+    });
+
+     it("16.7. Should revert because the rewards to deliver exceed the weekly limit", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+    
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, true, oneMillionTokens);
+
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        //The last wallet has rewards that exceed the weekly limit by 10%
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*1.1) / divisor) * divisor]; 
+
+          // Call the updateRewards function
+          const updateRewardsBatchTx = await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+          const updateRewardsBatchReceipt = await updateRewardsBatchTx.wait();
+          const events = updateRewardsBatchReceipt?.logs || [];
+  
+          let numberOfFailedUpdates = 0;
+          let numberOfSuccessfulUpdates = 0;
+  
+          for (const event of events) {
+              //'Wallet is not whitelisted'
+              if(event.fragment.name === "RewardUpdateFailed") {
+                  expect(event.args[2]).to.equal('A single wallet cannot have rewards higher than the weekly limit');
+                  numberOfFailedUpdates++;
+              }
+              else if(event.fragment.name === "RewardUpdateSuccess") {
+                  numberOfSuccessfulUpdates++;
+              }
+          }
+          //There should be 1 events where the wallet is blacklisted
+          expect(numberOfFailedUpdates).to.equal(1);
+  
+          //There should be 2 events where the wallet is whitelisted
+          expect(numberOfSuccessfulUpdates).to.equal(2);
+    });
+
+    it("16.8. Revert because the batch exceeds the maximum batch size defined for updates", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+    
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, true, oneMillionTokens);
+
+        //Update the maximum batch size for update rewards
+        await upgradeableHYAXRewards.connect(owner).updateMaximumBatchSizeForUpdateRewards(2);
+
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor];
+
+        // Call the updateRewards function
+        await expect(
+            upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards)
+        ).to.be.revertedWith('Batch size exceeds the defined limit');
+    });
+
+    it("16.9. Should revert because there are not enough tokens in the smart contract to fund the rewards", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+    
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, true, oneMillionTokens);
+
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        //The last wallet has rewards that exceed the weekly limit by 10%
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor]; 
+
+        //Withdraw all the reward tokens from the smart contract 
+        const withdrawAmount = ethers.parseUnits("1000000000", 18); //(1B) 1,000,000,000 reward Tokens
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.withdrawTokensToBurn(2, withdrawAmount);
+
+          // Call the updateRewards function
+          const updateRewardsBatchTx = await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+          const updateRewardsBatchReceipt = await updateRewardsBatchTx.wait();
+          const events = updateRewardsBatchReceipt?.logs || [];
+            
+          let numberOfFailedUpdates = 0;
+          let numberOfSuccessfulUpdates = 0;
+  
+          for (const event of events) {
+              //'Wallet is not whitelisted'
+              if(event.fragment.name === "RewardUpdateFailed") {
+                  expect(event.args[2]).to.equal('Insufficient reward tokens to distribute as rewards');
+                  numberOfFailedUpdates++;
+              }
+              else if(event.fragment.name === "RewardUpdateSuccess") {
+                  numberOfSuccessfulUpdates++;
+              }
+          }
+          //There should be 3 events where the update reverted
+          expect(numberOfFailedUpdates).to.equal(3);
+  
+          //There should be 0 events where the update was successful
+          expect(numberOfSuccessfulUpdates).to.equal(0);
+    });
+
+    it("16.10. Should revert because there is an array mismatch", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+    
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, true, oneMillionTokens);
+
+        const walletAddresses = [addr1.address, addr2.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        //The last wallet has rewards that exceed the weekly limit by 10%
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor]; 
+
+        // Call the updateRewards function
+        await expect(
+            upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards)
+        ).to.be.revertedWith('Array lengths must match');
+    });
+
+    
+    it("16.11. Should successfully update the rewards for a batch of team wallets", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, true, oneMillionTokens);
+
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor];
+
+        console.log("   [Log]: walletAddresses: ", walletAddresses);
+        console.log("   [Log]: walletRewards: ", walletRewards);
+        
+        // Call the updateRewards function
+        await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+
+        for (const walletAddress of walletAddresses) {
+            const [ hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, 
+                currentRewardsAmount, rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
+                lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
+                = await upgradeableHYAXRewards.wallets(walletAddress);
+
+            console.log("\n   [Log]: Updated wallet: ", walletAddress);
+            console.log("   [Log]: Updated wallet totalHyaxRewardsAmount: ", totalHyaxRewardsAmount);
+            console.log("   [Log]: Updated wallet currentRewardsAmount: ", currentRewardsAmount);
+            console.log("   [Log]: Updated wallet rewardsWithdrawn: ", rewardsWithdrawn);
+            console.log("   [Log]: Updated wallet lastRewardsWithdrawalTime: ", lastRewardsWithdrawalTime);
+            console.log("   [Log]: Updated wallet lastRewardsUpdateTime: ", lastRewardsUpdateTime);
+        }
+    });
+
+    it("16.12. Should revert because tried to update the rewards of a team wallet in less than 1 week", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, true, oneMillionTokens);
+
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        //The last wallet has rewards that exceed the weekly limit by 10%
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor]; 
+
+        //Initial successful update of wallet rewards
+        await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+
+          // Call the updateRewards function
+          const updateRewardsBatchTx = await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+          const updateRewardsBatchReceipt = await updateRewardsBatchTx.wait();
+          const events = updateRewardsBatchReceipt?.logs || [];
+            
+          let numberOfFailedUpdates = 0;
+          let numberOfSuccessfulUpdates = 0;
+  
+          for (const event of events) {
+              //'Wallet is not whitelisted'
+              if(event.fragment.name === "RewardUpdateFailed") {
+                  expect(event.args[2]).to.equal('Too soon to update rewards for this wallet');
+                  numberOfFailedUpdates++;
+              }
+              else if(event.fragment.name === "RewardUpdateSuccess") {
+                  numberOfSuccessfulUpdates++;
+              }
+          }
+          //There should be 3 events where the update reverted
+          expect(numberOfFailedUpdates).to.equal(3);
+  
+          //There should be 0 events where the update was successful
+          expect(numberOfSuccessfulUpdates).to.equal(0);
+    });
+});
+
+
+describe("Testing Use Case #17: Withdraw Rewards Tokens of team wallets", function () {
+    async function deployUpgradeableHYAXRewardsFixture() {
+        const [owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress ] = await ethers.getSigners();
+        
+        //Deploy the HYAX token mock
+        const hyaxToken = await ethers.deployContract("HYAXToken");
+
+        //Deploy the UpgradeableHYAXRewards contract
+        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+
+        // Update the whitelister address
+        await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
+
+        // Update the rewards updater address
+        await upgradeableHYAXRewards.connect(owner).updateRewardsUpdaterAddress(rewardsUpdaterAddress.address);
+
+        // Fund the smart contract with reward tokens
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 reward Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        // Fixtures can return anything you consider useful for your tests
+        return { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress };
+    }
+    
+    it("17.1. Should revert if trying to withdraw before being funded", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress  } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+
+        // Try to withdraw growth tokens 
+        await expect(
+            upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens()
+        ).to.be.revertedWith('Funding has not started yet, no tokens to withdraw');
+    });
+
+    it("17.2. Should revert if trying to withdraw without being whitelisted", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.connect(owner).approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        // Try to withdraw growth tokens
+        await expect(
+            upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens()
+        ).to.be.revertedWith('Wallet is not whitelisted');
+    });
+
+    it("17.3. Should revert if trying to withdraw reward tokens while being blacklisted", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.connect(owner).approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+
+        // Add the wallet to the blacklist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr1.address, true);
+
+        // Try to withdraw reward tokens
+        await expect(
+            upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens()
+        ).to.be.revertedWith('Wallet has been blacklisted');
+    });
+
+    it("17.4. Should revert if trying to withdraw reward tokens before being distributed by the rewards updater to the wallet", async function () {
+        const {  upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.connect(owner).approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        // Add the wallet to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+
+        // Try to withdraw reward tokens
+        await expect(
+            upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens()
+        ).to.be.revertedWith('No rewards available to withdraw');
+    });
+
+    it("17.5. Should revert if trying to withdraw team tokens without enough reward tokens in the contract", async function () {
+        const {  upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.connect(owner).approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        // Add the wallet to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+
+        // Update the rewards for the wallet
+        const rewardAmount = "1442307000000000000000000"; //Equivalent to 1'442.307 M Tokens or 50% of the total reward tokens per week
+        await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(addr1.address, rewardAmount);
+
+        // Withdraw all reward tokens
+        await upgradeableHYAXRewards.connect(owner).withdrawTokensToBurn(2, fundingAmount);
+
+        // Try to withdraw reward tokens
+        await expect(
+            upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens()
+        ).to.be.revertedWith('Insufficient reward tokens in the contract to withdraw');
+    });
+
+    it("17.6. Should withdraw the correct amount of team tokens after being distributed by the rewards updater", async function () {
+        const {  upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+        
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.connect(owner).approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        // Add the wallet to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+        
+        // Update the rewards for the wallet
+        const rewardAmount = "1442307000000000000000000"; //Equivalent to 1'442.307 M Tokens or 50% of the total reward tokens per week
+        await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(addr1.address, rewardAmount);
+
+        // Get the initial balance of the smart contract
+        const prevSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
+        console.log("\n   [Log]: PrevSmartContractBalance:", prevSmartContractBalance);
+
+        // Get the initial balance of the wallet
+        const prevWalletTokenBalance = await hyaxToken.balanceOf(addr1.address);
+        console.log("   [Log]: PrevWalletTokenBalance:", prevWalletTokenBalance);
+
+        // Check if the correct amount of tokens was withdrawn for the wallet
+        const [ , , totalHyaxRewardsAmount1, currentRewardsAmount1, rewardsWithdrawn1, , , , , , , ]
+            = await upgradeableHYAXRewards.wallets(addr1.address);
+
+        // Withdraw rewards tokens for the wallet  
+        await upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens();
+
+        // Check if the correct amount of tokens was withdrawn for the wallet
+        const [ , , totalHyaxRewardsAmount2, currentRewardsAmount2, rewardsWithdrawn2, , , , , , , ]
+            = await upgradeableHYAXRewards.wallets(addr1.address);
+
+        // Check if the correct amount of tokens was withdrawn
+        const rewardTokensWithdrawn = await upgradeableHYAXRewards.rewardTokensWithdrawn();
+        expect(rewardTokensWithdrawn).to.equal(rewardsWithdrawn2);
+        console.log("\n   [Log]: RewardTokensWithdrawn:", rewardsWithdrawn2);
+
+        // Check if the correct amount of tokens was withdrawn for the wallet
+        console.log("   [Log]: NewCurrentRewardsAmount:", currentRewardsAmount2);
+        console.log("   [Log]: PrevCurrentRewardsAmount:", currentRewardsAmount1);
+        expect(currentRewardsAmount1 - currentRewardsAmount2).to.equal(rewardAmount);
+        // Verify that the last withdrawal time was updated correctly
+        expect(totalHyaxRewardsAmount2).to.equal(rewardAmount);
+
+        // Check if the remaining tokens in the smart contract are correct
+        const rewardTokensInSmartContract = await upgradeableHYAXRewards.rewardTokensInSmartContract();
+        console.log("\n   [Log]: RewardTokensInSmartContract:", rewardTokensInSmartContract);
+        expect(rewardTokensInSmartContract).to.equal(fundingAmount - rewardTokensWithdrawn);
+
+        // Verify that the smart contract balance decreased by the correct amount
+        const newSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
+        console.log("   [Log]: NewSmartContractBalance:", newSmartContractBalance);
+        expect(prevSmartContractBalance - newSmartContractBalance).to.equal(rewardAmount);
+
+        // Check if the wallet balance increased by the correct amount
+        const newWalletTokenBalance = await hyaxToken.balanceOf(addr1.address);
+        console.log("\n   [Log]: NewWalletTokenBalance:", newWalletTokenBalance);
+        console.log("   [Log]: PrevWalletTokenBalance:", prevWalletTokenBalance);
+        expect(newWalletTokenBalance - prevWalletTokenBalance).to.equal(rewardAmount);
+    });
+
+    it("17.7. Should withdraw all reward tokens after being distributed by the rewards updater after 8 years", async function () {
+        const {  upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const fundingAmount = ethers.parseUnits("1200000000", 18); // Fund with (1,2 B) 1,200,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.connect(owner).approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        // Add the wallet 1 and wallet 2 to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+
+        const oneWeek = 7 * 24 * 60 * 60; // One week in seconds
+
+        const rewardAmount = "2884615000000000000000000"; //Equivalent to 2'884.615 M Tokens or 50% of the total reward tokens per week
+
+        //Run a for loop for 416 weeks to update the rewards for the wallet, simulating the rewards distribution for 8 years
+        for (let i = 0; i < 416; i++) {
+
+            await network.provider.send("evm_increaseTime", [oneWeek]);
+            await network.provider.send("evm_mine");
+
+            // Update the rewards for the wallet
+            await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(addr1.address, rewardAmount);
+
+            await upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens();
+            /*
+            console.log("   [Log]: Week:", i);
+            console.log("   [Log]: RewardTokensDistributed:", await upgradeableHYAXRewards.rewardTokensDistributed());
+            console.log("   [Log]: RewardTokensInSmartContract:", await upgradeableHYAXRewards.rewardTokensInSmartContract());
+            console.log("   [Log]: RewardTokensWithdrawn:", await upgradeableHYAXRewards.rewardTokensWithdrawn());
+            console.log("   [Log]: Total Reward Tokens:", await upgradeableHYAXRewards.REWARD_TOKENS_TOTAL());
+            */
+        }
+
+        //Calculate reward tokens that are currently left. Margin error of 160 tokens due to rounding
+        const rewardTokensLeftToDistribute = await upgradeableHYAXRewards.REWARD_TOKENS_TOTAL() - await upgradeableHYAXRewards.rewardTokensDistributed();
+        console.log("\n   [Log]: RewardTokensLeftToDistribute:", ethers.formatEther(rewardTokensLeftToDistribute.toString())); 
+        
+        //Calculate reward tokens that are currently left. Margin error of 160 tokens due to rounding
+        const rewardTokensLeftToWithdraw = await upgradeableHYAXRewards.REWARD_TOKENS_TOTAL() - await upgradeableHYAXRewards.rewardTokensWithdrawn();
+        console.log("   [Log]: RewardTokensLeftToWithdraw:", ethers.formatEther(rewardTokensLeftToWithdraw.toString())); 
+    });
+});
+
+describe("Testing Use Case #18: Calculate year for team tokens", function () {
+    async function deployUpgradeableHYAXRewardsFixture() {
+        const [owner, addr1, addr2] = await ethers.getSigners();
+
+        //Deploy the HYAX token mock
+        const hyaxToken = await ethers.deployContract("HYAXToken");
+
+        //Deploy the UpgradeableHYAXRewards contract
+        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+
+        // Fixtures can return anything you consider useful for your tests
+        return { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken };
+    }
+
+    it("18.1. Should return error if trying to calculate the year for team tokens before being funded", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        await expect(
+            upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens()
+        ).to.be.revertedWith('Team tokens funding has not started yet');
+    });
+
+    
+    it("18.2. Should return 0 if trying to calculate the year between 0 and 4 years of funding the team tokens", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.fundSmartContract(1, fundingAmount);
+
+        //Day 0: Immediatelly after funding should be 0
+        const yearForTeamTokens_immediatellyAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
+        expect(yearForTeamTokens_immediatellyAfterFunding).to.equal(0);   
+
+        // Less than one year in seconds
+        const lessThanOneYear = 364 * 24 * 60 * 60;
+
+        // Wait for the specified time period to elapse (simulate less than one year)
+        await network.provider.send("evm_increaseTime", [lessThanOneYear]);
+        await network.provider.send("evm_mine");
+
+        // Day 364: Less than one year after funding should be 0
+        const yearForTeamTokens_lessThanOneYearAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
+        expect(yearForTeamTokens_lessThanOneYearAfterFunding).to.equal(0);   
+
+        //One day
+        const oneDay = 1 * 24 * 60 * 60; 
+
+        // Wait for the specified time period to elapse (simulate one year)
+        await network.provider.send("evm_increaseTime", [oneDay]);
+        await network.provider.send("evm_mine");
+
+        // Day 365: One year after funding should be 0
+        const yearForTeamTokens_oneYearAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
+        expect(yearForTeamTokens_oneYearAfterFunding).to.equal(0);  
+
+        //Two years after funding should be 0
+        const oneYear = 1 * 365 * 24 * 60 * 60; 
+
+        // Wait for the specified time period to elapse (simulate one year)
+        await network.provider.send("evm_increaseTime", [oneYear]);
+        await network.provider.send("evm_mine");
+
+        // Day 730: Two years after funding should be 0
+        const yearForTeamTokens_twoYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
+        expect(yearForTeamTokens_twoYearsAfterFunding).to.equal(0);
+
+        // Wait for the specified time period to elapse (simulate two years)
+        await network.provider.send("evm_increaseTime", [oneYear]);
+        await network.provider.send("evm_mine");
+
+        // Day 1095: Three years after funding should be 0
+        const yearForTeamTokens_threeYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
+        expect(yearForTeamTokens_threeYearsAfterFunding).to.equal(0);  
+
+        // Wait for the specified time period to elapse (simulate less than year)
+        await network.provider.send("evm_increaseTime", [lessThanOneYear]);
+        await network.provider.send("evm_mine");
+
+        // Day 1459: Less than four years after funding should be 0
+        const yearForTeamTokens_lessThanFourYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
+        expect(yearForTeamTokens_lessThanFourYearsAfterFunding).to.equal(0);   
+    });
+    
+    
+    it("18.2. Should return 1 if trying to calculate the year between 4 and less than 5 years of funding the team tokens", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.fundSmartContract(1, fundingAmount);
+
+        //Four years after funding should be 1
+        const fourYears = 4 * 365 * 24 * 60 * 60; 
+
+        // Wait for the specified time period to elapse (simulate one year)
+        await network.provider.send("evm_increaseTime", [fourYears]);
+        await network.provider.send("evm_mine");
+
+        // Day 1460: Four years after funding should be 1
+        const yearForTeamTokens_fourYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
+        expect(yearForTeamTokens_fourYearsAfterFunding).to.equal(1);   
+
+        // Less than one year in seconds
+        const lessThanOneYear = 364 * 24 * 60 * 60;
+
+        // Wait for the specified time period to elapse (simulate one year)
+        await network.provider.send("evm_increaseTime", [lessThanOneYear]);
+        await network.provider.send("evm_mine");
+        
+        // Day 1460: Four years after funding should be 1
+        const yearForTeamTokens_lessThanFiveYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
+        expect(yearForTeamTokens_lessThanFiveYearsAfterFunding).to.equal(1);  
+    });
+
+    it("18.3. Should return 2 if trying to calculate the year between 5 and less than 6 years of funding the team tokens", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.fundSmartContract(1, fundingAmount);
+
+        //Five years after funding should be 2
+        const fiveYears = 5 * 365 * 24 * 60 * 60; 
+
+        // Wait for the specified time period to elapse (simulate five years)
+        await network.provider.send("evm_increaseTime", [fiveYears]);
+        await network.provider.send("evm_mine");
+
+        // Day 1460: Five years after funding should be 2
+        const yearForTeamTokens_fiveYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
+        expect(yearForTeamTokens_fiveYearsAfterFunding).to.equal(2);   
+
+        // Less than one year in seconds
+        const lessThanOneYear = 364 * 24 * 60 * 60;
+
+        // Wait for the specified time period to elapse (simulate one year)
+        await network.provider.send("evm_increaseTime", [lessThanOneYear]);
+        await network.provider.send("evm_mine");
+        
+        // Day 1460: Four years after funding should be 1
+        const yearForTeamTokens_lessThanSixYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
+        expect(yearForTeamTokens_lessThanSixYearsAfterFunding).to.equal(2);  
+    });
+
+    it("18.4. Should return 3 if trying to calculate the year between 6 and less than 7 years of funding the team tokens", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.fundSmartContract(1, fundingAmount);
+
+        //Six years after funding should be 3
+        const sixYears = 6 * 365 * 24 * 60 * 60; 
+
+        // Wait for the specified time period to elapse (simulate six years)
+        await network.provider.send("evm_increaseTime", [sixYears]);
+        await network.provider.send("evm_mine");
+
+        // Day 1460: Six years after funding should be 3
+        const yearForTeamTokens_sixYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
+        expect(yearForTeamTokens_sixYearsAfterFunding).to.equal(3);   
+
+        // Less than one year in seconds
+        const lessThanOneYear = 364 * 24 * 60 * 60;
+
+        // Wait for the specified time period to elapse (simulate one year)
+        await network.provider.send("evm_increaseTime", [lessThanOneYear]);
+        await network.provider.send("evm_mine");
+
+        // Day 1460: Seven years after funding should be 3
+        const yearForTeamTokens_lessThanSevenYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
+        expect(yearForTeamTokens_lessThanSevenYearsAfterFunding).to.equal(3);  
+    });
+
+    
+    it("18.5. Should return 4 if trying to calculate the year between 7 and less than 8 years of funding the team tokens", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.fundSmartContract(1, fundingAmount);
+
+        //Seven years after funding should be 4
+        const sevenYears = 7 * 365 * 24 * 60 * 60; 
+
+        // Wait for the specified time period to elapse (simulate seven years)
+        await network.provider.send("evm_increaseTime", [sevenYears]);
+        await network.provider.send("evm_mine");
+
+        // Day 1460: Six years after funding should be 3
+        const yearForTeamTokens_sevenYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
+        expect(yearForTeamTokens_sevenYearsAfterFunding).to.equal(4);   
+
+        // Less than one year in seconds
+        const lessThanOneYear = 364 * 24 * 60 * 60;
+
+        // Wait for the specified time period to elapse (simulate one year)
+        await network.provider.send("evm_increaseTime", [lessThanOneYear]);
+        await network.provider.send("evm_mine");
+        
+        // Day 1460: Seven years after funding should be 3
+        const yearForTeamTokens_lessThanEightYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
+        expect(yearForTeamTokens_lessThanEightYearsAfterFunding).to.equal(4);  
+    });
+
+    it("18.6. Should return 5 if trying to calculate the year between 8 and beyond years of funding the team tokens", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.fundSmartContract(1, fundingAmount);
+
+        //Eight years after funding should be 5
+        const eightYears = 8 * 365 * 24 * 60 * 60; 
+
+        // Wait for the specified time period to elapse (simulate eight years)
+        await network.provider.send("evm_increaseTime", [eightYears]);
+        await network.provider.send("evm_mine");
+
+        // Day 1460: Eight years after funding should be 5
+        const yearForTeamTokens_eightYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
+        expect(yearForTeamTokens_eightYearsAfterFunding).to.equal(5);   
+
+        // Less than one year in seconds
+        const lessThanOneYear = 364 * 24 * 60 * 60;
+
+        // Wait for the specified time period to elapse (simulate one year)
+        await network.provider.send("evm_increaseTime", [lessThanOneYear]);
+        await network.provider.send("evm_mine");
+        
+        // Day 1460: Less than nine years after funding should be 5
+        const yearForTeamTokens_lessThanNineYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
+        expect(yearForTeamTokens_lessThanNineYearsAfterFunding).to.equal(5);
+
+        // One year in seconds
+        const oneYear = 366 * 24 * 60 * 60;
+
+        // Wait for the specified time period to elapse (simulate one year)
+        await network.provider.send("evm_increaseTime", [oneYear]);
+        await network.provider.send("evm_mine");
+
+        // Day 1460: Nine years after funding should be 5
+        const yearForTeamTokens_tenYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
+        expect(yearForTeamTokens_tenYearsAfterFunding).to.equal(5);  
+
+        // Wait for the specified time period to elapse (simulate one year)
+        await network.provider.send("evm_increaseTime", [oneYear*2]);
+        await network.provider.send("evm_mine");
+
+        // Day 1460: Eleven years after funding should be 5
+        const yearForTeamTokens_elevenYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
+        expect(yearForTeamTokens_elevenYearsAfterFunding).to.equal(5);  
+        
+        // Wait for the specified time period to elapse (simulate one year)
+        await network.provider.send("evm_increaseTime", [oneYear*4]);
+        await network.provider.send("evm_mine");
+        
+        // Day 1460: Eleven years after funding should be 5
+        const yearForTeamTokens_thirteenYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
+        expect(yearForTeamTokens_thirteenYearsAfterFunding).to.equal(5);    
+    });
+
 });

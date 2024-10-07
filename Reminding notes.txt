@@ -4,11 +4,11 @@
 Lock: 4 years - 208 weeks
 ----
 Unlock roadmap
-Year 4: 20% / 20%
-Year 5: 20% / 40%
-Year 6: 20% / 60%
-Year 7: 20% / 80%
-Year 8: 20% / 100%
+Year 4: 20% / 20% - 1
+Year 5: 20% / 40% - 2
+Year 6: 20% / 60% - 3
+Year 7: 20% / 80% - 4
+Year 8: 20% / 100% - 5
 
 The locked % can be seen from the platform and while it's locked the team member can get rewards
 
@@ -235,10 +235,12 @@ Proxy also for the token smart contract?
 
 UPDATED
 
+Arbitrum blockchain y ethereum blockchain.
+
 1. Capacidad de restaurar los tokens de una wallet de un miembro del equipo en caso de perdida.
 Add wallet & remove wallet
 
-2. No existe fecha limite para reclamar los rewards de la wallet ni para los tokens de equipo.
+2. No existe fecha limite para reclamar los rewards de la wallet ni para los tokens de equipo. DONE
 
 3. Funcionalidad de quemar tokens en el smart contract XXXXXXX? No entra.
 
@@ -254,7 +256,7 @@ Hacer estimación con y sin proxy.
 
 ---------------------------------------------------------
 
-Arbitrum blockchain y ethereum blockchain.
+
 
 
 

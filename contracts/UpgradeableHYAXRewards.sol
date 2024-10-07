@@ -518,7 +518,15 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         emit TeamTokensWithdrawn(msg.sender, withdrawableAmount);
     }
 
+    /**
+     * @notice Calculates the year for team tokens based on the funding start time
+     * @dev This function calculates the year for team tokens based on the funding start time
+     * @return The year for team tokens as a uint8
+     */
     function calculateYearForTeamTokens() public view returns (uint8)  {
+
+        // Check if team tokens funding has started
+        require(teamTokensFundingStarted, "Team tokens funding has not started yet");
 
         uint256 timeElapsed = block.timestamp - teamTokensStartFundingTime;
 
@@ -548,11 +556,11 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
     function updateRewardsBatch(address[] calldata _walletAddresses, uint256[] calldata _hyaxRewards) public onlyOwnerOrRewardsUpdater nonReentrant {
         
         // Validate the batch size limit
-        require(_walletAddresses.length <= maximumBatchSizeForUpdateRewards, "Batch size exceeds limit. Max batch size is 100");
+        require(_walletAddresses.length <= maximumBatchSizeForUpdateRewards, "Batch size exceeds the defined limit");
         //console.log("Enters 1.1");
 
         // Validate the length of the arrays
-        require(_walletAddresses.length == _hyaxRewards.length, "Array lengths must match.");
+        require(_walletAddresses.length == _hyaxRewards.length, "Array lengths must match");
         //console.log("Enters 1.2");
 
         // Iterate through the list of wallets
@@ -592,7 +600,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
 
         // Ensure rewards don't exceed the weekly withdrawal limit
         require(_hyaxRewards <= REWARD_TOKENS_PER_WEEK, "A single wallet cannot have rewards higher than the weekly limit");
-        //console.log("Enters 2.6");
+        //console.log("Enters 2.6"); 
 
         // Check if there are sufficient tokens in the contract to distribute as rewards
         require(_hyaxRewards <= rewardTokensInSmartContract, "Insufficient reward tokens to distribute as rewards");
