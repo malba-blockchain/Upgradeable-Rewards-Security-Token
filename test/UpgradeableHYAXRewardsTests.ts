@@ -49,7 +49,7 @@ describe("Testing Use Case #1: Constructor", function () {
 describe("Testing Use Case #2: Update wallet whitelist status", function () {
 
     async function deployUpgradeableHYAXRewardsFixture() {
-        const [owner, addr1, addr2, whitelister] = await ethers.getSigners();
+        const [owner, addr1, addr2, whitelisterAddress] = await ethers.getSigners();
 
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
@@ -58,10 +58,10 @@ describe("Testing Use Case #2: Update wallet whitelist status", function () {
         const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
 
         //Update the whitelister address in the contract
-        await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelister.address);
+        await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
 
         // Fixtures can return anything you consider useful for your tests
-        return { upgradeableHYAXRewards, owner, addr1, addr2, whitelister, hyaxToken };
+        return { upgradeableHYAXRewards, owner, addr1, addr2, whitelisterAddress, hyaxToken };
     }
 
     it("2.1. Should fail to add a wallet because it doesnt have an authorized role", async function () {
@@ -101,10 +101,10 @@ describe("Testing Use Case #2: Update wallet whitelist status", function () {
     });
 
     it("2.3.Should successfully add a team wallet to the whitelist as whitelister", async function () {
-        const { upgradeableHYAXRewards, addr1, addr2, whitelister } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        const { upgradeableHYAXRewards, addr1, addr2, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         // Try to add the wallet to the whitelist
-        await upgradeableHYAXRewards.connect(whitelister)
+        await upgradeableHYAXRewards.connect(whitelisterAddress)
             .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
         //Get the wallet data of the address
@@ -158,10 +158,10 @@ describe("Testing Use Case #2: Update wallet whitelist status", function () {
     });
 
     it("2.7. Should successfully remove a team wallet from the whitelist as owner", async function () {
-        const { upgradeableHYAXRewards, owner, addr1, whitelister } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        const { upgradeableHYAXRewards, owner, addr1, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         // Add the wallet to the whitelist
-        await upgradeableHYAXRewards.connect(whitelister).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18))
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18))
 
         // Remove the wallet from the whitelist
         await upgradeableHYAXRewards.connect(owner).updateWhitelistStatus(addr1.address, false);
@@ -187,13 +187,13 @@ describe("Testing Use Case #2: Update wallet whitelist status", function () {
     });
 
     it("2.8. Should successfully remove a team wallet from the whitelist as whitelister", async function () {
-        const { upgradeableHYAXRewards, whitelister, owner, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        const { upgradeableHYAXRewards, whitelisterAddress, owner, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         // Add the wallet to the whitelist
         await upgradeableHYAXRewards.connect(owner).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18))
 
         // Remove the wallet from the whitelist
-        await upgradeableHYAXRewards.connect(whitelister).updateWhitelistStatus(addr1.address, false);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateWhitelistStatus(addr1.address, false);
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
@@ -209,17 +209,17 @@ describe("Testing Use Case #2: Update wallet whitelist status", function () {
     });
 
     it("2.9. Should fail to remove a wallet because it is not currently whitelisted", async function () {
-        const { upgradeableHYAXRewards, whitelister, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        const { upgradeableHYAXRewards, whitelisterAddress, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         // Add the wallet to the whitelist
-        await upgradeableHYAXRewards.connect(whitelister).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18))
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18))
 
         // Remove the wallet from the whitelist
-        await upgradeableHYAXRewards.connect(whitelister).updateWhitelistStatus(addr1.address, false);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateWhitelistStatus(addr1.address, false);
 
         // Test that unauthorized address cannot add wallet to whitelist
         await expect(
-            upgradeableHYAXRewards.connect(whitelister).updateWhitelistStatus(addr1.address, false)
+            upgradeableHYAXRewards.connect(whitelisterAddress).updateWhitelistStatus(addr1.address, false)
         ).to.be.revertedWith("Wallet has already been updated to that status");
     });
 });
@@ -228,7 +228,7 @@ describe("Testing Use Case #2: Update wallet whitelist status", function () {
 describe("Testing Use Case #3: Update wallet blacklist status", function () {
 
     async function deployUpgradeableHYAXRewardsFixture() {
-        const [owner, addr1, addr2, whitelister] = await ethers.getSigners();
+        const [owner, addr1, addr2, whitelisterAddress] = await ethers.getSigners();
 
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
@@ -237,13 +237,13 @@ describe("Testing Use Case #3: Update wallet blacklist status", function () {
         const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
 
         //Update the whitelister address in the contract
-        await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelister.address);
+        await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
 
         //Add wallet to the whitelist
-        await upgradeableHYAXRewards.connect(whitelister).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18))
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18))
 
         // Fixtures can return anything you consider useful for your tests
-        return { upgradeableHYAXRewards, owner, addr1, addr2, whitelister, hyaxToken };
+        return { upgradeableHYAXRewards, owner, addr1, addr2, whitelisterAddress, hyaxToken };
     }
 
     it("3.1. Should fail to add a wallet because it doesnt have an authorized role", async function () {
@@ -285,10 +285,10 @@ describe("Testing Use Case #3: Update wallet blacklist status", function () {
     });
 
     it("3.3.Should successfully add a team wallet to the blacklist as whitelister", async function () {
-        const { upgradeableHYAXRewards, addr1, addr2, whitelister } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        const { upgradeableHYAXRewards, addr1, addr2, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         //Add wallet to the blacklist
-        await upgradeableHYAXRewards.connect(whitelister).updateBlacklistStatus(addr1.address, true);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr1.address, true);
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
@@ -328,10 +328,10 @@ describe("Testing Use Case #3: Update wallet blacklist status", function () {
     });
 
     it("3.6. Should successfully remove a team wallet from the blacklist as owner", async function () {
-        const { upgradeableHYAXRewards, owner, whitelister, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        const { upgradeableHYAXRewards, owner, whitelisterAddress, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         // Add the wallet to the blacklist
-        await upgradeableHYAXRewards.connect(whitelister).updateBlacklistStatus(addr1.address, true);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr1.address, true);
 
         // Remove the wallet from the blacklist
         await upgradeableHYAXRewards.connect(owner).updateBlacklistStatus(addr1.address, false);
@@ -360,13 +360,13 @@ describe("Testing Use Case #3: Update wallet blacklist status", function () {
     });
 
     it("3.7. Should successfully remove a team wallet from the blacklist as whitelister", async function () {
-        const { upgradeableHYAXRewards, whitelister, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        const { upgradeableHYAXRewards, whitelisterAddress, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         // Add the wallet to the blacklist
-        await upgradeableHYAXRewards.connect(whitelister).updateBlacklistStatus(addr1.address, true);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr1.address, true);
 
         // Remove the wallet from the blacklist
-        await upgradeableHYAXRewards.connect(whitelister).updateBlacklistStatus(addr1.address, false);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr1.address, false);
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
@@ -385,11 +385,11 @@ describe("Testing Use Case #3: Update wallet blacklist status", function () {
     });
 
     it("3.8. Should fail to remove a wallet from blacklist because it is not currently blacklisted", async function () {
-        const { upgradeableHYAXRewards, whitelister, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        const { upgradeableHYAXRewards, whitelisterAddress, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         // Test that unauthorized address cannot add wallet to whitelist
         await expect(
-            upgradeableHYAXRewards.connect(whitelister).updateBlacklistStatus(addr1.address, false)
+            upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr1.address, false)
         ).to.be.revertedWith("Wallet has already been updated to that status");
     });
 });
@@ -1376,7 +1376,7 @@ describe("Testing Use Case #8: Fund Smart Contract with team tokens after having
 
 describe("Testing Use Case #9: Withdraw Team Tokens", function () {
     async function deployUpgradeableHYAXRewardsFixture() {
-        const [owner, addr1, addr2, whiteLister] = await ethers.getSigners();
+        const [owner, addr1, addr2, whitelisterAddress] = await ethers.getSigners();
 
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
@@ -1385,17 +1385,17 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
 
         // Update the whiteLister address
-        await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whiteLister.address);
+        await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
 
         // Fixtures can return anything you consider useful for your tests
-        return { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, whiteLister };
+        return { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, whitelisterAddress };
     }
 
     it("9.1. Should revert if trying to withdraw before being funded", async function () {
-        const { upgradeableHYAXRewards, addr1, whiteLister } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        const { upgradeableHYAXRewards, addr1, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         // Add the wallet to the whitelist
-        await upgradeableHYAXRewards.connect(whiteLister)
+        await upgradeableHYAXRewards.connect(whitelisterAddress)
             .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
         // Try to withdraw growth tokens
@@ -1422,7 +1422,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
     });
 
     it("9.3. Should revert if trying to withdraw team tokens without being a team member", async function () {
-        const { upgradeableHYAXRewards, owner, addr1, hyaxToken, whiteLister } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        const { upgradeableHYAXRewards, owner, addr1, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
 
@@ -1433,7 +1433,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
 
         // Add the wallet to the whitelist
-        await upgradeableHYAXRewards.connect(whiteLister)
+        await upgradeableHYAXRewards.connect(whitelisterAddress)
             .addWalletToWhitelist(addr1.address, false, ethers.parseUnits("0", 18));
 
         // Try to withdraw growth tokens
@@ -1443,7 +1443,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
     });
 
     it("9.4. Should revert if trying to withdraw team tokens before 4 years since being added to the whitelist", async function () {
-        const { upgradeableHYAXRewards, owner, addr1, hyaxToken, whiteLister } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        const { upgradeableHYAXRewards, owner, addr1, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
 
@@ -1454,7 +1454,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
 
         // Add the wallet to the whitelist
-        await upgradeableHYAXRewards.connect(whiteLister)
+        await upgradeableHYAXRewards.connect(whitelisterAddress)
             .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
         // Try to withdraw growth tokens
@@ -1476,7 +1476,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
 
     it("9.5. Should withdraw the correct amount of team tokens after 4 years have passed and update the corresponding variables", async function () {
-        const { upgradeableHYAXRewards, owner, addr1, hyaxToken, whiteLister } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        const { upgradeableHYAXRewards, owner, addr1, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Team Tokens
@@ -1488,7 +1488,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
 
         // Add the wallet to the whitelist
-        await upgradeableHYAXRewards.connect(whiteLister)
+        await upgradeableHYAXRewards.connect(whitelisterAddress)
             .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
         const fourYears = 1460 * 24 * 60 * 60; // Four years in seconds
@@ -1549,7 +1549,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
 
     it("9.6. Should revert if trying to withdraw team tokens before 1 year after first withdrawal", async function () {
-        const { upgradeableHYAXRewards, owner, addr1, hyaxToken, whiteLister } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        const { upgradeableHYAXRewards, owner, addr1, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
 
@@ -1560,7 +1560,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
 
         // Add the wallet to the whitelist
-        await upgradeableHYAXRewards.connect(whiteLister)
+        await upgradeableHYAXRewards.connect(whitelisterAddress)
             .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
         const fourYears = 1460 * 24 * 60 * 60; // 4 years in seconds
@@ -1585,7 +1585,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
     });
 
     it("9.7. Should withdraw the correct amount of team tokens one year has passed since last withdrawal and update the corresponding variables", async function () {
-        const { upgradeableHYAXRewards, owner, addr1, hyaxToken, whiteLister } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        const { upgradeableHYAXRewards, owner, addr1, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
 
@@ -1596,7 +1596,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
 
         // Add the wallet to the whitelist
-        await upgradeableHYAXRewards.connect(whiteLister)
+        await upgradeableHYAXRewards.connect(whitelisterAddress)
             .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
         const fourYears = 1460 * 24 * 60 * 60; // 4 years in seconds
@@ -1667,7 +1667,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
     });
 
     it("9.8. Should revert after withdrawing all team tokens", async function () {
-        const { upgradeableHYAXRewards, owner, addr1, hyaxToken, whiteLister } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        const { upgradeableHYAXRewards, owner, addr1, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         const fundingAmount = ethers.parseUnits("1500000000", 18); // Fund with (1,5B) 1,500,000,000 Team Tokens
 
@@ -1678,7 +1678,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
 
         // Add the wallet to the whitelist with 15 Billion tokens as the amount
-        await upgradeableHYAXRewards.connect(whiteLister)
+        await upgradeableHYAXRewards.connect(whitelisterAddress)
             .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1500000000", 18));
 
         const prevSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
@@ -1747,7 +1747,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
     });
 
     it("9.9. Should revert after the team member has withdrawn all his own team tokens", async function () {
-        const { upgradeableHYAXRewards, owner, addr1, hyaxToken, whiteLister } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        const { upgradeableHYAXRewards, owner, addr1, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         const fundingAmount = ethers.parseUnits("1500000000", 18); // Fund with (1,5B) 1,500,000,000 Team Tokens
 
@@ -1758,7 +1758,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
 
         // Add the wallet to the whitelist with 1 Million tokens as the amount
-        await upgradeableHYAXRewards.connect(whiteLister)
+        await upgradeableHYAXRewards.connect(whitelisterAddress)
             .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("10000000", 18));
 
         const prevSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
@@ -1829,7 +1829,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
 
     it("9.10. Should withdraw tokens two times after two years since being added to the whitelist", async function () {
-        const { upgradeableHYAXRewards, owner, addr1, hyaxToken, whiteLister } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        const { upgradeableHYAXRewards, owner, addr1, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
 
@@ -1840,7 +1840,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
 
         // Add the wallet to the whitelist
-        await upgradeableHYAXRewards.connect(whiteLister)
+        await upgradeableHYAXRewards.connect(whitelisterAddress)
             .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
         const fourYears = 1460 * 24 * 60 * 60; // 4 years
@@ -1904,7 +1904,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
     });
 
     it("9.11. Should withdraw tokens five times after five years since being added to the whitelist", async function () {
-        const { upgradeableHYAXRewards, owner, addr1, hyaxToken, whiteLister } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        const { upgradeableHYAXRewards, owner, addr1, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
 
@@ -1915,7 +1915,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
 
         // Add the wallet to the whitelist
-        await upgradeableHYAXRewards.connect(whiteLister)
+        await upgradeableHYAXRewards.connect(whitelisterAddress)
             .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
         const fourYears = 1460 * 24 * 60 * 60; // 4 years
@@ -1989,7 +1989,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
     });
 
     it("9.12. Should revert after trying to withdraw tokens six times after five years since being added to the whitelist", async function () {
-        const { upgradeableHYAXRewards, owner, addr1, hyaxToken, whiteLister } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+        const { upgradeableHYAXRewards, owner, addr1, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
 
@@ -2000,7 +2000,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
 
         // Add the wallet to the whitelist
-        await upgradeableHYAXRewards.connect(whiteLister)
+        await upgradeableHYAXRewards.connect(whitelisterAddress)
             .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
         const fourYears = 1460 * 24 * 60 * 60; // 4 years
@@ -2048,7 +2048,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
 
 describe("Testing Use Case #10: Fund smart contract with reward tokens", function () {
     async function deployUpgradeableHYAXRewardsFixture() {
-        const [owner, addr1, addr2, whiteLister] = await ethers.getSigners();
+        const [owner, addr1, addr2, whitelisterAddress] = await ethers.getSigners();
 
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
@@ -2057,10 +2057,10 @@ describe("Testing Use Case #10: Fund smart contract with reward tokens", functio
         const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
 
         // Update the whiteLister address
-        await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whiteLister.address);
+        await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
 
         // Fixtures can return anything you consider useful for your tests
-        return { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, whiteLister };
+        return { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, whitelisterAddress };
     }
 
 
@@ -4233,7 +4233,7 @@ describe("Testing Use Case #18: Calculate year for team tokens", function () {
         const yearForTeamTokens_oneYearAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
         expect(yearForTeamTokens_oneYearAfterFunding).to.equal(0);  
 
-        //Two years after funding should be 0
+        //Day 730: Two years after funding should be 0
         const oneYear = 1 * 365 * 24 * 60 * 60; 
 
         // Wait for the specified time period to elapse (simulate one year)
@@ -4274,7 +4274,7 @@ describe("Testing Use Case #18: Calculate year for team tokens", function () {
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         await upgradeableHYAXRewards.fundSmartContract(1, fundingAmount);
 
-        //Four years after funding should be 1
+        //Day 1460: Four years after funding should be 1
         const fourYears = 4 * 365 * 24 * 60 * 60; 
 
         // Wait for the specified time period to elapse (simulate one year)
@@ -4292,7 +4292,7 @@ describe("Testing Use Case #18: Calculate year for team tokens", function () {
         await network.provider.send("evm_increaseTime", [lessThanOneYear]);
         await network.provider.send("evm_mine");
         
-        // Day 1460: Four years after funding should be 1
+        // Day 1824: Four years after funding should be 1
         const yearForTeamTokens_lessThanFiveYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
         expect(yearForTeamTokens_lessThanFiveYearsAfterFunding).to.equal(1);  
     });
@@ -4316,7 +4316,7 @@ describe("Testing Use Case #18: Calculate year for team tokens", function () {
         await network.provider.send("evm_increaseTime", [fiveYears]);
         await network.provider.send("evm_mine");
 
-        // Day 1460: Five years after funding should be 2
+        // Day 1825: Five years after funding should be 2
         const yearForTeamTokens_fiveYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
         expect(yearForTeamTokens_fiveYearsAfterFunding).to.equal(2);   
 
@@ -4327,7 +4327,7 @@ describe("Testing Use Case #18: Calculate year for team tokens", function () {
         await network.provider.send("evm_increaseTime", [lessThanOneYear]);
         await network.provider.send("evm_mine");
         
-        // Day 1460: Four years after funding should be 1
+        // Day 2189: Five years after funding should be 2
         const yearForTeamTokens_lessThanSixYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
         expect(yearForTeamTokens_lessThanSixYearsAfterFunding).to.equal(2);  
     });
@@ -4351,7 +4351,7 @@ describe("Testing Use Case #18: Calculate year for team tokens", function () {
         await network.provider.send("evm_increaseTime", [sixYears]);
         await network.provider.send("evm_mine");
 
-        // Day 1460: Six years after funding should be 3
+        // Day 2190: Six years after funding should be 3
         const yearForTeamTokens_sixYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
         expect(yearForTeamTokens_sixYearsAfterFunding).to.equal(3);   
 
@@ -4362,7 +4362,7 @@ describe("Testing Use Case #18: Calculate year for team tokens", function () {
         await network.provider.send("evm_increaseTime", [lessThanOneYear]);
         await network.provider.send("evm_mine");
 
-        // Day 1460: Seven years after funding should be 3
+        // Day 2554: Seven years after funding should be 3
         const yearForTeamTokens_lessThanSevenYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
         expect(yearForTeamTokens_lessThanSevenYearsAfterFunding).to.equal(3);  
     });
@@ -4387,7 +4387,7 @@ describe("Testing Use Case #18: Calculate year for team tokens", function () {
         await network.provider.send("evm_increaseTime", [sevenYears]);
         await network.provider.send("evm_mine");
 
-        // Day 1460: Six years after funding should be 3
+        // Day 2555: Seven years after funding should be 4
         const yearForTeamTokens_sevenYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
         expect(yearForTeamTokens_sevenYearsAfterFunding).to.equal(4);   
 
@@ -4398,7 +4398,7 @@ describe("Testing Use Case #18: Calculate year for team tokens", function () {
         await network.provider.send("evm_increaseTime", [lessThanOneYear]);
         await network.provider.send("evm_mine");
         
-        // Day 1460: Seven years after funding should be 3
+        // Day 2919: Seven years after funding should be 4
         const yearForTeamTokens_lessThanEightYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
         expect(yearForTeamTokens_lessThanEightYearsAfterFunding).to.equal(4);  
     });
@@ -4422,7 +4422,7 @@ describe("Testing Use Case #18: Calculate year for team tokens", function () {
         await network.provider.send("evm_increaseTime", [eightYears]);
         await network.provider.send("evm_mine");
 
-        // Day 1460: Eight years after funding should be 5
+        // Day 2920: Eight years after funding should be 5
         const yearForTeamTokens_eightYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
         expect(yearForTeamTokens_eightYearsAfterFunding).to.equal(5);   
 
@@ -4444,7 +4444,7 @@ describe("Testing Use Case #18: Calculate year for team tokens", function () {
         await network.provider.send("evm_increaseTime", [oneYear]);
         await network.provider.send("evm_mine");
 
-        // Day 1460: Nine years after funding should be 5
+        // Day 3286: Nine years after funding should be 5
         const yearForTeamTokens_tenYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
         expect(yearForTeamTokens_tenYearsAfterFunding).to.equal(5);  
 
@@ -4452,7 +4452,7 @@ describe("Testing Use Case #18: Calculate year for team tokens", function () {
         await network.provider.send("evm_increaseTime", [oneYear*2]);
         await network.provider.send("evm_mine");
 
-        // Day 1460: Eleven years after funding should be 5
+        // Day 4016: Eleven years after funding should be 5
         const yearForTeamTokens_elevenYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
         expect(yearForTeamTokens_elevenYearsAfterFunding).to.equal(5);  
         
@@ -4460,9 +4460,678 @@ describe("Testing Use Case #18: Calculate year for team tokens", function () {
         await network.provider.send("evm_increaseTime", [oneYear*4]);
         await network.provider.send("evm_mine");
         
-        // Day 1460: Eleven years after funding should be 5
-        const yearForTeamTokens_thirteenYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
-        expect(yearForTeamTokens_thirteenYearsAfterFunding).to.equal(5);    
+        // Day 5476: Fifteen years after funding should be 5
+        const yearForTeamTokens_fifteenYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
+        expect(yearForTeamTokens_fifteenYearsAfterFunding).to.equal(5);
+
+        // Wait for the specified time period to elapse (simulate one year)
+        await network.provider.send("evm_increaseTime", [oneYear*5]);
+        await network.provider.send("evm_mine");
+        
+        // Day 6206: Twenty years after funding should be 5
+        const yearForTeamTokens_twentyYearsAfterFunding = await upgradeableHYAXRewards.connect(owner).calculateYearForTeamTokens();
+        expect(yearForTeamTokens_twentyYearsAfterFunding).to.equal(5);  
+    });
+});
+
+describe("Testing Use Case #19: Withdrawal of tokens to burn", function () {
+    async function deployUpgradeableHYAXRewardsFixture() {
+        const [owner, addr1, addr2, whitelisterAddress] = await ethers.getSigners();
+
+        //Deploy the HYAX token mock
+        const hyaxToken = await ethers.deployContract("HYAXToken");
+
+        //Deploy the UpgradeableHYAXRewards contract
+        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+
+        // Update the whiteLister address
+        await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
+
+        // Fixtures can return anything you consider useful for your tests
+        return { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, whitelisterAddress };
+    }
+
+
+    it("19.1. Should revert the withdraw of tokens because its not the owner", async function () {
+        const { upgradeableHYAXRewards, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Tokens
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}  
+        await expect(
+            upgradeableHYAXRewards.connect(addr1).withdrawTokensToBurn(2, fundingAmount)
+        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'OwnableUnauthorizedAccount');
     });
 
+    it("19.2. Should revert the withdraw of tokens because its using an invalid type", async function () {
+        const { upgradeableHYAXRewards, owner, hyaxToken } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Tokens
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await expect(
+            upgradeableHYAXRewards.connect(owner).withdrawTokensToBurn(3, fundingAmount)
+        ).to.be.reverted;
+    });
+
+    it("19.3. Should revert the withdraw of Growth tokens because the amount is 0", async function () {
+        const { upgradeableHYAXRewards, owner, hyaxToken } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await expect(
+            upgradeableHYAXRewards.connect(owner).withdrawTokensToBurn(0, 0)
+        ).to.be.revertedWith('Amount must be greater than 0');
+    });
+
+    it("19.4. Should revert the withdraw of Growth tokens because the funding has not started yet", async function () {
+        const { upgradeableHYAXRewards, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const withdrawAmount = ethers.parseUnits("1000000", 18); // Withdraw (1M) 1,000,000 Team Tokens
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await expect(
+            upgradeableHYAXRewards.connect(owner).withdrawTokensToBurn(0, withdrawAmount)
+        ).to.be.revertedWith('Funding has not started yet, no tokens to withdraw');
+    });
+
+    it("19.5. Should revert because of insufficient growth tokens in the contract to withdraw", async function () {
+        const { upgradeableHYAXRewards, owner, hyaxToken } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const fundingAmount = ethers.parseUnits("1000000", 18); // Fund with (1M) 1,000,000 Team Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(0, fundingAmount);
+
+        const withdrawAmount = ethers.parseUnits("10000000", 18); // Withdraw (10M) 10,000,000 Team Tokens
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await expect(
+            upgradeableHYAXRewards.connect(owner).withdrawTokensToBurn(0, withdrawAmount)
+        ).to.be.revertedWith('Insufficient growth tokens in the contract to withdraw');
+    });
+
+    it("19.6. Should successfully withdraw the growth tokens", async function () {
+        const { upgradeableHYAXRewards, owner, hyaxToken } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(0, fundingAmount);
+
+        const withdrawAmount = ethers.parseUnits("10000000", 18); // Withdraw (10M) 10,000,000 Growth Tokens
+
+        //Balances before withdraw
+        const growthTokensInSmartContractBeforeWithdraw = await upgradeableHYAXRewards.growthTokensInSmartContract();
+
+        const smartContractBalanceBeforeWithdraw = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
+
+        const ownerBalanceBeforeWithdraw = await hyaxToken.balanceOf(owner.address);
+
+        // Execute the withdraw of growth tokens
+        await upgradeableHYAXRewards.connect(owner).withdrawTokensToBurn(0, withdrawAmount);
+
+        //Balances after withdraw
+        const growthTokensInSmartContractAfterWithdraw = await upgradeableHYAXRewards.growthTokensInSmartContract();
+
+        const smartContractBalanceAfterWithdraw = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
+
+        const ownerBalanceAfterWithdraw = await hyaxToken.balanceOf(owner.address);
+
+        // Growth tokens in smart contract should be less by the withdraw amount
+        expect(growthTokensInSmartContractBeforeWithdraw - growthTokensInSmartContractAfterWithdraw).to.equal(withdrawAmount);  
+
+        // Smart contract balance should be less by the withdraw amount
+        expect(smartContractBalanceBeforeWithdraw - smartContractBalanceAfterWithdraw).to.equal(withdrawAmount);  
+        
+        // Owner balance should be more by the withdraw amount
+        expect(ownerBalanceAfterWithdraw - ownerBalanceBeforeWithdraw).to.equal(withdrawAmount);  
+    });
+
+    it("19.7. Should revert the withdraw of Team tokens because the amount is 0", async function () {
+        const { upgradeableHYAXRewards, owner, hyaxToken } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await expect(
+            upgradeableHYAXRewards.connect(owner).withdrawTokensToBurn(1, 0)
+        ).to.be.revertedWith('Amount must be greater than 0');
+    });
+
+    it("19.8. Should revert the withdraw of Team tokens because the funding has not started yet", async function () {
+        const { upgradeableHYAXRewards, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const withdrawAmount = ethers.parseUnits("1000000", 18); // Withdraw (1M) 1,000,000 Team Tokens
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await expect(
+            upgradeableHYAXRewards.connect(owner).withdrawTokensToBurn(1, withdrawAmount)
+        ).to.be.revertedWith('Funding has not started yet, no tokens to withdraw');
+    });
+
+    it("19.9. Should revert because of insufficient team tokens in the contract to withdraw", async function () {
+        const { upgradeableHYAXRewards, owner, hyaxToken } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const fundingAmount = ethers.parseUnits("1000000", 18); // Fund with (1M) 1,000,000 Team Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
+
+        const withdrawAmount = ethers.parseUnits("10000000", 18); // Withdraw (10M) 10,000,000 Team Tokens
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await expect(
+            upgradeableHYAXRewards.connect(owner).withdrawTokensToBurn(1, withdrawAmount)
+        ).to.be.revertedWith('Insufficient team tokens in the contract to withdraw');
+    });
+
+    it("19.10. Should successfully withdraw the team tokens", async function () {
+        const { upgradeableHYAXRewards, owner, hyaxToken } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Team Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
+
+        const withdrawAmount = ethers.parseUnits("10000000", 18); // Withdraw (10M) 10,000,000 Team Tokens
+
+        //Balances before withdraw
+        const teamTokensInSmartContractBeforeWithdraw = await upgradeableHYAXRewards.teamTokensInSmartContract();
+
+        const smartContractBalanceBeforeWithdraw = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
+
+        const ownerBalanceBeforeWithdraw = await hyaxToken.balanceOf(owner.address);
+
+        // Execute the withdraw of team tokens
+        await upgradeableHYAXRewards.connect(owner).withdrawTokensToBurn(1, withdrawAmount);
+
+        //Balances after withdraw
+        const teamTokensInSmartContractAfterWithdraw = await upgradeableHYAXRewards.teamTokensInSmartContract();
+
+        const smartContractBalanceAfterWithdraw = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
+
+        const ownerBalanceAfterWithdraw = await hyaxToken.balanceOf(owner.address);
+
+        // Team tokens in smart contract should be less by the withdraw amount
+        expect(teamTokensInSmartContractBeforeWithdraw - teamTokensInSmartContractAfterWithdraw).to.equal(withdrawAmount);  
+
+        // Smart contract balance should be less by the withdraw amount
+        expect(smartContractBalanceBeforeWithdraw - smartContractBalanceAfterWithdraw).to.equal(withdrawAmount);  
+        
+        // Owner balance should be more by the withdraw amount
+        expect(ownerBalanceAfterWithdraw - ownerBalanceBeforeWithdraw).to.equal(withdrawAmount);  
+    });
+
+    
+    it("19.11. Should revert the withdraw of rewards tokens because the amount is 0", async function () {
+        const { upgradeableHYAXRewards, owner, hyaxToken } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await expect(
+            upgradeableHYAXRewards.connect(owner).withdrawTokensToBurn(2, 0)
+        ).to.be.revertedWith('Amount must be greater than 0');
+    });
+
+    it("19.12. Should revert the withdraw of rewards tokens because the funding has not started yet", async function () {
+        const { upgradeableHYAXRewards, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const withdrawAmount = ethers.parseUnits("1000000", 18); // Withdraw (1M) 1,000,000 Investor Rewards Tokens
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await expect(
+            upgradeableHYAXRewards.connect(owner).withdrawTokensToBurn(2, withdrawAmount)
+        ).to.be.revertedWith('Funding has not started yet, no tokens to withdraw');
+    });
+
+    it("19.13. Should revert because of insufficient rewards tokens in the contract to withdraw", async function () {
+        const { upgradeableHYAXRewards, owner, hyaxToken } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const fundingAmount = ethers.parseUnits("1000000", 18); // Fund with (1M) 1,000,000 Investor Rewards Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        const withdrawAmount = ethers.parseUnits("10000000", 18); // Withdraw (10M) 10,000,000 Rewards Tokens
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await expect(
+            upgradeableHYAXRewards.connect(owner).withdrawTokensToBurn(2, withdrawAmount)
+        ).to.be.revertedWith('Insufficient reward tokens in the contract to withdraw');
+    });
+
+    it("19.14. Should successfully withdraw the reward tokens", async function () {
+        const { upgradeableHYAXRewards, owner, hyaxToken } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Rewards Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        const withdrawAmount = ethers.parseUnits("10000000", 18); // Withdraw (10M) 10,000,000 Rewards Tokens
+
+        //Balances before withdraw
+        const rewardTokensInSmartContractBeforeWithdraw = await upgradeableHYAXRewards.rewardTokensInSmartContract();
+
+        const smartContractBalanceBeforeWithdraw = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
+
+        const ownerBalanceBeforeWithdraw = await hyaxToken.balanceOf(owner.address);
+
+        // Execute the withdraw of team tokens
+        await upgradeableHYAXRewards.connect(owner).withdrawTokensToBurn(2, withdrawAmount);
+        
+        //Balances after withdraw
+        const rewardTokensInSmartContractAfterWithdraw = await upgradeableHYAXRewards.rewardTokensInSmartContract();
+
+        const smartContractBalanceAfterWithdraw = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
+
+        const ownerBalanceAfterWithdraw = await hyaxToken.balanceOf(owner.address);
+
+        // Team tokens in smart contract should be less by the withdraw amount
+        expect(rewardTokensInSmartContractBeforeWithdraw - rewardTokensInSmartContractAfterWithdraw).to.equal(withdrawAmount);  
+
+        // Smart contract balance should be less by the withdraw amount
+        expect(smartContractBalanceBeforeWithdraw - smartContractBalanceAfterWithdraw).to.equal(withdrawAmount);  
+        
+        // Owner balance should be more by the withdraw amount
+        expect(ownerBalanceAfterWithdraw - ownerBalanceBeforeWithdraw).to.equal(withdrawAmount);  
+    });
+}); 
+
+describe("Testing Use Case #20: Update whiteLister address", function () {
+    async function deployUpgradeableHYAXRewardsFixture() {
+        const [owner, addr1, addr2, whitelisterAddress] = await ethers.getSigners();
+
+        //Deploy the HYAX token mock
+        const hyaxToken = await ethers.deployContract("HYAXToken");
+
+        //Deploy the UpgradeableHYAXRewards contract
+        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+
+        // Fixtures can return anything you consider useful for your tests
+        return { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, whitelisterAddress };
+    }
+
+    it("20.1. Revert update of whitelister address because its not the owner", async function () {
+        const { upgradeableHYAXRewards, addr1, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Update the whiteLister address without being the owner
+        await expect(
+            upgradeableHYAXRewards.connect(addr1).updateWhiteListerAddress(whitelisterAddress.address)
+        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'OwnableUnauthorizedAccount');
+    });
+
+    it("20.2. Revert update of whitelister address because it's the zero address", async function () {
+        const { upgradeableHYAXRewards, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Attempt to update the whiteLister address to the zero address
+        await expect(
+            upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(ethers.ZeroAddress)
+        ).to.be.revertedWith("White lister address cannot be the zero address");
+    });
+
+    it("20.3. Successfully update whitelister address", async function () {
+        const { upgradeableHYAXRewards, owner, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Update the whiteLister address
+        await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
+
+        const updatedWhiteListerAddress = await upgradeableHYAXRewards.whiteListerAddress();
+        expect(updatedWhiteListerAddress).to.equal(whitelisterAddress.address);
+    });
+});
+
+describe("Testing Use Case #21: Update rewardsUpdater address", function () {
+    async function deployUpgradeableHYAXRewardsFixture() {
+        const [owner, addr1, addr2, rewardsUpdater] = await ethers.getSigners();
+
+        //Deploy the HYAX token mock
+        const hyaxToken = await ethers.deployContract("HYAXToken");
+
+        //Deploy the UpgradeableHYAXRewards contract
+        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+
+        // Fixtures can return anything you consider useful for your tests
+        return { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, rewardsUpdater };
+    }
+
+    it("21.1. Revert update of rewardsUpdater address because its not the owner", async function () {
+        const { upgradeableHYAXRewards, addr1, rewardsUpdater } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Update the rewardsUpdater address without being the owner
+        await expect(
+            upgradeableHYAXRewards.connect(addr1).updateRewardsUpdaterAddress(rewardsUpdater.address)
+        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'OwnableUnauthorizedAccount');
+    });
+
+    it("21.2. Revert update of rewardsUpdater address because it's the zero address", async function () {
+        const { upgradeableHYAXRewards, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Attempt to update the rewardsUpdater address to the zero address
+        await expect(
+            upgradeableHYAXRewards.connect(owner).updateRewardsUpdaterAddress(ethers.ZeroAddress)
+        ).to.be.revertedWith("Rewards updater address cannot be the zero address");
+    });
+
+    it("21.3. Successfully update rewardsUpdater address", async function () {
+        const { upgradeableHYAXRewards, owner, rewardsUpdater } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Update the rewardsUpdater address
+        await upgradeableHYAXRewards.connect(owner).updateRewardsUpdaterAddress(rewardsUpdater.address);
+
+        const updatedRewardsUpdaterAddress = await upgradeableHYAXRewards.rewardsUpdaterAddress();
+        expect(updatedRewardsUpdaterAddress).to.equal(rewardsUpdater.address);
+    });
+});
+
+describe("Testing Use Case #22: Update hyax token address", function () {
+    async function deployUpgradeableHYAXRewardsFixture() {
+        const [owner, addr1, addr2, rewardsUpdater] = await ethers.getSigners();
+
+        //Deploy the HYAX token mock
+        const hyaxToken = await ethers.deployContract("HYAXToken");
+
+        //Deploy the UpgradeableHYAXRewards contract
+        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+
+        // Fixtures can return anything you consider useful for your tests
+        return { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, rewardsUpdater };
+    }
+
+    it("22.1. Revert update of hyax token address because its not the owner", async function () {
+        const { upgradeableHYAXRewards, addr1, rewardsUpdater } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Update the rewardsUpdater address without being the owner
+        await expect(
+            upgradeableHYAXRewards.connect(addr1).updateHyaxTokenAddress(rewardsUpdater.address)
+        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'OwnableUnauthorizedAccount');
+    });
+
+    it("22.2. Revert update of hyax token address because it's the zero address", async function () {
+        const { upgradeableHYAXRewards, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Attempt to update the rewardsUpdater address to the zero address
+        await expect(
+            upgradeableHYAXRewards.connect(owner).updateHyaxTokenAddress(ethers.ZeroAddress)
+        ).to.be.revertedWith("Hyax token address cannot be the zero address");
+    });
+
+    it("22.3. Revert update of hyax token address because it's not a valid HYAX token address", async function () {
+        const { upgradeableHYAXRewards, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Attempt to update the hyax token address to an invalid HYAX token address
+        await expect(
+            upgradeableHYAXRewards.connect(owner).updateHyaxTokenAddress(upgradeableHYAXRewards.target)
+        ).to.be.reverted;
+    });
+
+    it("22.4. Successfully update hyax token address", async function () {
+        const { upgradeableHYAXRewards, owner, hyaxToken } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Update the hyax token address
+        await upgradeableHYAXRewards.connect(owner).updateHyaxTokenAddress(hyaxToken.target);
+
+        const updatedHyaxTokenAddress = await upgradeableHYAXRewards.hyaxTokenAddress();
+        expect(updatedHyaxTokenAddress).to.equal(hyaxToken.target);
+    });
+});
+
+describe("Testing Use Case #23: Update maximum batch size for update rewards", function () {
+    async function deployUpgradeableHYAXRewardsFixture() {
+        const [owner, addr1, addr2, rewardsUpdater] = await ethers.getSigners();
+
+        //Deploy the HYAX token mock
+        const hyaxToken = await ethers.deployContract("HYAXToken");
+
+        //Deploy the UpgradeableHYAXRewards contract
+        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+
+        // Fixtures can return anything you consider useful for your tests
+        return { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, rewardsUpdater };
+    }
+
+    it("23.1. Revert update of maximum batch size for update rewards because it's not the owner", async function () {
+        const { upgradeableHYAXRewards, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Attempt to update the maximum batch size without being the owner
+        await expect(
+            upgradeableHYAXRewards.connect(addr1).updateMaximumBatchSizeForUpdateRewards(50)
+        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'OwnableUnauthorizedAccount');
+    });
+
+    it("23.2. Revert update of maximum batch size for update rewards because it's zero", async function () {
+        const { upgradeableHYAXRewards, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Attempt to update the maximum batch size to zero
+        await expect(
+            upgradeableHYAXRewards.connect(owner).updateMaximumBatchSizeForUpdateRewards(0)
+        ).to.be.revertedWith("Maximum batch size cannot be 0");
+    });
+
+    it("23.3. Revert update of maximum batch size for update rewards because it's more than 100", async function () {
+        const { upgradeableHYAXRewards, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Attempt to update the maximum batch size to more than 100
+        await expect(
+            upgradeableHYAXRewards.connect(owner).updateMaximumBatchSizeForUpdateRewards(101)
+        ).to.be.revertedWith("Maximum batch size cannot be greater than 100");
+    });
+
+    it("23.4. Successfully update maximum batch size for update rewards", async function () {
+        const { upgradeableHYAXRewards, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Update the maximum batch size
+        await upgradeableHYAXRewards.connect(owner).updateMaximumBatchSizeForUpdateRewards(50);
+
+        const updatedMaximumBatchSize = await upgradeableHYAXRewards.maximumBatchSizeForUpdateRewards();
+        expect(updatedMaximumBatchSize).to.equal(50);
+    });
+});
+
+describe("Testing Use Case #24: Pause and unpause the contract", function () {
+
+    async function deployUpgradeableHYAXRewardsFixture() {
+        const [owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress ] = await ethers.getSigners();
+        
+        //Deploy the HYAX token mock
+        const hyaxToken = await ethers.deployContract("HYAXToken");
+
+        //Deploy the UpgradeableHYAXRewards contract
+        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+
+        // Update the whitelister address
+        await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
+
+        // Update the rewards updater address
+        await upgradeableHYAXRewards.connect(owner).updateRewardsUpdaterAddress(rewardsUpdaterAddress.address);
+
+        // Transfer tokens to the addresses
+        await hyaxToken.connect(owner).transfer(addr1.address, ethers.parseUnits("100000000", 18));
+        await hyaxToken.connect(owner).transfer(addr2.address, ethers.parseUnits("200000000", 18));
+        await hyaxToken.connect(owner).transfer(addr3.address, ethers.parseUnits("300000000", 18));
+
+        // Fund the smart contract with reward tokens
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 reward Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        // Fixtures can return anything you consider useful for your tests
+        return { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress };
+    }
+    
+    it("24.1. Revert pause of the smart contract because its not the owner", async function () {
+        const { upgradeableHYAXRewards, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Attempt to pause the contract without being the owner
+        await expect(
+            upgradeableHYAXRewards.connect(addr1).pause()
+        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'OwnableUnauthorizedAccount');
+    });
+
+    it("24.2. Successfully pause the smart contract", async function () {
+        const { upgradeableHYAXRewards, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Pause the contract
+        await upgradeableHYAXRewards.connect(owner).pause();
+
+        const isPaused = await upgradeableHYAXRewards.paused();
+        expect(isPaused).to.be.true;
+    });
+
+    it("24.3. Revert funding smart contract transaction because the contract is paused", async function () {
+        const { upgradeableHYAXRewards, owner, hyaxToken } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 reward Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        // Pause the contract
+        await upgradeableHYAXRewards.connect(owner).pause();
+
+        // Attempt to fund the smart contract
+        await expect(
+            upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount)
+        ).to.be.revertedWith('Contract is paused');
+    });
+
+    it("24.4. Revert withdraw of growth tokens because the contract is paused", async function () {
+        const { upgradeableHYAXRewards, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Pause the contract
+        await upgradeableHYAXRewards.connect(owner).pause();
+
+        // Attempt to withdraw growth tokens
+        await expect(
+            upgradeableHYAXRewards.connect(owner).withdrawGrowthTokens()
+        ).to.be.revertedWith('Contract is paused');
+    });
+
+    it("24.5. Revert withdraw of team tokens because the contract is paused", async function () {
+        const { upgradeableHYAXRewards, owner, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Pause the contract
+        await upgradeableHYAXRewards.connect(owner).pause();
+
+        // Add the address to the whitelist
+        await upgradeableHYAXRewards.connect(owner).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18))
+
+        // Attempt to withdraw team tokens
+        await expect(
+            upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens()
+        ).to.be.revertedWith('Contract is paused');
+    });
+
+    it("24.6. Revert withdraw of reward tokens because the contract is paused", async function () {
+        const { upgradeableHYAXRewards, owner, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Pause the contract
+        await upgradeableHYAXRewards.connect(owner).pause();
+
+        // Add the address to the whitelist
+        await upgradeableHYAXRewards.connect(owner).addWalletToWhitelist(addr1.address, false, 0)
+
+        // Attempt to withdraw reward tokens
+        await expect(
+            upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens()
+        ).to.be.revertedWith('Contract is paused');
+    });
+
+    it("24.7. Revert withdraw of tokens to burn because the contract is paused", async function () {
+        const { upgradeableHYAXRewards, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Pause the contract
+        await upgradeableHYAXRewards.connect(owner).pause();
+
+        const withdrawAmount = ethers.parseUnits("100000000", 18);
+
+        // Attempt to withdraw tokens to burn
+        await expect(
+            upgradeableHYAXRewards.connect(owner).withdrawTokensToBurn(0, withdrawAmount)
+        ).to.be.revertedWith('Contract is paused');
+    });
+
+    it("24.8. Unpause the smart contract", async function () {
+        const { upgradeableHYAXRewards, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Pause the contract
+        await upgradeableHYAXRewards.connect(owner).pause();
+
+        const isPaused = await upgradeableHYAXRewards.paused();
+        expect(isPaused).to.be.true;
+
+        // Unpause the contract
+        await upgradeableHYAXRewards.connect(owner).unpause();
+
+        const isUnpaused = await upgradeableHYAXRewards.paused();
+        expect(isUnpaused).to.be.false;
+    });
+});
+
+describe("Testing Use Case #25: Transfer ownership of the contract", function () {
+    async function deployUpgradeableHYAXRewardsFixture() {
+        const [owner, addr1, addr2, rewardsUpdater] = await ethers.getSigners();
+
+        //Deploy the HYAX token mock
+        const hyaxToken = await ethers.deployContract("HYAXToken");
+
+        //Deploy the UpgradeableHYAXRewards contract
+        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+
+        // Fixtures can return anything you consider useful for your tests
+        return { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, rewardsUpdater };
+    }
+
+    it("25.1. Revert transfer of ownership if it's not the owner", async function () {
+        const { upgradeableHYAXRewards, owner, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Attempt to transfer ownership without being the owner
+        await expect(
+            upgradeableHYAXRewards.connect(addr1).transferOwnership(addr1.address)
+        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'OwnableUnauthorizedAccount');
+    });
+
+    it("25.2. Revert transfer of ownership if it's to the zero address", async function () {
+        const { upgradeableHYAXRewards, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Attempt to transfer ownership to the zero address
+        await expect(
+            upgradeableHYAXRewards.connect(owner).transferOwnership(ethers.ZeroAddress)
+        ).to.be.revertedWith("Ownable: new owner is the zero address");
+    });
+
+    it("25.3. Revert transfer of ownership if it's to the same contract address", async function () {
+        const { upgradeableHYAXRewards, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Attempt to transfer ownership to the same contract address
+        await expect(
+            upgradeableHYAXRewards.connect(owner).transferOwnership(upgradeableHYAXRewards.target)
+        ).to.be.revertedWith("Ownable: new owner cannot be the same contract address");
+    });
+
+    it("25.4. Successfully transfer ownership to addr1", async function () {
+        const { upgradeableHYAXRewards, owner, addr1 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        // Transfer ownership to addr1
+        await upgradeableHYAXRewards.connect(owner).transferOwnership(addr1.address);
+
+        // Verify the ownership has been transferred
+        const newOwner = await upgradeableHYAXRewards.owner();
+        expect(newOwner).to.equal(addr1.address);
+    });
 });

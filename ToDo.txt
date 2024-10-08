@@ -311,23 +311,50 @@ TEST CASES
 -updateRewardsSingle for team wallets DONE
 -updateRewardsBatch for team wallets DONE
 -withdraw rewards for team wallets DONE
+-calculateYearForTeamTokens: Fix the days on the testing. I.e. Day 1 - Day 364 DONE
 
--calculateYearForTeamTokens: Fix the days on the testing. I.e. Day 1 - Day 364
+-withdrawTokensToBurn DONE
+--Wrong account 
+--Invalid type
+--For GrowthTokens, TeamTokens, RewardTokens
+---Amount to withdraw is zero DONE
+---Funding not startet yet DONE
+---Insufficient tokens in the contract to withdraw DONE
+---Successfully withdraw DONE
+
+-updateWhiteListerAddress DONE
+-updateRewardsUpdaterAddress DONE
+-updateHyaxTokenAddress DONE
+-pause and unpause DONE
+-transferOwnership 
 
 
--withdrawTokensToBurn
--updateWhiteListerAddress
--updateRewardsUpdaterAddress
--updateHyaxTokenAddress
--pause
--unpause
--transferOwnership
+addWalletToWhitelist
+updateWhitelistStatus
+updateBlacklistStatus
+fundSmartContract
+withdrawGrowthTokens
+withdrawTeamTokens
+calculateYearForTeamTokens
+updateRewardsBatch
+updateRewardsSingle
+withdrawRewardTokens
+withdrawTokensToBurn
+updateWhiteListerAddress
+updateRewardsUpdaterAddress
+updateHyaxTokenAddress
+updateMaximumBatchSizeForUpdateRewards
+pause
+unpause
+transferOwnership
 
 
 UPDATED 
 1. Blacklist also for the token smart contract.
 
-2. Capacidad de restaurar los tokens de una wallet de un miembro del equipo en caso de perdida.
+2. Verify the address of tokens for crypto payments in HYAX smart contract have the right symbol 
+
+3. Capacidad de restaurar los tokens de una wallet de un miembro del equipo en caso de perdida.
 Add wallet & remove wallet
 
 

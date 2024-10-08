@@ -308,7 +308,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
      * @param _amount The amount of tokens to fund
      * @custom:events Emits a FundingAdded event upon successful funding
      */
-    function fundSmartContract(FundingType _fundingType, uint256 _amount) onlyOwner() nonReentrant() public {
+    function fundSmartContract(FundingType _fundingType, uint256 _amount) onlyOwner() nonReentrant() isNotPaused() public {
 
         // Check if the funding type is valid
         require(_fundingType == FundingType.GrowthTokens || _fundingType == FundingType.TeamTokens || _fundingType == FundingType.RewardTokens, "Invalid funding type");
@@ -404,6 +404,12 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         require(wallets[_walletAddress].isBlacklisted == false, "Wallet has been blacklisted");
         _;
     }
+
+    modifier isNotPaused() {
+        // Ensure that the smart contract is not paused
+        require(paused() == false, "Contract is paused");
+        _;
+    }
     
     /////////////GROWTH TOKENS FUNCTIONS///////////
     /**
@@ -417,7 +423,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
      * @custom:requirements At least one year has passed since the last withdrawal
      * @custom:events Emits a GrowthTokensWithdrawn event upon successful withdrawal
      */
-    function withdrawGrowthTokens() onlyOwner() nonReentrant() public {
+    function withdrawGrowthTokens() onlyOwner() nonReentrant() isNotPaused() public {
 
         // Check if growth tokens funding has started
         require(growthTokensFundingStarted, "Funding has not started yet, no tokens to withdraw");
@@ -470,7 +476,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
      * @custom:requirements The wallet must have a positive HYAX holding amount
      * @custom:events Emits a TeamTokensWithdrawn event upon successful withdrawal
      */
-    function withdrawTeamTokens() isWhitelisted(msg.sender) isNotBlacklisted(msg.sender) nonReentrant() public {
+    function withdrawTeamTokens() isWhitelisted(msg.sender) isNotBlacklisted(msg.sender) nonReentrant() isNotPaused() public {
 
         // Check if the sender is a team wallet
         require(wallets[msg.sender].isTeamWallet == true, "Only team wallets can withdraw tokens using this function");
@@ -633,7 +639,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
      * @dev Upon successful withdrawal, it updates relevant state variables and transfers tokens
      * @return None
      */
-    function withdrawRewardTokens() isWhitelisted(msg.sender) nonReentrant() public {
+    function withdrawRewardTokens() isWhitelisted(msg.sender) nonReentrant() isNotPaused() public {
 
         //Check if the wallet is whitelisted
         require(wallets[msg.sender].isWhitelisted == true, "Wallet is not whitelisted");
@@ -688,14 +694,14 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
      * @custom:requirements Amount must be greater than 0
      */
 
-    function withdrawTokensToBurn(FundingType _fundingType, uint256 _amount) onlyOwner() nonReentrant() public {
+    function withdrawTokensToBurn(FundingType _fundingType, uint256 _amount) onlyOwner() nonReentrant() isNotPaused() public {
 
         // Check if the funding type is valid
         require(_fundingType == FundingType.GrowthTokens || _fundingType == FundingType.TeamTokens || _fundingType == FundingType.RewardTokens, "Invalid funding type");
 
         // Verify that the amount is greater than 0
         require(_amount > 0, "Amount must be greater than 0");
-
+        
         // Check if growth tokens funding has started
         if(_fundingType == FundingType.GrowthTokens){
             require(growthTokensFundingStarted, "Funding has not started yet, no tokens to withdraw");
@@ -720,13 +726,14 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         // Emit an event to notify that the growth tokens were withdrawn    
         emit TokensToBurnWithdrawn(_fundingType, _amount);
     }
-
+    
     /**
      * @notice Updates the white lister address
      * @dev This function can only be called by the owner
      * @param _whiteListerAddress The address of the new white lister
      */
     function updateWhiteListerAddress(address _whiteListerAddress) onlyOwner() public {
+        require(_whiteListerAddress != address(0), "White lister address cannot be the zero address");
         whiteListerAddress = _whiteListerAddress;
     }
 
@@ -736,6 +743,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
      * @param _rewardsUpdaterAddress The address of the new rewards updater
      */
     function updateRewardsUpdaterAddress(address _rewardsUpdaterAddress) onlyOwner() public {
+        require(_rewardsUpdaterAddress != address(0), "Rewards updater address cannot be the zero address");
         rewardsUpdaterAddress = _rewardsUpdaterAddress;
     }
 
@@ -745,7 +753,19 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
      * @param _hyaxTokenAddress The address of the new hyax token
      */
     function updateHyaxTokenAddress(address _hyaxTokenAddress) onlyOwner() public {
+        require(_hyaxTokenAddress != address(0), "Hyax token address cannot be the zero address");
+
+        // Validate that the token is a valid HYAX token
+        ERC20TokenInterface newHyaxToken = ERC20TokenInterface(_hyaxTokenAddress);
+
+        // Validate that the token is a valid HYAX token    
+        require(keccak256(abi.encodePacked(newHyaxToken.symbol())) == keccak256(abi.encodePacked("HYAX")), 
+            "Token address must be a valid HYAX token address");
+
+        // Update the hyax token address
         hyaxTokenAddress = _hyaxTokenAddress;
+
+        // Update the hyax token
         hyaxToken = ERC20TokenInterface(hyaxTokenAddress);
     }
 
@@ -755,6 +775,8 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
      * @param _maximumBatchSizeForUpdateRewards The maximum batch size for update rewards
      */
     function updateMaximumBatchSizeForUpdateRewards(uint8 _maximumBatchSizeForUpdateRewards) onlyOwner() public {
+        require(_maximumBatchSizeForUpdateRewards > 0, "Maximum batch size cannot be 0");
+        require(_maximumBatchSizeForUpdateRewards <= 100, "Maximum batch size cannot be greater than 100");
         maximumBatchSizeForUpdateRewards = _maximumBatchSizeForUpdateRewards;
     }
 
