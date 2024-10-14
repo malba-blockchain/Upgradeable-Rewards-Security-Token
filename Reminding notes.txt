@@ -235,7 +235,7 @@ Proxy also for the token smart contract?
 
 UPDATED
 
-Arbitrum blockchain y ethereum blockchain.
+Arbitrum blockchain y ethereum blockchain: Option for deployment 
 
 1. Capacidad de restaurar los tokens de una wallet de un miembro del equipo en caso de perdida.
 Add wallet & remove wallet

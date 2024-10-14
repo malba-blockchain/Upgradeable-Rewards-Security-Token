@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "hardhat/console.sol";
 
- /**
+/**
  * @title ERC20TokenInterface
  * @dev Interface for interacting with the different tokens: USDC, USDT, WBTC and WETH
  */
@@ -103,6 +103,13 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
      */
     event LogSenderAndOrigin(address _sender, address _origin);
 
+    /**
+     * @dev Emitted when a team member tokens are recovered
+     * @param _oldTeamMemberWalletAddress The address of the old team member wallet
+     * @param _newTeamMemberWalletAddress The address of the new team member wallet
+     */
+    event TeamMemberTokensRecovered(address _oldTeamMemberWalletAddress, address _newTeamMemberWalletAddress);
+
     ////////////////// SMART CONTRACT VARIABLES //////////////////
 
     address public hyaxTokenAddress;
@@ -191,9 +198,9 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         uint256 rewardsWithdrawn;                   // Total amount of rewards withdrawn by the wallet
         
         uint256 addedToWhitelistTime;               // Timestamp when the wallet was added to the whitelist
-        uint8 tokenWithdrawalTimes;                  // Times that there have been a token withdrawal
+        uint8 tokenWithdrawalTimes;                 // Times that there have been a token withdrawal
         uint256 lastRewardsWithdrawalTime;          // Timestamp of the last rewards withdrawal
-        uint256 lastRewardsUpdateTime;            // Timestamp of the last rewards update
+        uint256 lastRewardsUpdateTime;              // Timestamp of the last rewards update
 
         bool isTeamWallet;                          // Flag indicating if this is a team wallet
         bool isWhitelisted;                         // Flag indicating if the wallet is whitelisted
@@ -266,7 +273,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         //Emit an event to notify that the wallet was added to the whitelist
         emit WalletAddedToWhitelist(msg.sender, _walletAddress, _isTeamWallet, _hyaxHoldingAmountAtWhitelistTime);
     }
-
+    
     /**
      * @notice Updates the status of a wallet in the whitelist
      * @dev This function allows the owner or the whitelister address to update the status of a wallet in the whitelist
@@ -274,7 +281,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
      */ 
     function updateWhitelistStatus(address _walletAddress, bool _newStatus) onlyOwnerOrWhitelister public {
         
-        //Verify that the wallet is in the whitelist
+        //Verify that the wallet is currently in a different status
         require(wallets[_walletAddress].isWhitelisted != _newStatus, "Wallet has already been updated to that status");
 
         //Update the whitelist status
@@ -291,7 +298,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
      */ 
     function updateBlacklistStatus(address _walletAddress, bool _newStatus) onlyOwnerOrWhitelister public {
         
-        //Verify that the wallet is in the blacklist
+        //Verify that the wallet is currently in a different status
         require(wallets[_walletAddress].isBlacklisted != _newStatus, "Wallet has already been updated to that status");
 
         //Update the blacklist status
@@ -369,7 +376,6 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
                 rewardTokensStartFundingTime = block.timestamp; // Start the funding time
             }
         }
-
         // Emit an event to notify that the funding was successful
         emit FundingAdded(_fundingType, _amount);
     }
@@ -377,6 +383,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
     modifier onlyOwnerOrWhitelister {
         // Ensure that the sender is the owner or the whitelister address
         require(msg.sender == owner() || msg.sender == whiteListerAddress, "Function reserved only for the whitelister or the owner");
+        // Emit an event to log the sender and origin of the transaction
         emit LogSenderAndOrigin(msg.sender, tx.origin);
         _;
     }
@@ -389,6 +396,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
             msg.sender == address(this),
             "Function reserved only for the rewards updater, the owner, or the contract itself"
         );
+        // Emit an event to log the sender and origin of the transaction
         emit LogSenderAndOrigin(msg.sender, tx.origin);
         _;
     }
@@ -628,6 +636,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         wallets[_walletAddress].currentRewardsAmount += _hyaxRewards;
         //console.log("Enters 2.11");
 
+        // Emit an event to notify that the rewards were updated successfully
         emit RewardUpdateSuccess(msg.sender, _walletAddress, _hyaxRewards);
     }
     
@@ -702,21 +711,31 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         // Verify that the amount is greater than 0
         require(_amount > 0, "Amount must be greater than 0");
         
-        // Check if growth tokens funding has started
+        
+        // Check the funding type and perform the necessary actions
         if(_fundingType == FundingType.GrowthTokens){
+            // Ensure that growth tokens funding has started
             require(growthTokensFundingStarted, "Funding has not started yet, no tokens to withdraw");
+            // Verify that there are sufficient growth tokens in the contract to withdraw
             require(_amount <= growthTokensInSmartContract, "Insufficient growth tokens in the contract to withdraw");
+            // Update the growth tokens in the smart contract
             growthTokensInSmartContract -= _amount;
         }
         else if(_fundingType == FundingType.TeamTokens){
+            // Ensure that team tokens funding has started
             require(teamTokensFundingStarted, "Funding has not started yet, no tokens to withdraw");
+            // Verify that there are sufficient team tokens in the contract to withdraw
             require(_amount <= teamTokensInSmartContract, "Insufficient team tokens in the contract to withdraw");
+            // Update the team tokens in the smart contract
             teamTokensInSmartContract -= _amount;
 
         }
         else if(_fundingType == FundingType.RewardTokens){
+            // Ensure that reward tokens funding has started
             require(rewardTokensFundingStarted, "Funding has not started yet, no tokens to withdraw");
+            // Verify that there are sufficient reward tokens in the contract to withdraw
             require(_amount <= rewardTokensInSmartContract, "Insufficient reward tokens in the contract to withdraw");
+            // Update the reward tokens in the smart contract
             rewardTokensInSmartContract -= _amount;
         }
         
@@ -726,6 +745,69 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         // Emit an event to notify that the growth tokens were withdrawn    
         emit TokensToBurnWithdrawn(_fundingType, _amount);
     }
+
+    function recoverTeamTokens(address _oldTeamMemberWalletAddress, address _newTeamMemberWalletAddress) onlyOwner() nonReentrant() public {
+        // Ensure that team tokens funding has started
+        require(teamTokensFundingStarted, "Funding has not started yet, no tokens to recover");
+
+        // Validate that the old team member wallet address is a team wallet
+        require(wallets[_oldTeamMemberWalletAddress].isTeamWallet == true, "Old wallet address is not a team wallet");
+
+        // Validate that the old team member wallet address is whitelisted
+        require(wallets[_oldTeamMemberWalletAddress].isWhitelisted == true, "Old team member wallet address is not whitelisted");
+
+        // Validate that the old team member wallet address is not blacklisted
+        require(wallets[_oldTeamMemberWalletAddress].isBlacklisted == false, "Old team member wallet address is blacklisted");
+
+        // Validate that the new team member wallet address is not the zero address
+        require(_newTeamMemberWalletAddress != address(0), "New team member wallet address cannot be the zero address");
+
+        // Validate that the new team member wallet address is not the same as the old team member wallet address
+        require(_newTeamMemberWalletAddress != _oldTeamMemberWalletAddress, "New team member wallet address cannot be the same as the old team member wallet address");
+
+        //Validate that the new team member wallet address is not already whitelisted
+        require(wallets[_newTeamMemberWalletAddress].isWhitelisted == false, "New team member wallet address is already whitelisted");
+
+        //Validate that the new team member wallet address is not already a team wallet
+        require(wallets[_newTeamMemberWalletAddress].isTeamWallet == false, "New team member wallet address is already a team wallet");
+
+        //Validate that the new team member wallet address is not already blacklisted
+        require(wallets[_newTeamMemberWalletAddress].isBlacklisted == false, "New team member wallet address is blacklisted");
+
+        //In case it passes all validations, register the new team member wallet address
+        wallets[_newTeamMemberWalletAddress].isWhitelisted = true;
+        wallets[_newTeamMemberWalletAddress].isTeamWallet = true;
+        wallets[_newTeamMemberWalletAddress].isBlacklisted = false;
+        wallets[_newTeamMemberWalletAddress].addedToWhitelistTime = block.timestamp;
+
+        //Do the transfer of the old values to the new team member wallet address
+        wallets[_newTeamMemberWalletAddress].hyaxHoldingAmountAtWhitelistTime = wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmountAtWhitelistTime;
+        wallets[_newTeamMemberWalletAddress].hyaxHoldingAmount = wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmount;
+        wallets[_newTeamMemberWalletAddress].lastRewardsUpdateTime = wallets[_oldTeamMemberWalletAddress].lastRewardsUpdateTime;
+        wallets[_newTeamMemberWalletAddress].lastRewardsWithdrawalTime = wallets[_oldTeamMemberWalletAddress].lastRewardsWithdrawalTime;
+        wallets[_newTeamMemberWalletAddress].totalHyaxRewardsAmount = wallets[_oldTeamMemberWalletAddress].totalHyaxRewardsAmount;
+        wallets[_newTeamMemberWalletAddress].currentRewardsAmount = wallets[_oldTeamMemberWalletAddress].currentRewardsAmount;
+        wallets[_newTeamMemberWalletAddress].rewardsWithdrawn = wallets[_oldTeamMemberWalletAddress].rewardsWithdrawn;
+        wallets[_newTeamMemberWalletAddress].tokenWithdrawalTimes = wallets[_oldTeamMemberWalletAddress].tokenWithdrawalTimes;
+
+        //Remove the old team member wallet address from the lists
+        wallets[_oldTeamMemberWalletAddress].isWhitelisted = false;
+        wallets[_oldTeamMemberWalletAddress].isTeamWallet = false;
+        wallets[_oldTeamMemberWalletAddress].isBlacklisted = true;
+        
+        //Update values of the old team member wallet address to 0
+        wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmountAtWhitelistTime = 0;
+        wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmount = 0;
+        wallets[_oldTeamMemberWalletAddress].lastRewardsUpdateTime = 0;
+        wallets[_oldTeamMemberWalletAddress].lastRewardsWithdrawalTime = 0;
+        wallets[_oldTeamMemberWalletAddress].totalHyaxRewardsAmount = 0;
+        wallets[_oldTeamMemberWalletAddress].currentRewardsAmount = 0;
+        wallets[_oldTeamMemberWalletAddress].rewardsWithdrawn = 0;
+        wallets[_oldTeamMemberWalletAddress].tokenWithdrawalTimes = 0;
+
+        //Emit an event to notify that the team tokens were recovered
+        emit TeamMemberTokensRecovered(_oldTeamMemberWalletAddress, _newTeamMemberWalletAddress);
+    }
     
     /**
      * @notice Updates the white lister address
@@ -733,7 +815,10 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
      * @param _whiteListerAddress The address of the new white lister
      */
     function updateWhiteListerAddress(address _whiteListerAddress) onlyOwner() public {
+        // Validate that the white lister address is not the zero address
         require(_whiteListerAddress != address(0), "White lister address cannot be the zero address");
+
+        // Update the white lister address
         whiteListerAddress = _whiteListerAddress;
     }
 
@@ -743,7 +828,10 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
      * @param _rewardsUpdaterAddress The address of the new rewards updater
      */
     function updateRewardsUpdaterAddress(address _rewardsUpdaterAddress) onlyOwner() public {
+        // Validate that the rewards updater address is not the zero address
         require(_rewardsUpdaterAddress != address(0), "Rewards updater address cannot be the zero address");
+        
+        // Update the rewards updater address
         rewardsUpdaterAddress = _rewardsUpdaterAddress;
     }
 
@@ -775,8 +863,13 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
      * @param _maximumBatchSizeForUpdateRewards The maximum batch size for update rewards
      */
     function updateMaximumBatchSizeForUpdateRewards(uint8 _maximumBatchSizeForUpdateRewards) onlyOwner() public {
+        // Validate that the maximum batch size is greater than 0
         require(_maximumBatchSizeForUpdateRewards > 0, "Maximum batch size cannot be 0");
+
+        // Validate that the maximum batch size does not exceed 100
         require(_maximumBatchSizeForUpdateRewards <= 100, "Maximum batch size cannot be greater than 100");
+        
+        // Update the maximum batch size for update rewards
         maximumBatchSizeForUpdateRewards = _maximumBatchSizeForUpdateRewards;
     }
 
@@ -809,6 +902,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         //Validate the new owner is not the same contract address, otherwise management of the smart contract will be lost
         require(newOwner != address(this), "Ownable: new owner cannot be the same contract address");
         
+        // Transfer the ownership to the new owner
         _transferOwnership(newOwner);
     }
 }

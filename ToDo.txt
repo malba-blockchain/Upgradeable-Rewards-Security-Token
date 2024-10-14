@@ -38,6 +38,7 @@ npm install @openzeppelin/contracts
 
 3. Create tests code DONE
 
+
 ---------EXECUTE LOCAL TESTS---------
 
 npm i hardhat-gas-reporter
@@ -219,9 +220,14 @@ Team wallets
 
 ---
 Approve
-0xCd1fA2C8626B023197158aC84C5DF56EDD1F3f0C Proxy
-0x378a1DC6b11E1cfD1Bfd7183085dc0C79FCE1a47 Implementation
-100000000000000000000 100 WBTC
+0x55a0E75dA1Ea313b5e051be15d884D26C5332EaD Proxy
+0x1Cb720D712776F8F1f4CC6Baf58FAD3931F8df94 Implementation
+
+100 WBTC
+100000000000000000000
+1 WBTC
+1000000000000000000
+
 
 
 -Launch rewards basic smart contract   
@@ -304,9 +310,6 @@ npx hardhat run scripts/updateWeeklyRewards.ts
 14.6. Successfully withdraw reward tokens DONE
 14.7. Revert because all reward tokens have been withdrawn DONE
 
-
-CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-
 TEST CASES
 -updateRewardsSingle for team wallets DONE
 -updateRewardsBatch for team wallets DONE
@@ -326,9 +329,9 @@ TEST CASES
 -updateRewardsUpdaterAddress DONE
 -updateHyaxTokenAddress DONE
 -pause and unpause DONE
--transferOwnership 
+-transferOwnership DONE
 
-
+ALL FUNCTIONALITIES
 addWalletToWhitelist
 updateWhitelistStatus
 updateBlacklistStatus
@@ -349,24 +352,42 @@ unpause
 transferOwnership
 
 
-UPDATED 
-1. Blacklist also for the token smart contract.
+UPDATED REQUIREMENTS
+1. Blacklist also for the token smart contract. DONE
 
-2. Verify the address of tokens for crypto payments in HYAX smart contract have the right symbol 
+CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
-3. Capacidad de restaurar los tokens de una wallet de un miembro del equipo en caso de perdida.
-Add wallet & remove wallet
+2. Capacidad de restaurar los tokens de una wallet de un miembro del equipo en caso de perdida.
+Add wallet & remove wallet.
+RecoverTeamWallet
+INPUT: address teamWallet, address newWallet
 
+-Only owner non reentrancy
+-Changes status to whitelisted and team member (simmilar to add new wallet)
+-Takes the previous wallet to 0 in rewards
+-Takes the new wallet to the previous rewards
+-Changes status of previous wallet to non white listed, non team member
 
-FAIL CASES
+3. Add events to ALL functions
+
+4. Test all cases for the recoverTeamTokens function
+
+5. Test fail cases
 If a single transaction update fails, everything fails. Make sure it executes everything right and the one that fails gets emited as event.
 
 If the wallet gets updated from whitelist to false, its possible to add it again. Which shouldn't happen.
 
 Run test cases with for loops and increasing evm time to simulate the end of the days.
 
-DON'T FORGET
+6. Update updates script
 Updates are made based on the tokens of a week ago.
+Create script that interacts with local version and optimize it.
+
+7. Optimize updates script
+
+8. Do initial deployment in local
+
+9. Launch in testnet
 
 
 ---------INITIAL LOCAL DEPLOYMENT---------

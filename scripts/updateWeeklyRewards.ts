@@ -296,13 +296,13 @@ async function updateRewardsSingle(): Promise<string> {
 
     const walletToBeUpdated = "0x34795B6a05543Fe097C8BbBc221e3119f27B793E";
 
-    const rewardAmout = "1602867000000000000000000";
+    const rewardAmount = "1602867000000000000000000";
 
     console.log("\nUpdater wallet address: ", whitelisterWallet.address); // Log the deployer wallet's address
 
     console.log("\nUpdater wallet balance: ", await alchemyProvider.getBalance(whitelisterWallet.address)); // Log the deployer wallet's balance
 
-    const tx = await rewardsContract.connect(whitelisterWallet).updateRewardsSingle(walletToBeUpdated, rewardAmout);
+    const tx = await rewardsContract.connect(whitelisterWallet).updateRewardsSingle(walletToBeUpdated, rewardAmount);
 
     console.log("Waiting for single transaction to finish...");
 

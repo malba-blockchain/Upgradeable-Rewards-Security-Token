@@ -14,7 +14,7 @@ async function main() {
     const provider = new ethers.JsonRpcProvider(`https://polygon-amoy.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`);
 
     const wallet = new ethers.Wallet(process.env.REACT_APP_SIGNER_PRIVATE_KEY || ""); // Create a wallet instance using the private key from .env
-
+    
     const deployerWallet = wallet.connect(provider); // Connect the wallet to the provider
 
     console.log("\nDeployer wallet address: ", deployerWallet.address); // Log the deployer wallet's address

@@ -52,6 +52,7 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "owner"
       | "pause"
       | "paused"
+      | "recoverTeamTokens"
       | "renounceOwnership"
       | "rewardTokensDistributed"
       | "rewardTokensFunded"
@@ -95,6 +96,7 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "RewardTokensWithdrawn"
       | "RewardUpdateFailed"
       | "RewardUpdateSuccess"
+      | "TeamMemberTokensRecovered"
       | "TeamTokensWithdrawn"
       | "TokensToBurnWithdrawn"
       | "Unpaused"
@@ -194,6 +196,10 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "recoverTeamTokens",
+    values: [AddressLike, AddressLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
@@ -404,6 +410,10 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "recoverTeamTokens",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -663,6 +673,25 @@ export namespace RewardUpdateSuccessEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace TeamMemberTokensRecoveredEvent {
+  export type InputTuple = [
+    _oldTeamMemberWalletAddress: AddressLike,
+    _newTeamMemberWalletAddress: AddressLike
+  ];
+  export type OutputTuple = [
+    _oldTeamMemberWalletAddress: string,
+    _newTeamMemberWalletAddress: string
+  ];
+  export interface OutputObject {
+    _oldTeamMemberWalletAddress: string;
+    _newTeamMemberWalletAddress: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace TeamTokensWithdrawnEvent {
   export type InputTuple = [_walletAddress: AddressLike, _amount: BigNumberish];
   export type OutputTuple = [_walletAddress: string, _amount: bigint];
@@ -854,6 +883,15 @@ export interface UpgradeableHYAXRewards extends BaseContract {
   pause: TypedContractMethod<[], [void], "nonpayable">;
 
   paused: TypedContractMethod<[], [boolean], "view">;
+
+  recoverTeamTokens: TypedContractMethod<
+    [
+      _oldTeamMemberWalletAddress: AddressLike,
+      _newTeamMemberWalletAddress: AddressLike
+    ],
+    [void],
+    "nonpayable"
+  >;
 
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
 
@@ -1082,6 +1120,16 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     nameOrSignature: "paused"
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
+    nameOrSignature: "recoverTeamTokens"
+  ): TypedContractMethod<
+    [
+      _oldTeamMemberWalletAddress: AddressLike,
+      _newTeamMemberWalletAddress: AddressLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
@@ -1304,6 +1352,13 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     RewardUpdateSuccessEvent.OutputObject
   >;
   getEvent(
+    key: "TeamMemberTokensRecovered"
+  ): TypedContractEvent<
+    TeamMemberTokensRecoveredEvent.InputTuple,
+    TeamMemberTokensRecoveredEvent.OutputTuple,
+    TeamMemberTokensRecoveredEvent.OutputObject
+  >;
+  getEvent(
     key: "TeamTokensWithdrawn"
   ): TypedContractEvent<
     TeamTokensWithdrawnEvent.InputTuple,
@@ -1437,6 +1492,17 @@ export interface UpgradeableHYAXRewards extends BaseContract {
       RewardUpdateSuccessEvent.InputTuple,
       RewardUpdateSuccessEvent.OutputTuple,
       RewardUpdateSuccessEvent.OutputObject
+    >;
+
+    "TeamMemberTokensRecovered(address,address)": TypedContractEvent<
+      TeamMemberTokensRecoveredEvent.InputTuple,
+      TeamMemberTokensRecoveredEvent.OutputTuple,
+      TeamMemberTokensRecoveredEvent.OutputObject
+    >;
+    TeamMemberTokensRecovered: TypedContractEvent<
+      TeamMemberTokensRecoveredEvent.InputTuple,
+      TeamMemberTokensRecoveredEvent.OutputTuple,
+      TeamMemberTokensRecoveredEvent.OutputObject
     >;
 
     "TeamTokensWithdrawn(address,uint256)": TypedContractEvent<
