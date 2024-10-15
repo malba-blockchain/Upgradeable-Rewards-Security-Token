@@ -89,6 +89,14 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
     event RewardUpdateSuccess(address _sender, address _walletAddress, uint256 _hyaxReward);
 
     /**
+     * @dev Emitted when a reward update batch is sent
+     * @param _sender The address that attempted to update the rewards
+     * @param _walletAddresses The addresses of the wallets sent for the update
+     * @param _hyaxRewards The amount of HYAX rewards sent for the update
+     */
+    event RewardUpdateBatchSent(address _sender, address[] _walletAddresses, uint256[] _hyaxRewards);
+
+    /**
      * @dev Emitted when a reward update fails for a specific wallet
      * @param _sender The address that attempted to update the rewards
      * @param _walletAddress The address of the wallet for which the update failed
@@ -108,7 +116,32 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
      * @param _oldTeamMemberWalletAddress The address of the old team member wallet
      * @param _newTeamMemberWalletAddress The address of the new team member wallet
      */
-    event TeamMemberTokensRecovered(address _oldTeamMemberWalletAddress, address _newTeamMemberWalletAddress);
+    event TeamMemberTokensRecovered(address _oldTeamMemberWalletAddress, address _newTeamMemberWalletAddress, 
+        uint256 _hyaxHoldingAmount, uint256 _currentRewardsAmount);
+
+    /**
+     * @dev Emitted when the white lister address is updated
+     * @param _whiteListerAddress The address of the new white lister
+     */
+    event WhiteListerAddressUpdated(address _whiteListerAddress);
+
+    /**
+     * @dev Emitted when the rewards updater address is updated
+     * @param _rewardsUpdaterAddress The address of the new rewards updater
+     */
+    event RewardsUpdaterAddressUpdated(address _rewardsUpdaterAddress);
+
+    /**
+     * @dev Emitted when the hyax token address is updated
+     * @param _hyaxTokenAddress The address of the new hyax token
+     */
+    event HyaxTokenAddressUpdated(address _hyaxTokenAddress);
+
+    /**
+     * @dev Emitted when the maximum batch size for update rewards is updated
+     * @param _maximumBatchSizeForUpdateRewards The new maximum batch size for update rewards
+     */
+    event MaximumBatchSizeForUpdateRewardsUpdated(uint8 _maximumBatchSizeForUpdateRewards);
 
     ////////////////// SMART CONTRACT VARIABLES //////////////////
 
@@ -588,6 +621,8 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
                 emit RewardUpdateFailed(msg.sender, _walletAddresses[i], _errorMessage);
             }
         }
+
+        emit RewardUpdateBatchSent(msg.sender, _walletAddresses, _hyaxRewards);
     }
 
     /**
@@ -778,7 +813,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         wallets[_newTeamMemberWalletAddress].isWhitelisted = true;
         wallets[_newTeamMemberWalletAddress].isTeamWallet = true;
         wallets[_newTeamMemberWalletAddress].isBlacklisted = false;
-        wallets[_newTeamMemberWalletAddress].addedToWhitelistTime = block.timestamp;
+        
 
         //Do the transfer of the old values to the new team member wallet address
         wallets[_newTeamMemberWalletAddress].hyaxHoldingAmountAtWhitelistTime = wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmountAtWhitelistTime;
@@ -788,6 +823,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         wallets[_newTeamMemberWalletAddress].totalHyaxRewardsAmount = wallets[_oldTeamMemberWalletAddress].totalHyaxRewardsAmount;
         wallets[_newTeamMemberWalletAddress].currentRewardsAmount = wallets[_oldTeamMemberWalletAddress].currentRewardsAmount;
         wallets[_newTeamMemberWalletAddress].rewardsWithdrawn = wallets[_oldTeamMemberWalletAddress].rewardsWithdrawn;
+        wallets[_newTeamMemberWalletAddress].addedToWhitelistTime = wallets[_oldTeamMemberWalletAddress].addedToWhitelistTime;
         wallets[_newTeamMemberWalletAddress].tokenWithdrawalTimes = wallets[_oldTeamMemberWalletAddress].tokenWithdrawalTimes;
 
         //Remove the old team member wallet address from the lists
@@ -806,7 +842,8 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         wallets[_oldTeamMemberWalletAddress].tokenWithdrawalTimes = 0;
 
         //Emit an event to notify that the team tokens were recovered
-        emit TeamMemberTokensRecovered(_oldTeamMemberWalletAddress, _newTeamMemberWalletAddress);
+        emit TeamMemberTokensRecovered(_oldTeamMemberWalletAddress, _newTeamMemberWalletAddress,
+            wallets[_newTeamMemberWalletAddress].hyaxHoldingAmount, wallets[_newTeamMemberWalletAddress].currentRewardsAmount);
     }
     
     /**
@@ -820,6 +857,8 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
 
         // Update the white lister address
         whiteListerAddress = _whiteListerAddress;
+
+        emit WhiteListerAddressUpdated(_whiteListerAddress);
     }
 
     /**
@@ -833,6 +872,8 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         
         // Update the rewards updater address
         rewardsUpdaterAddress = _rewardsUpdaterAddress;
+
+        emit RewardsUpdaterAddressUpdated(_rewardsUpdaterAddress);
     }
 
     /**
@@ -855,6 +896,8 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
 
         // Update the hyax token
         hyaxToken = ERC20TokenInterface(hyaxTokenAddress);
+
+        emit HyaxTokenAddressUpdated(_hyaxTokenAddress);
     }
 
     /**
@@ -871,6 +914,8 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         
         // Update the maximum batch size for update rewards
         maximumBatchSizeForUpdateRewards = _maximumBatchSizeForUpdateRewards;
+
+        emit MaximumBatchSizeForUpdateRewardsUpdated(_maximumBatchSizeForUpdateRewards);
     }
 
      /**

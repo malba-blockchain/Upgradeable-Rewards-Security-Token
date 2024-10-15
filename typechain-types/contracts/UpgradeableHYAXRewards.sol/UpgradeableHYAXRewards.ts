@@ -90,17 +90,22 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "BlacklistStatusUpdated"
       | "FundingAdded"
       | "GrowthTokensWithdrawn"
+      | "HyaxTokenAddressUpdated"
       | "LogSenderAndOrigin"
+      | "MaximumBatchSizeForUpdateRewardsUpdated"
       | "OwnershipTransferred"
       | "Paused"
       | "RewardTokensWithdrawn"
+      | "RewardUpdateBatchSent"
       | "RewardUpdateFailed"
       | "RewardUpdateSuccess"
+      | "RewardsUpdaterAddressUpdated"
       | "TeamMemberTokensRecovered"
       | "TeamTokensWithdrawn"
       | "TokensToBurnWithdrawn"
       | "Unpaused"
       | "WalletAddedToWhitelist"
+      | "WhiteListerAddressUpdated"
       | "WhitelistStatusUpdated"
   ): EventFragment;
 
@@ -578,12 +583,36 @@ export namespace GrowthTokensWithdrawnEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace HyaxTokenAddressUpdatedEvent {
+  export type InputTuple = [_hyaxTokenAddress: AddressLike];
+  export type OutputTuple = [_hyaxTokenAddress: string];
+  export interface OutputObject {
+    _hyaxTokenAddress: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace LogSenderAndOriginEvent {
   export type InputTuple = [_sender: AddressLike, _origin: AddressLike];
   export type OutputTuple = [_sender: string, _origin: string];
   export interface OutputObject {
     _sender: string;
     _origin: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace MaximumBatchSizeForUpdateRewardsUpdatedEvent {
+  export type InputTuple = [_maximumBatchSizeForUpdateRewards: BigNumberish];
+  export type OutputTuple = [_maximumBatchSizeForUpdateRewards: bigint];
+  export interface OutputObject {
+    _maximumBatchSizeForUpdateRewards: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -622,6 +651,28 @@ export namespace RewardTokensWithdrawnEvent {
   export interface OutputObject {
     _walletAddress: string;
     _amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace RewardUpdateBatchSentEvent {
+  export type InputTuple = [
+    _sender: AddressLike,
+    _walletAddresses: AddressLike[],
+    _hyaxRewards: BigNumberish[]
+  ];
+  export type OutputTuple = [
+    _sender: string,
+    _walletAddresses: string[],
+    _hyaxRewards: bigint[]
+  ];
+  export interface OutputObject {
+    _sender: string;
+    _walletAddresses: string[];
+    _hyaxRewards: bigint[];
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -673,18 +724,36 @@ export namespace RewardUpdateSuccessEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace RewardsUpdaterAddressUpdatedEvent {
+  export type InputTuple = [_rewardsUpdaterAddress: AddressLike];
+  export type OutputTuple = [_rewardsUpdaterAddress: string];
+  export interface OutputObject {
+    _rewardsUpdaterAddress: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace TeamMemberTokensRecoveredEvent {
   export type InputTuple = [
     _oldTeamMemberWalletAddress: AddressLike,
-    _newTeamMemberWalletAddress: AddressLike
+    _newTeamMemberWalletAddress: AddressLike,
+    _hyaxHoldingAmount: BigNumberish,
+    _currentRewardsAmount: BigNumberish
   ];
   export type OutputTuple = [
     _oldTeamMemberWalletAddress: string,
-    _newTeamMemberWalletAddress: string
+    _newTeamMemberWalletAddress: string,
+    _hyaxHoldingAmount: bigint,
+    _currentRewardsAmount: bigint
   ];
   export interface OutputObject {
     _oldTeamMemberWalletAddress: string;
     _newTeamMemberWalletAddress: string;
+    _hyaxHoldingAmount: bigint;
+    _currentRewardsAmount: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -748,6 +817,18 @@ export namespace WalletAddedToWhitelistEvent {
     _walletAddress: string;
     _isTeamWallet: boolean;
     _hyaxHoldingAmount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace WhiteListerAddressUpdatedEvent {
+  export type InputTuple = [_whiteListerAddress: AddressLike];
+  export type OutputTuple = [_whiteListerAddress: string];
+  export interface OutputObject {
+    _whiteListerAddress: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -1310,11 +1391,25 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     GrowthTokensWithdrawnEvent.OutputObject
   >;
   getEvent(
+    key: "HyaxTokenAddressUpdated"
+  ): TypedContractEvent<
+    HyaxTokenAddressUpdatedEvent.InputTuple,
+    HyaxTokenAddressUpdatedEvent.OutputTuple,
+    HyaxTokenAddressUpdatedEvent.OutputObject
+  >;
+  getEvent(
     key: "LogSenderAndOrigin"
   ): TypedContractEvent<
     LogSenderAndOriginEvent.InputTuple,
     LogSenderAndOriginEvent.OutputTuple,
     LogSenderAndOriginEvent.OutputObject
+  >;
+  getEvent(
+    key: "MaximumBatchSizeForUpdateRewardsUpdated"
+  ): TypedContractEvent<
+    MaximumBatchSizeForUpdateRewardsUpdatedEvent.InputTuple,
+    MaximumBatchSizeForUpdateRewardsUpdatedEvent.OutputTuple,
+    MaximumBatchSizeForUpdateRewardsUpdatedEvent.OutputObject
   >;
   getEvent(
     key: "OwnershipTransferred"
@@ -1338,6 +1433,13 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     RewardTokensWithdrawnEvent.OutputObject
   >;
   getEvent(
+    key: "RewardUpdateBatchSent"
+  ): TypedContractEvent<
+    RewardUpdateBatchSentEvent.InputTuple,
+    RewardUpdateBatchSentEvent.OutputTuple,
+    RewardUpdateBatchSentEvent.OutputObject
+  >;
+  getEvent(
     key: "RewardUpdateFailed"
   ): TypedContractEvent<
     RewardUpdateFailedEvent.InputTuple,
@@ -1350,6 +1452,13 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     RewardUpdateSuccessEvent.InputTuple,
     RewardUpdateSuccessEvent.OutputTuple,
     RewardUpdateSuccessEvent.OutputObject
+  >;
+  getEvent(
+    key: "RewardsUpdaterAddressUpdated"
+  ): TypedContractEvent<
+    RewardsUpdaterAddressUpdatedEvent.InputTuple,
+    RewardsUpdaterAddressUpdatedEvent.OutputTuple,
+    RewardsUpdaterAddressUpdatedEvent.OutputObject
   >;
   getEvent(
     key: "TeamMemberTokensRecovered"
@@ -1385,6 +1494,13 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     WalletAddedToWhitelistEvent.InputTuple,
     WalletAddedToWhitelistEvent.OutputTuple,
     WalletAddedToWhitelistEvent.OutputObject
+  >;
+  getEvent(
+    key: "WhiteListerAddressUpdated"
+  ): TypedContractEvent<
+    WhiteListerAddressUpdatedEvent.InputTuple,
+    WhiteListerAddressUpdatedEvent.OutputTuple,
+    WhiteListerAddressUpdatedEvent.OutputObject
   >;
   getEvent(
     key: "WhitelistStatusUpdated"
@@ -1428,6 +1544,17 @@ export interface UpgradeableHYAXRewards extends BaseContract {
       GrowthTokensWithdrawnEvent.OutputObject
     >;
 
+    "HyaxTokenAddressUpdated(address)": TypedContractEvent<
+      HyaxTokenAddressUpdatedEvent.InputTuple,
+      HyaxTokenAddressUpdatedEvent.OutputTuple,
+      HyaxTokenAddressUpdatedEvent.OutputObject
+    >;
+    HyaxTokenAddressUpdated: TypedContractEvent<
+      HyaxTokenAddressUpdatedEvent.InputTuple,
+      HyaxTokenAddressUpdatedEvent.OutputTuple,
+      HyaxTokenAddressUpdatedEvent.OutputObject
+    >;
+
     "LogSenderAndOrigin(address,address)": TypedContractEvent<
       LogSenderAndOriginEvent.InputTuple,
       LogSenderAndOriginEvent.OutputTuple,
@@ -1437,6 +1564,17 @@ export interface UpgradeableHYAXRewards extends BaseContract {
       LogSenderAndOriginEvent.InputTuple,
       LogSenderAndOriginEvent.OutputTuple,
       LogSenderAndOriginEvent.OutputObject
+    >;
+
+    "MaximumBatchSizeForUpdateRewardsUpdated(uint8)": TypedContractEvent<
+      MaximumBatchSizeForUpdateRewardsUpdatedEvent.InputTuple,
+      MaximumBatchSizeForUpdateRewardsUpdatedEvent.OutputTuple,
+      MaximumBatchSizeForUpdateRewardsUpdatedEvent.OutputObject
+    >;
+    MaximumBatchSizeForUpdateRewardsUpdated: TypedContractEvent<
+      MaximumBatchSizeForUpdateRewardsUpdatedEvent.InputTuple,
+      MaximumBatchSizeForUpdateRewardsUpdatedEvent.OutputTuple,
+      MaximumBatchSizeForUpdateRewardsUpdatedEvent.OutputObject
     >;
 
     "OwnershipTransferred(address,address)": TypedContractEvent<
@@ -1472,6 +1610,17 @@ export interface UpgradeableHYAXRewards extends BaseContract {
       RewardTokensWithdrawnEvent.OutputObject
     >;
 
+    "RewardUpdateBatchSent(address,address[],uint256[])": TypedContractEvent<
+      RewardUpdateBatchSentEvent.InputTuple,
+      RewardUpdateBatchSentEvent.OutputTuple,
+      RewardUpdateBatchSentEvent.OutputObject
+    >;
+    RewardUpdateBatchSent: TypedContractEvent<
+      RewardUpdateBatchSentEvent.InputTuple,
+      RewardUpdateBatchSentEvent.OutputTuple,
+      RewardUpdateBatchSentEvent.OutputObject
+    >;
+
     "RewardUpdateFailed(address,address,string)": TypedContractEvent<
       RewardUpdateFailedEvent.InputTuple,
       RewardUpdateFailedEvent.OutputTuple,
@@ -1494,7 +1643,18 @@ export interface UpgradeableHYAXRewards extends BaseContract {
       RewardUpdateSuccessEvent.OutputObject
     >;
 
-    "TeamMemberTokensRecovered(address,address)": TypedContractEvent<
+    "RewardsUpdaterAddressUpdated(address)": TypedContractEvent<
+      RewardsUpdaterAddressUpdatedEvent.InputTuple,
+      RewardsUpdaterAddressUpdatedEvent.OutputTuple,
+      RewardsUpdaterAddressUpdatedEvent.OutputObject
+    >;
+    RewardsUpdaterAddressUpdated: TypedContractEvent<
+      RewardsUpdaterAddressUpdatedEvent.InputTuple,
+      RewardsUpdaterAddressUpdatedEvent.OutputTuple,
+      RewardsUpdaterAddressUpdatedEvent.OutputObject
+    >;
+
+    "TeamMemberTokensRecovered(address,address,uint256,uint256)": TypedContractEvent<
       TeamMemberTokensRecoveredEvent.InputTuple,
       TeamMemberTokensRecoveredEvent.OutputTuple,
       TeamMemberTokensRecoveredEvent.OutputObject
@@ -1547,6 +1707,17 @@ export interface UpgradeableHYAXRewards extends BaseContract {
       WalletAddedToWhitelistEvent.InputTuple,
       WalletAddedToWhitelistEvent.OutputTuple,
       WalletAddedToWhitelistEvent.OutputObject
+    >;
+
+    "WhiteListerAddressUpdated(address)": TypedContractEvent<
+      WhiteListerAddressUpdatedEvent.InputTuple,
+      WhiteListerAddressUpdatedEvent.OutputTuple,
+      WhiteListerAddressUpdatedEvent.OutputObject
+    >;
+    WhiteListerAddressUpdated: TypedContractEvent<
+      WhiteListerAddressUpdatedEvent.InputTuple,
+      WhiteListerAddressUpdatedEvent.OutputTuple,
+      WhiteListerAddressUpdatedEvent.OutputObject
     >;
 
     "WhitelistStatusUpdated(address,address,bool)": TypedContractEvent<

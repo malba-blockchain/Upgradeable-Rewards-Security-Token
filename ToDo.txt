@@ -112,18 +112,18 @@ Update the data one by uploading the info or by doing the calculation in the cod
 
 updateValuesOfTokenRewards(mapping rewards (address investorAddress –> uint256 rewardAmount))
 
-1. Batch Size Limit: Introduce a limit on the maximum number of wallet addresses that can be updated in a single transaction. This prevents gas exhaustion in case too many addresses are passed. DONE
-2. Timestamp Validation: Check whether enough time has passed since the last rewards update. For example, rewards might only be allowed to be updated weekly, so check that the minimum time (7 days) has elapsed. DONE
-3. Reentrancy Guard: Add a reentrancy guard to protect against malicious external calls. DONE
-4. Hyax Balance Check:  Ensure that the wallet has a non-zero HYAX balance before proceeding to update its rewards. This avoids unnecessary operations on wallets with zero balances. DONE
-5. Token Balance Consistency: Before updating the rewards, verify that the contract has enough tokens to distribute rewards based on the current weekly distribution formula. This prevents scenarios where the contract might not have sufficient tokens to cover all wallets. TODO
-6. Whitelist Validation: Ensure that the correct event (RewardsUpdated) is emitted only after the state changes are successfully applied. This helps maintain an accurate on-chain history of updates. DONE
-7. Ensure that the _walletAddresses array contains unique addresses to prevent duplicate updates.TODO
-8. Validate that the _hyaxHoldingAmounts array contains non-negative values. DONE
-9. Provide informative error messages to help developers debug issues and identify potential vulnerabilities. DONE
-
+6.1. Batch Size Limit: Introduce a limit on the maximum number of wallet addresses that can be updated in a single transaction. This prevents gas exhaustion in case too many addresses are passed. DONE
+6.2. Timestamp Validation: Check whether enough time has passed since the last rewards update. For example, rewards might only be allowed to be updated weekly, so check that the minimum time (7 days) has elapsed. DONE
+6.3. Reentrancy Guard: Add a reentrancy guard to protect against malicious external calls. DONE
+6.4. Hyax Balance Check:  Ensure that the wallet has a non-zero HYAX balance before proceeding to update its rewards. This avoids unnecessary operations on wallets with zero balances. DONE
+6.5. Token Balance Consistency: Before updating the rewards, verify that the contract has enough tokens to distribute rewards based on the current weekly distribution formula. This prevents scenarios where the contract might not have sufficient tokens to cover all wallets. TODO
+6.6. Whitelist Validation: Ensure that the correct event (RewardsUpdated) is emitted only after the state changes are successfully applied. This helps maintain an accurate on-chain history of updates. DONE
+6.7. Ensure that the _walletAddresses array contains unique addresses to prevent duplicate updates.TODO
+6.8. Validate that the _hyaxHoldingAmounts array contains non-negative values. DONE
+6.9. Provide informative error messages to help developers debug issues and identify potential vulnerabilities. DONE
 
 withdrawTokenRewards() DONE
+
 
 7. Create additional functionalities for smart contract
 
@@ -230,7 +230,7 @@ Approve
 
 
 
--Launch rewards basic smart contract   
+10. Launch rewards basic smart contract   
 v1: 0x7B008f7a8d377A351d7934632128d738a2200cf8
 v2: 0xcdd08884D34f2c6Ac7f6DB00D4eB50faAfbbb8F0
 v3: 0x57ba336A233a9a1F1404f73Ce46F444618209a61
@@ -272,7 +272,7 @@ npx hardhat run scripts/updateWeeklyRewards.ts
 0x7dE9a234E67b9Ac172c803555f5aA7fFf3DB5581 (T) Updated
 
 
-10. Add all required tests based on what's left to test
+11. Add all required tests based on what's left to test
 
 -Fund smart contract with reward tokens DONE
 -Fund smart contract with reward tokens after having already funded the first time DONE
@@ -353,11 +353,9 @@ transferOwnership
 
 
 UPDATED REQUIREMENTS
-1. Blacklist also for the token smart contract. DONE
+15. Blacklist also for the token smart contract. DONE
 
-CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-
-2. Capacidad de restaurar los tokens de una wallet de un miembro del equipo en caso de perdida.
+16. Capacidad de restaurar los tokens de una wallet de un miembro del equipo en caso de perdida.
 Add wallet & remove wallet.
 RecoverTeamWallet
 INPUT: address teamWallet, address newWallet
@@ -368,26 +366,73 @@ INPUT: address teamWallet, address newWallet
 -Takes the new wallet to the previous rewards
 -Changes status of previous wallet to non white listed, non team member
 
-3. Add events to ALL functions
+17. Add events to ALL functions DONE
 
-4. Test all cases for the recoverTeamTokens function
+18. Test all cases for the recoverTeamTokens function
 
-5. Test fail cases
+26.1. Revert because funding has not started yet DONE
+26.2. Revert because Old wallet address is not a team wallet DONE
+26.3. Revert because Old team member wallet address is not whitelisted DONE
+26.4. Revert because Old team member wallet address is blacklisted DONE
+26.5. Revert because New team member wallet address cannot be the zero address DONE
+26.6. Revert because New team member wallet address cannot be the same as the old team member wallet address DONE
+26.7. Revert because New team member wallet address is already whitelisted DONE
+26.8. Revert because New team member wallet address is already a team wallet DONE
+26.9. Revert because New team member wallet address is blacklisted DONE
+
+WHITOUT REWARDS
+-Successfully execute for a wallet in year zero DONE
+-Successfully execute for a wallet in year one DONE
+-Successfully execute for a wallet in year two DONE
+-Successfully execute for a wallet in year three DONE
+-Successfully execute for a wallet in year four DONE
+-Successfully execute for a wallet in year five DONE
+
+WITH REWARDS
+-Successfully execute for a wallet in year zero DONE
+-Successfully execute for a wallet in year one DONE
+-Successfully execute for a wallet in year two DONE
+-Successfully execute for a wallet in year three DONE
+-Successfully execute for a wallet in year four DONE
+-Successfully execute for a wallet in year five
+
+CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE (Last tests in upgradeable rewards)
+
+AFTER WITHDRAWAL WITH REWARDS
+-Successfully execute for a wallet in year five
+-Successfully execute for a wallet in year six
+-Successfully execute for a wallet in year seven
+-Successfully execute for a wallet in year eight
+-Successfully execute for a wallet in year nine
+
+Recover tokens allows vesting to work the right way? What if tries to recover afterwithdraw?
+
+-Successfully execute for a wallet with something in rewards
+
+19. Test fail cases
 If a single transaction update fails, everything fails. Make sure it executes everything right and the one that fails gets emited as event.
 
 If the wallet gets updated from whitelist to false, its possible to add it again. Which shouldn't happen.
 
+Is it ok to "update whitelist" and "update blacklist" status without having the address added to the system?
+
 Run test cases with for loops and increasing evm time to simulate the end of the days.
 
-6. Update updates script
+GOAL TUESDAY: UP TO HERE-------------------------------
+
+20. Update updates script
 Updates are made based on the tokens of a week ago.
 Create script that interacts with local version and optimize it.
 
-7. Optimize updates script
+21. Optimize updates script
 
-8. Do initial deployment in local
+22. Do initial deployment in local
 
-9. Launch in testnet
+23. Launch in testnet
+
+24. Document
+
+25. Do realistic tests
 
 
 ---------INITIAL LOCAL DEPLOYMENT---------
@@ -396,9 +441,9 @@ npx hardhat node
 
 npx hardhat compile --force
 
-9. Create local upgradeable version
+Create local upgradeable version
 
-10. Create testnet upgradeable version
+Create testnet upgradeable version
 
 
 ----------------------------
