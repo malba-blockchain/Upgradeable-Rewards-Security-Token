@@ -758,7 +758,7 @@ describe("Testing Use Case #6: Withdraw Growth Tokens ", function () {
         // Try to withdraw growth tokens
         await expect(
             upgradeableHYAXRewards.connect(owner).withdrawGrowthTokens()
-        ).to.be.revertedWith('Funding has not started yet, no tokens to withdraw');
+        ).to.be.revertedWith('Growth tokens funding has not started yet, no tokens to withdraw');
     });
 
     it("6.2. Should revert if trying to withdraw without being the owner", async function () {
@@ -782,7 +782,7 @@ describe("Testing Use Case #6: Withdraw Growth Tokens ", function () {
         // Try to withdraw growth tokens
         await expect(
             upgradeableHYAXRewards.connect(owner).withdrawGrowthTokens()
-        ).to.be.revertedWith("Funding has not started yet, no tokens to withdraw");
+        ).to.be.revertedWith("Growth tokens funding has not started yet, no tokens to withdraw");
     });
 
     it("6.4. Should revert if attempting to withdraw after funding but before a year has passed", async function () {
@@ -1398,10 +1398,10 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         await upgradeableHYAXRewards.connect(whitelisterAddress)
             .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
-        // Try to withdraw growth tokens
+        // Try to withdraw team tokens
         await expect(
             upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens()
-        ).to.be.revertedWith('Funding has not started yet, no tokens to withdraw');
+        ).to.be.revertedWith('Team tokens funding has not started yet, no tokens to withdraw');
     });
 
     it("9.2. Should revert if trying to withdraw without being whitelisted", async function () {
@@ -1415,7 +1415,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
 
-        // Try to withdraw growth tokens
+        // Try to withdraw team tokens
         await expect(
             upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens()
         ).to.be.revertedWith('Wallet is not whitelisted');
@@ -1436,7 +1436,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         await upgradeableHYAXRewards.connect(whitelisterAddress)
             .addWalletToWhitelist(addr1.address, false, ethers.parseUnits("0", 18));
 
-        // Try to withdraw growth tokens
+        // Try to withdraw team tokens
         await expect(
             upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens()
         ).to.be.revertedWith('Only team wallets can withdraw tokens using this function');
@@ -1457,7 +1457,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         await upgradeableHYAXRewards.connect(whitelisterAddress)
             .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
-        // Try to withdraw growth tokens
+        // Try to withdraw team tokens
         await expect(
             upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens()
         ).to.be.revertedWith('Cannot withdraw before 4 years after being added to the whitelist');
@@ -1468,7 +1468,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         await network.provider.send("evm_increaseTime", [fourYearsMinusOneDay]);
         await network.provider.send("evm_mine");
 
-        // Try to withdraw growth tokens just 1 day before 4 years
+        // Try to withdraw team tokens just 1 day before 4 years
         await expect(
             upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens()
         ).to.be.revertedWith('Cannot withdraw before 4 years after being added to the whitelist');
@@ -1578,7 +1578,7 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         await network.provider.send("evm_increaseTime", [lessThanOneYear]);
         await network.provider.send("evm_mine");
 
-        // Try to withdraw growth tokens just 1 day before 4 years
+        // Try to withdraw team tokens just 1 day before 4 years
         await expect(
             upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens()
         ).to.be.revertedWith('Can only withdraw team tokens once per year');
@@ -2042,6 +2042,196 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         // Attempt to withdraw six times in a row after the eight year
         await expect(
             upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens()
+        ).to.be.revertedWith("No hyax holding amount to withdraw");
+    });
+
+    
+    it("9.13. Should withdraw tokens after being added to the whitelist and recovering the wallet", async function () {
+        const { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.connect(owner).approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
+
+        // Add the wallet to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress)
+            .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
+
+        const fourYears = 1460 * 24 * 60 * 60; // 4 years
+
+        // Wait for the specified time period to elapse (simulate four years)
+        await network.provider.send("evm_increaseTime", [fourYears]);
+        await network.provider.send("evm_mine");
+
+        const fourYearsMore = 1460 * 24 * 60 * 60; // 8 years
+
+        // Wait for the specified time period to elapse (simulate two years)
+        await network.provider.send("evm_increaseTime", [fourYearsMore]);
+        await network.provider.send("evm_mine");
+
+        // Get the initial balance of the smart contract
+        const prevSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
+        console.log("\n   [Log]: PrevSmartContractBalance:", prevSmartContractBalance);
+        // Get the initial balance of the team member wallet
+        const prevTeamMemberWalletTokenBalance = await hyaxToken.balanceOf(addr1.address);
+        console.log("   [Log]: PrevTeamMemberWalletTokenBalance:", prevTeamMemberWalletTokenBalance);
+
+        // Check if the correct amount of tokens was withdrawn for the wallet
+        const [prevHyaxHoldingAmount, , , , , , , , ,] = await upgradeableHYAXRewards.wallets(addr1.address);
+
+        console.log("   [Log]: Current year:", await upgradeableHYAXRewards.calculateYearForTeamTokens());
+
+        // Recover the wallet
+        await upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+
+        // Withdraw team tokens for the wallet the first time
+        await upgradeableHYAXRewards.connect(addr2).withdrawTeamTokens();
+
+        // Withdraw team tokens for the wallet the second time
+        await upgradeableHYAXRewards.connect(addr2).withdrawTeamTokens();
+
+        // Withdraw team tokens for the wallet the third time
+        await upgradeableHYAXRewards.connect(addr2).withdrawTeamTokens();
+
+        // Withdraw team tokens for the wallet the fourth time
+        await upgradeableHYAXRewards.connect(addr2).withdrawTeamTokens();
+
+        // Withdraw team tokens for the wallet the fifth time
+        await upgradeableHYAXRewards.connect(addr2).withdrawTeamTokens();
+
+        // Check if the correct amount of tokens was withdrawn
+        const teamTokensWithdrawn = await upgradeableHYAXRewards.teamTokensWithdrawn();
+        expect(teamTokensWithdrawn).to.equal(ethers.parseUnits("1000000", 18));
+        console.log("\n   [Log]: TeamTokensWithdrawn:", teamTokensWithdrawn);
+
+        // Check if the correct amount of tokens was withdrawn for the wallet
+        const [newHyaxHoldingAmount, , , , , , tokenWithdrawalTimes, , ,] = await upgradeableHYAXRewards.wallets(addr2.address);
+        console.log("   [Log]: NewHyaxHoldingAmount:", newHyaxHoldingAmount);
+        console.log("   [Log]: PrevHyaxHoldingAmount:", prevHyaxHoldingAmount);
+        expect(prevHyaxHoldingAmount - newHyaxHoldingAmount).to.equal(ethers.parseUnits("1000000", 18));
+        // Verify that the last withdrawal time was updated correctly
+        expect(tokenWithdrawalTimes).to.equal(5);
+
+        // Check if the remaining tokens in the smart contract are correct
+        const teamTokensInSmartContract = await upgradeableHYAXRewards.teamTokensInSmartContract();
+        console.log("   [Log]: TeamTokensInSmartContract:", teamTokensInSmartContract);
+        expect(teamTokensInSmartContract).to.equal(fundingAmount - teamTokensWithdrawn);
+
+        // Verify that the smart contract balance decreased by the correct amount
+        const newSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
+        console.log("   [Log]: NewSmartContractBalance:", newSmartContractBalance);
+        expect(prevSmartContractBalance - newSmartContractBalance).to.equal(ethers.parseUnits("1000000", 18));
+
+        // Check if the team member's balance increased by the correct amount
+        const newTeamMemberWalletTokenBalance = await hyaxToken.balanceOf(addr2.address);
+        console.log("   [Log]: NewTeamMemberWalletTokenBalance:", newTeamMemberWalletTokenBalance);
+        console.log("   [Log]: PrevTeamMemberWalletTokenBalance:", prevTeamMemberWalletTokenBalance);
+        expect(newTeamMemberWalletTokenBalance - prevTeamMemberWalletTokenBalance).to.equal(ethers.parseUnits("1000000", 18));
+    });
+
+    it("9.14. Should revert if trying to withdraw team tokens before 1 year after first withdrawal after recovering the wallet", async function () {
+        const { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.connect(owner).approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
+
+        // Add the wallet to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress)
+            .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
+
+        const fourYears = 1460 * 24 * 60 * 60; // 4 years in seconds
+
+        // Wait for the specified time period to elapse (simulate one year)
+        await network.provider.send("evm_increaseTime", [fourYears]);
+        await network.provider.send("evm_mine");
+
+        // Withdraw team tokens for the wallet for first time
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        // Recover the wallet
+        await upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+
+        const lessThanOneYear = 364 * 24 * 60 * 60; // Less than one year in seconds
+
+        // Wait for the specified time period to elapse (simulate one year)
+        await network.provider.send("evm_increaseTime", [lessThanOneYear]);
+        await network.provider.send("evm_mine");
+
+        // Try to withdraw team tokens just 1 day before 4 years
+        await expect(
+            upgradeableHYAXRewards.connect(addr2).withdrawTeamTokens()
+        ).to.be.revertedWith('Can only withdraw team tokens once per year');
+    });
+
+    it("9.15. Should revert when trying to withdraw tokens after recovering the wallet after withdrawing team tokens", async function () {
+        const { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.connect(owner).approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
+
+        // Add the wallet to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress)
+            .addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
+
+        const fourYears = 1460 * 24 * 60 * 60; // 4 years
+
+        // Wait for the specified time period to elapse (simulate four years)
+        await network.provider.send("evm_increaseTime", [fourYears]);
+        await network.provider.send("evm_mine");
+
+        const fourYearsMore = 1460 * 24 * 60 * 60; // 8 years
+
+        // Wait for the specified time period to elapse (simulate two years)
+        await network.provider.send("evm_increaseTime", [fourYearsMore]);
+        await network.provider.send("evm_mine");
+
+        // Get the initial balance of the smart contract
+        const prevSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
+        console.log("\n   [Log]: PrevSmartContractBalance:", prevSmartContractBalance);
+        // Get the initial balance of the team member wallet
+        const prevTeamMemberWalletTokenBalance = await hyaxToken.balanceOf(addr1.address);
+        console.log("   [Log]: PrevTeamMemberWalletTokenBalance:", prevTeamMemberWalletTokenBalance);
+
+        // Check if the correct amount of tokens was withdrawn for the wallet
+        const [prevHyaxHoldingAmount, , , , , , , , ,] = await upgradeableHYAXRewards.wallets(addr1.address);
+
+        console.log("   [Log]: Current year:", await upgradeableHYAXRewards.calculateYearForTeamTokens());
+
+        // Withdraw team tokens for the wallet the first time
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        // Withdraw team tokens for the wallet the second time
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        // Withdraw team tokens for the wallet the third time
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        // Withdraw team tokens for the wallet the fourth time
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        // Withdraw team tokens for the wallet the fifth time
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        // Recover the wallet
+        await upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+
+        // Try to withdraw team tokens for the wallet the sixth time
+        await expect(
+            upgradeableHYAXRewards.connect(addr2).withdrawTeamTokens()
         ).to.be.revertedWith("No hyax holding amount to withdraw");
     });
 });
@@ -3062,7 +3252,7 @@ describe("Testing Use Case #14: Withdraw Rewards Tokens of non team wallets", fu
         // Try to withdraw growth tokens 
         await expect(
             upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens()
-        ).to.be.revertedWith('Funding has not started yet, no tokens to withdraw');
+        ).to.be.revertedWith('Reward tokens funding has not started yet, no tokens to withdraw');
     });
 
     it("14.2. Should revert if trying to withdraw without being whitelisted", async function () {
@@ -3958,7 +4148,7 @@ describe("Testing Use Case #17: Withdraw Rewards Tokens of team wallets", functi
         // Try to withdraw growth tokens 
         await expect(
             upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens()
-        ).to.be.revertedWith('Funding has not started yet, no tokens to withdraw');
+        ).to.be.revertedWith('Reward tokens funding has not started yet, no tokens to withdraw');
     });
 
     it("17.2. Should revert if trying to withdraw without being whitelisted", async function () {
@@ -4054,7 +4244,36 @@ describe("Testing Use Case #17: Withdraw Rewards Tokens of team wallets", functi
         ).to.be.revertedWith('Insufficient reward tokens in the contract to withdraw');
     });
 
-    it("17.6. Should withdraw the correct amount of team tokens after being distributed by the rewards updater", async function () {
+    it("17.6. Should revert if trying to withdraw team tokens after withdrawing the reward tokens that wallet has", async function () {
+        const {  upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.connect(owner).approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        // Add the wallet to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+
+        // Update the rewards for the wallet
+        const rewardAmount = "1442307000000000000000000"; //Equivalent to 1'442.307 M Tokens or 50% of the total reward tokens per week
+        await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(addr1.address, rewardAmount);
+
+        // Withdraw all reward tokens that wallet has
+        await upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens();
+
+        // Try to withdraw reward tokens
+        await expect(
+            upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens()
+        ).to.be.revertedWith('No rewards available to withdraw');
+    });
+
+    it("17.7. Should withdraw the correct amount of team tokens after being distributed by the rewards updater", async function () {
         const {  upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
@@ -4123,7 +4342,7 @@ describe("Testing Use Case #17: Withdraw Rewards Tokens of team wallets", functi
         expect(newWalletTokenBalance - prevWalletTokenBalance).to.equal(rewardAmount);
     });
 
-    it("17.7. Should withdraw all reward tokens after being distributed by the rewards updater after 8 years", async function () {
+    it("17.8. Should withdraw all reward tokens after being distributed by the rewards updater after 8 years", async function () {
         const {  upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         const fundingAmount = ethers.parseUnits("1200000000", 18); // Fund with (1,2 B) 1,200,000,000 Growth Tokens
@@ -4169,6 +4388,116 @@ describe("Testing Use Case #17: Withdraw Rewards Tokens of team wallets", functi
         //Calculate reward tokens that are currently left. Margin error of 160 tokens due to rounding
         const rewardTokensLeftToWithdraw = await upgradeableHYAXRewards.REWARD_TOKENS_TOTAL() - await upgradeableHYAXRewards.rewardTokensWithdrawn();
         console.log("   [Log]: RewardTokensLeftToWithdraw:", ethers.formatEther(rewardTokensLeftToWithdraw.toString())); 
+    });
+
+    it("17.9. Should withdraw the correct amount of team tokens after being distributed by the rewards updater and recovering the wallet", async function () {
+        const {  upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+        
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.connect(owner).approve(upgradeableHYAXRewards.target, fundingAmount*BigInt(2));
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        // Add the wallet to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+        
+        // Update the rewards for the wallet
+        const rewardAmount = "1442307000000000000000000"; //Equivalent to 1'442.307 M Tokens or 50% of the total reward tokens per week
+        await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(addr1.address, rewardAmount);
+
+        // Recover the wallet
+        await upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+
+        // Get the initial balance of the smart contract
+        const prevSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
+        console.log("\n   [Log]: PrevSmartContractBalance:", prevSmartContractBalance);
+
+        // Get the initial balance of the wallet
+        const prevWalletTokenBalance = await hyaxToken.balanceOf(addr2.address);
+        console.log("   [Log]: PrevWalletTokenBalance:", prevWalletTokenBalance);
+
+        // Check if the correct amount of tokens was withdrawn for the wallet
+        const [ , , totalHyaxRewardsAmount1, currentRewardsAmount1, rewardsWithdrawn1, , , , , , , ]
+            = await upgradeableHYAXRewards.wallets(addr2.address);
+
+        // Withdraw rewards tokens for the wallet  
+        await upgradeableHYAXRewards.connect(addr2).withdrawRewardTokens();
+
+        // Check if the correct amount of tokens was withdrawn for the wallet
+        const [ , , totalHyaxRewardsAmount2, currentRewardsAmount2, rewardsWithdrawn2, , , , , , , ]
+            = await upgradeableHYAXRewards.wallets(addr2.address);
+
+        // Check if the correct amount of tokens was withdrawn
+        const rewardTokensWithdrawn = await upgradeableHYAXRewards.rewardTokensWithdrawn();
+        expect(rewardTokensWithdrawn).to.equal(rewardsWithdrawn2);
+        console.log("\n   [Log]: RewardTokensWithdrawn:", rewardsWithdrawn2);
+
+        // Check if the correct amount of tokens was withdrawn for the wallet
+        console.log("   [Log]: NewCurrentRewardsAmount:", currentRewardsAmount2);
+        console.log("   [Log]: PrevCurrentRewardsAmount:", currentRewardsAmount1);
+        expect(currentRewardsAmount1 - currentRewardsAmount2).to.equal(rewardAmount);
+        // Verify that the last withdrawal time was updated correctly
+        expect(totalHyaxRewardsAmount2).to.equal(rewardAmount);
+
+        // Check if the remaining tokens in the smart contract are correct
+        const rewardTokensInSmartContract = await upgradeableHYAXRewards.rewardTokensInSmartContract();
+        console.log("\n   [Log]: RewardTokensInSmartContract:", rewardTokensInSmartContract);
+        expect(rewardTokensInSmartContract).to.equal(fundingAmount - rewardTokensWithdrawn);
+
+        // Verify that the smart contract balance decreased by the correct amount
+        const newSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
+        console.log("   [Log]: NewSmartContractBalance:", newSmartContractBalance);
+        expect(prevSmartContractBalance - newSmartContractBalance).to.equal(rewardAmount);
+
+        // Check if the wallet balance increased by the correct amount
+        const newWalletTokenBalance = await hyaxToken.balanceOf(addr2.address);
+        console.log("\n   [Log]: NewWalletTokenBalance:", newWalletTokenBalance);
+        console.log("   [Log]: PrevWalletTokenBalance:", prevWalletTokenBalance);
+        expect(newWalletTokenBalance - prevWalletTokenBalance).to.equal(rewardAmount);
+    });
+
+    it("17.10. Should revert when trying to withdraw tokens after recovering the wallet after withdrawing all reward tokens that wallet has", async function () {
+        const {  upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.connect(owner).approve(upgradeableHYAXRewards.target, fundingAmount*BigInt(2));
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        // Add the wallet to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+
+        // Update the rewards for the wallet
+        const rewardAmount = "1442307000000000000000000"; //Equivalent to 1'442.307 M Tokens or 50% of the total reward tokens per week
+        await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(addr1.address, rewardAmount);
+
+        // Withdraw all reward tokens that wallet has
+        await upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens();
+
+        // Recover the wallet
+        await upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+
+        // Try to withdraw reward tokens
+        await expect(
+            upgradeableHYAXRewards.connect(addr2).withdrawRewardTokens()
+        ).to.be.revertedWith('No rewards available to withdraw');
     });
 });
 
@@ -4530,7 +4859,7 @@ describe("Testing Use Case #19: Withdrawal of tokens to burn", function () {
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         await expect(
             upgradeableHYAXRewards.connect(owner).withdrawTokensToBurn(0, withdrawAmount)
-        ).to.be.revertedWith('Funding has not started yet, no tokens to withdraw');
+        ).to.be.revertedWith('Growth tokens funding has not started yet, no tokens to withdraw');
     });
 
     it("19.5. Should revert because of insufficient growth tokens in the contract to withdraw", async function () {
@@ -4609,7 +4938,7 @@ describe("Testing Use Case #19: Withdrawal of tokens to burn", function () {
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         await expect(
             upgradeableHYAXRewards.connect(owner).withdrawTokensToBurn(1, withdrawAmount)
-        ).to.be.revertedWith('Funding has not started yet, no tokens to withdraw');
+        ).to.be.revertedWith('Team tokens funding has not started yet, no tokens to withdraw');
     });
 
     it("19.9. Should revert because of insufficient team tokens in the contract to withdraw", async function () {
@@ -4689,7 +5018,7 @@ describe("Testing Use Case #19: Withdrawal of tokens to burn", function () {
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         await expect(
             upgradeableHYAXRewards.connect(owner).withdrawTokensToBurn(2, withdrawAmount)
-        ).to.be.revertedWith('Funding has not started yet, no tokens to withdraw');
+        ).to.be.revertedWith('Reward tokens funding has not started yet, no tokens to withdraw');
     });
 
     it("19.13. Should revert because of insufficient rewards tokens in the contract to withdraw", async function () {
@@ -5152,7 +5481,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         await expect(
             upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address)
-        ).to.be.revertedWith("Funding has not started yet, no tokens to recover");
+        ).to.be.revertedWith("Team tokens funding has not started yet, no tokens to recover");
     });
 
     it("26.2. Should revert if old wallet address is not a team wallet", async function () {
@@ -6251,6 +6580,972 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.rewardsWithdrawn).to.equal(0);
         expect(newWallet.tokenWithdrawalTimes).to.equal(0);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
+        expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
+
+        // Check that the old wallet has been properly reset
+        const oldWallet = await upgradeableHYAXRewards.wallets(addr1.address);
+        expect(oldWallet.isWhitelisted).to.be.false;
+        expect(oldWallet.isTeamWallet).to.be.false;
+        expect(oldWallet.isBlacklisted).to.be.true;
+        expect(oldWallet.hyaxHoldingAmount).to.equal(0);
+        expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
+        expect(oldWallet.currentRewardsAmount).to.equal(0);
+        expect(oldWallet.rewardsWithdrawn).to.equal(0);
+        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
+        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
+
+        // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
+        expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
+
+        //Get the wallet data of the address
+        const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
+            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
+            = await upgradeableHYAXRewards.wallets(addr2.address);
+
+        console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
+            hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
+            currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
+            "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
+    });
+    
+    
+    it("26.22. Should successfully recover team tokens on year 4 with rewards after team token withdrawal", async function () {
+        const { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount*BigInt(2));
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards} - Fund with team tokens
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards} - Fund with rewards tokens
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        // Add the address to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
+
+        // Update the rewards for the wallet
+        await upgradeableHYAXRewards.connect(owner).updateRewardsSingle(addr1.address, ethers.parseUnits("500000", 18));
+
+        // Get the timestamp of the block before
+        const blockNumBefore = await ethers.provider.getBlockNumber();
+        const blockBefore = await ethers.provider.getBlock(blockNumBefore);
+        const timestampOfBlockBefore = blockBefore?.timestamp;
+
+        //Wait for 4 years
+        const fourYears = 4 * 365 * 24 * 60 * 60; // Four years in seconds
+        await network.provider.send("evm_increaseTime", [fourYears]);
+        await network.provider.send("evm_mine");
+
+        //Withdraw 20% of the team tokens available. 20% of 1,000,000 is 200,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Recover team tokens from addr1 to addr2
+        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+
+        await expect(tx)
+            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .withArgs(addr1.address, addr2.address, ethers.parseUnits("800000", 18), ethers.parseUnits("500000", 18));
+
+        // Check that the new wallet has inherited the properties of the old wallet
+        const newWallet = await upgradeableHYAXRewards.wallets(addr2.address);
+        expect(newWallet.isWhitelisted).to.be.true;
+        expect(newWallet.isTeamWallet).to.be.true;
+        expect(newWallet.isBlacklisted).to.be.false;
+        expect(newWallet.hyaxHoldingAmount).to.equal(ethers.parseUnits("800000", 18));
+        expect(newWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(ethers.parseUnits("1000000", 18));
+        expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("500000", 18));
+        expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("500000", 18));
+        expect(newWallet.rewardsWithdrawn).to.equal(0);
+        expect(newWallet.tokenWithdrawalTimes).to.equal(1);
+        expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
+        expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
+
+        // Check that the old wallet has been properly reset
+        const oldWallet = await upgradeableHYAXRewards.wallets(addr1.address);
+        expect(oldWallet.isWhitelisted).to.be.false;
+        expect(oldWallet.isTeamWallet).to.be.false;
+        expect(oldWallet.isBlacklisted).to.be.true;
+        expect(oldWallet.hyaxHoldingAmount).to.equal(0);
+        expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
+        expect(oldWallet.currentRewardsAmount).to.equal(0);
+        expect(oldWallet.rewardsWithdrawn).to.equal(0);
+        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
+        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
+
+        // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
+        expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
+
+        //Get the wallet data of the address
+        const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
+            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
+            = await upgradeableHYAXRewards.wallets(addr2.address);
+
+        console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
+            hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
+            currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
+            "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
+    });
+
+    it("26.23. Should successfully recover team tokens on year 5 with rewards after team token withdrawal", async function () {
+        const { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount*BigInt(2));
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards} - Fund with team tokens
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards} - Fund with rewards tokens
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        // Add the address to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
+
+        // Update the rewards for the wallet
+        await upgradeableHYAXRewards.connect(owner).updateRewardsSingle(addr1.address, ethers.parseUnits("600000", 18));
+
+        // Get the timestamp of the block before
+        const blockNumBefore = await ethers.provider.getBlockNumber();
+        const blockBefore = await ethers.provider.getBlock(blockNumBefore);
+        const timestampOfBlockBefore = blockBefore?.timestamp;
+
+        //Wait for 5 years
+        const fiveYears = 5 * 365 * 24 * 60 * 60; // Five years in seconds
+        await network.provider.send("evm_increaseTime", [fiveYears]);
+        await network.provider.send("evm_mine");
+
+        //Withdraw 20% of the initial team tokens assigned. 20% of 1,000,000 is 200,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Withdraw 20% of the initial team tokens assigned again. 40% of 1,000,000 is 400,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Recover team tokens from addr1 to addr2
+        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+
+        await expect(tx)
+            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .withArgs(addr1.address, addr2.address, ethers.parseUnits("600000", 18), ethers.parseUnits("600000", 18));
+
+        // Check that the new wallet has inherited the properties of the old wallet
+        const newWallet = await upgradeableHYAXRewards.wallets(addr2.address);
+        expect(newWallet.isWhitelisted).to.be.true;
+        expect(newWallet.isTeamWallet).to.be.true;
+        expect(newWallet.isBlacklisted).to.be.false;
+        expect(newWallet.hyaxHoldingAmount).to.equal(ethers.parseUnits("600000", 18));
+        expect(newWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(ethers.parseUnits("1000000", 18));
+        expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("600000", 18));
+        expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("600000", 18));
+        expect(newWallet.rewardsWithdrawn).to.equal(0);
+        expect(newWallet.tokenWithdrawalTimes).to.equal(2);
+        expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
+        expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
+
+        // Check that the old wallet has been properly reset
+        const oldWallet = await upgradeableHYAXRewards.wallets(addr1.address);
+        expect(oldWallet.isWhitelisted).to.be.false;
+        expect(oldWallet.isTeamWallet).to.be.false;
+        expect(oldWallet.isBlacklisted).to.be.true;
+        expect(oldWallet.hyaxHoldingAmount).to.equal(0);
+        expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
+        expect(oldWallet.currentRewardsAmount).to.equal(0);
+        expect(oldWallet.rewardsWithdrawn).to.equal(0);
+        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
+        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
+        
+        // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
+        expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
+
+        //Get the wallet data of the address
+        const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
+            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
+            = await upgradeableHYAXRewards.wallets(addr2.address);
+
+        console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
+            hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
+            currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
+            "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
+    });
+
+    it("26.24. Should successfully recover team tokens on year 6 with rewards after team token withdrawal", async function () {
+        const { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount*BigInt(2));
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards} - Fund with team tokens
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards} - Fund with rewards tokens
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        // Add the address to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
+
+        // Update the rewards for the wallet
+        await upgradeableHYAXRewards.connect(owner).updateRewardsSingle(addr1.address, ethers.parseUnits("700000", 18));
+
+        // Get the timestamp of the block before
+        const blockNumBefore = await ethers.provider.getBlockNumber();
+        const blockBefore = await ethers.provider.getBlock(blockNumBefore);
+        const timestampOfBlockBefore = blockBefore?.timestamp;
+
+        //Wait for 6 years
+        const sixYears = 6 * 365 * 24 * 60 * 60; // Six years in seconds
+        await network.provider.send("evm_increaseTime", [sixYears]);
+        await network.provider.send("evm_mine");
+
+        //Withdraw 20% of the initial team tokens assigned. 20% of 1,000,000 is 200,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Withdraw 20% of the initial team tokens assigned again. 40% of 1,000,000 is 400,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Withdraw 20% of the initial team tokens assigned again. 60% of 1,000,000 is 600,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Recover team tokens from addr1 to addr2
+        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+
+        await expect(tx)
+            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .withArgs(addr1.address, addr2.address, ethers.parseUnits("400000", 18), ethers.parseUnits("700000", 18));
+
+        // Check that the new wallet has inherited the properties of the old wallet
+        const newWallet = await upgradeableHYAXRewards.wallets(addr2.address);
+        expect(newWallet.isWhitelisted).to.be.true;
+        expect(newWallet.isTeamWallet).to.be.true;
+        expect(newWallet.isBlacklisted).to.be.false;
+        expect(newWallet.hyaxHoldingAmount).to.equal(ethers.parseUnits("400000", 18));
+        expect(newWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(ethers.parseUnits("1000000", 18));
+        expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("700000", 18));
+        expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("700000", 18));
+        expect(newWallet.rewardsWithdrawn).to.equal(0);
+        expect(newWallet.tokenWithdrawalTimes).to.equal(3);
+        expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
+        expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
+
+        // Check that the old wallet has been properly reset
+        const oldWallet = await upgradeableHYAXRewards.wallets(addr1.address);
+        expect(oldWallet.isWhitelisted).to.be.false;
+        expect(oldWallet.isTeamWallet).to.be.false;
+        expect(oldWallet.isBlacklisted).to.be.true;
+        expect(oldWallet.hyaxHoldingAmount).to.equal(0);
+        expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
+        expect(oldWallet.currentRewardsAmount).to.equal(0);
+        expect(oldWallet.rewardsWithdrawn).to.equal(0);
+        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
+        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
+        
+        // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
+        expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
+
+        //Get the wallet data of the address
+        const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
+            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
+            = await upgradeableHYAXRewards.wallets(addr2.address);
+
+        console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
+            hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
+            currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
+            "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
+    });
+
+    it("26.25. Should successfully recover team tokens on year 7 with rewards after team token withdrawal", async function () {
+        const { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount*BigInt(2));
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards} - Fund with team tokens
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards} - Fund with rewards tokens
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        // Add the address to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
+
+        // Update the rewards for the wallet
+        await upgradeableHYAXRewards.connect(owner).updateRewardsSingle(addr1.address, ethers.parseUnits("800000", 18));
+
+        // Get the timestamp of the block before
+        const blockNumBefore = await ethers.provider.getBlockNumber();
+        const blockBefore = await ethers.provider.getBlock(blockNumBefore);
+        const timestampOfBlockBefore = blockBefore?.timestamp;
+
+        //Wait for 7 years
+        const sevenYears = 7 * 365 * 24 * 60 * 60; // Seven years in seconds
+        await network.provider.send("evm_increaseTime", [sevenYears]);
+        await network.provider.send("evm_mine");
+
+        //Withdraw 20% of the initial team tokens assigned. 20% of 1,000,000 is 200,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Withdraw 20% of the initial team tokens assigned again. 40% of 1,000,000 is 400,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Withdraw 20% of the initial team tokens assigned again. 60% of 1,000,000 is 600,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Withdraw 20% of the initial team tokens assigned again. 80% of 1,000,000 is 800,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Recover team tokens from addr1 to addr2
+        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+
+        await expect(tx)
+            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .withArgs(addr1.address, addr2.address, ethers.parseUnits("200000", 18), ethers.parseUnits("800000", 18));
+
+        // Check that the new wallet has inherited the properties of the old wallet
+        const newWallet = await upgradeableHYAXRewards.wallets(addr2.address);
+        expect(newWallet.isWhitelisted).to.be.true;
+        expect(newWallet.isTeamWallet).to.be.true;
+        expect(newWallet.isBlacklisted).to.be.false;
+        expect(newWallet.hyaxHoldingAmount).to.equal(ethers.parseUnits("200000", 18));
+        expect(newWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(ethers.parseUnits("1000000", 18));
+        expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("800000", 18));
+        expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("800000", 18));
+        expect(newWallet.rewardsWithdrawn).to.equal(0);
+        expect(newWallet.tokenWithdrawalTimes).to.equal(4);
+        expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
+        expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
+
+        // Check that the old wallet has been properly reset
+        const oldWallet = await upgradeableHYAXRewards.wallets(addr1.address);
+        expect(oldWallet.isWhitelisted).to.be.false;
+        expect(oldWallet.isTeamWallet).to.be.false;
+        expect(oldWallet.isBlacklisted).to.be.true;
+        expect(oldWallet.hyaxHoldingAmount).to.equal(0);
+        expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
+        expect(oldWallet.currentRewardsAmount).to.equal(0);
+        expect(oldWallet.rewardsWithdrawn).to.equal(0);
+        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
+        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
+        
+        // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
+        expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
+
+        //Get the wallet data of the address
+        const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
+            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
+            = await upgradeableHYAXRewards.wallets(addr2.address);
+
+        console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
+            hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
+            currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
+            "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
+    });
+
+    
+    it("26.26. Should successfully recover team tokens on year 8 with rewards after team token withdrawal", async function () {
+        const { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount*BigInt(2));
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards} - Fund with team tokens
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards} - Fund with rewards tokens
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        // Add the address to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
+
+        // Update the rewards for the wallet
+        await upgradeableHYAXRewards.connect(owner).updateRewardsSingle(addr1.address, ethers.parseUnits("900000", 18));
+
+        // Get the timestamp of the block before
+        const blockNumBefore = await ethers.provider.getBlockNumber();
+        const blockBefore = await ethers.provider.getBlock(blockNumBefore);
+        const timestampOfBlockBefore = blockBefore?.timestamp;
+
+        //Wait for 8 years
+        const eightYears = 8 * 365 * 24 * 60 * 60; // Eight years in seconds
+        await network.provider.send("evm_increaseTime", [eightYears]);
+        await network.provider.send("evm_mine");
+
+        //Withdraw 20% of the initial team tokens assigned. 20% of 1,000,000 is 200,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Withdraw 20% of the initial team tokens assigned again. 40% of 1,000,000 is 400,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Withdraw 20% of the initial team tokens assigned again. 60% of 1,000,000 is 600,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Withdraw 20% of the initial team tokens assigned again. 80% of 1,000,000 is 800,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Withdraw 20% of the initial team tokens assigned again. 100% of 1,000,000 is 1,000,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Recover team tokens from addr1 to addr2
+        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+
+        await expect(tx)
+            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .withArgs(addr1.address, addr2.address, ethers.parseUnits("0", 18), ethers.parseUnits("900000", 18));
+
+        // Check that the new wallet has inherited the properties of the old wallet
+        const newWallet = await upgradeableHYAXRewards.wallets(addr2.address);
+        expect(newWallet.isWhitelisted).to.be.true;
+        expect(newWallet.isTeamWallet).to.be.true;
+        expect(newWallet.isBlacklisted).to.be.false;
+        expect(newWallet.hyaxHoldingAmount).to.equal(ethers.parseUnits("0", 18));
+        expect(newWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(ethers.parseUnits("1000000", 18));
+        expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("900000", 18));
+        expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("900000", 18));
+        expect(newWallet.rewardsWithdrawn).to.equal(0);
+        expect(newWallet.tokenWithdrawalTimes).to.equal(5);
+        expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
+        expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
+
+        // Check that the old wallet has been properly reset
+        const oldWallet = await upgradeableHYAXRewards.wallets(addr1.address);
+        expect(oldWallet.isWhitelisted).to.be.false;
+        expect(oldWallet.isTeamWallet).to.be.false;
+        expect(oldWallet.isBlacklisted).to.be.true;
+        expect(oldWallet.hyaxHoldingAmount).to.equal(0);
+        expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
+        expect(oldWallet.currentRewardsAmount).to.equal(0);
+        expect(oldWallet.rewardsWithdrawn).to.equal(0);
+        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
+        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
+        
+        // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
+        expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
+
+        //Get the wallet data of the address
+        const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
+            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
+            = await upgradeableHYAXRewards.wallets(addr2.address);
+
+        console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
+            hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
+            currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
+            "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
+    });
+
+    it("26.27. Should successfully recover team tokens on year 4 with rewards after team token withdrawal", async function () {
+        const { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount*BigInt(2));
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards} - Fund with team tokens
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards} - Fund with rewards tokens
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        // Add the address to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
+
+        // Update the rewards for the wallet
+        await upgradeableHYAXRewards.connect(owner).updateRewardsSingle(addr1.address, ethers.parseUnits("500000", 18));
+
+        // Get the timestamp of the block before
+        const blockNumBefore = await ethers.provider.getBlockNumber();
+        const blockBefore = await ethers.provider.getBlock(blockNumBefore);
+        const timestampOfBlockBefore = blockBefore?.timestamp;
+
+        //Withdraw rewards tokens
+        await upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens();
+
+        // Get the timestamp of the block before
+        const blockNumBefore2 = await ethers.provider.getBlockNumber();
+        const blockBefore2 = await ethers.provider.getBlock(blockNumBefore2);
+        const timestampOfBlockBefore2 = blockBefore2?.timestamp;
+
+        //Wait for 4 years
+        const fourYears = 4 * 365 * 24 * 60 * 60; // Four years in seconds
+        await network.provider.send("evm_increaseTime", [fourYears]);
+        await network.provider.send("evm_mine");
+
+        //Withdraw 20% of the team tokens available. 20% of 1,000,000 is 200,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Recover team tokens from addr1 to addr2
+        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+
+        await expect(tx)
+            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .withArgs(addr1.address, addr2.address, ethers.parseUnits("800000", 18), ethers.parseUnits("0", 18));
+
+        // Check that the new wallet has inherited the properties of the old wallet
+        const newWallet = await upgradeableHYAXRewards.wallets(addr2.address);
+        expect(newWallet.isWhitelisted).to.be.true;
+        expect(newWallet.isTeamWallet).to.be.true;
+        expect(newWallet.isBlacklisted).to.be.false;
+        expect(newWallet.hyaxHoldingAmount).to.equal(ethers.parseUnits("800000", 18));
+        expect(newWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(ethers.parseUnits("1000000", 18));
+        expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("500000", 18));
+        expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("0", 18));
+        expect(newWallet.rewardsWithdrawn).to.equal(ethers.parseUnits("500000", 18));
+        expect(newWallet.tokenWithdrawalTimes).to.equal(1);
+        expect(newWallet.lastRewardsWithdrawalTime).to.equal(timestampOfBlockBefore2);
+        expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
+
+        // Check that the old wallet has been properly reset
+        const oldWallet = await upgradeableHYAXRewards.wallets(addr1.address);
+        expect(oldWallet.isWhitelisted).to.be.false;
+        expect(oldWallet.isTeamWallet).to.be.false;
+        expect(oldWallet.isBlacklisted).to.be.true;
+        expect(oldWallet.hyaxHoldingAmount).to.equal(0);
+        expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
+        expect(oldWallet.currentRewardsAmount).to.equal(0);
+        expect(oldWallet.rewardsWithdrawn).to.equal(0);
+        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
+        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
+
+        // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
+        expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
+
+        //Get the wallet data of the address
+        const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
+            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
+            = await upgradeableHYAXRewards.wallets(addr2.address);
+
+        console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
+            hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
+            currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
+            "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
+    });
+
+    
+    it("26.28. Should successfully recover team tokens on year 5 with rewards after team token withdrawal", async function () {
+        const { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount*BigInt(2));
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards} - Fund with team tokens
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards} - Fund with rewards tokens
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        // Add the address to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
+
+        // Update the rewards for the wallet
+        await upgradeableHYAXRewards.connect(owner).updateRewardsSingle(addr1.address, ethers.parseUnits("600000", 18));
+
+        // Get the timestamp of the block before
+        const blockNumBefore = await ethers.provider.getBlockNumber();
+        const blockBefore = await ethers.provider.getBlock(blockNumBefore);
+        const timestampOfBlockBefore = blockBefore?.timestamp;
+
+        //Withdraw rewards tokens
+        await upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens();
+
+        // Get the timestamp of the block before
+        const blockNumBefore2 = await ethers.provider.getBlockNumber();
+        const blockBefore2 = await ethers.provider.getBlock(blockNumBefore2);
+        const timestampOfBlockBefore2 = blockBefore2?.timestamp;
+
+        //Wait for 5 years
+        const fiveYears = 5 * 365 * 24 * 60 * 60; // Five years in seconds
+        await network.provider.send("evm_increaseTime", [fiveYears]);
+        await network.provider.send("evm_mine");
+
+        //Withdraw 20% of the team tokens available. 20% of 1,000,000 is 200,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Withdraw 40% of the team tokens available. 40% of 1,000,000 is 400,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Recover team tokens from addr1 to addr2
+        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+
+        await expect(tx)
+            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .withArgs(addr1.address, addr2.address, ethers.parseUnits("600000", 18), ethers.parseUnits("0", 18));
+
+        // Check that the new wallet has inherited the properties of the old wallet
+        const newWallet = await upgradeableHYAXRewards.wallets(addr2.address);
+        expect(newWallet.isWhitelisted).to.be.true;
+        expect(newWallet.isTeamWallet).to.be.true;
+        expect(newWallet.isBlacklisted).to.be.false;
+        expect(newWallet.hyaxHoldingAmount).to.equal(ethers.parseUnits("600000", 18));
+        expect(newWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(ethers.parseUnits("1000000", 18));
+        expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("600000", 18));
+        expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("0", 18));
+        expect(newWallet.rewardsWithdrawn).to.equal(ethers.parseUnits("600000", 18));
+        expect(newWallet.tokenWithdrawalTimes).to.equal(2);
+        expect(newWallet.lastRewardsWithdrawalTime).to.equal(timestampOfBlockBefore2);
+        expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
+
+        // Check that the old wallet has been properly reset
+        const oldWallet = await upgradeableHYAXRewards.wallets(addr1.address);
+        expect(oldWallet.isWhitelisted).to.be.false;
+        expect(oldWallet.isTeamWallet).to.be.false;
+        expect(oldWallet.isBlacklisted).to.be.true;
+        expect(oldWallet.hyaxHoldingAmount).to.equal(0);
+        expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
+        expect(oldWallet.currentRewardsAmount).to.equal(0);
+        expect(oldWallet.rewardsWithdrawn).to.equal(0);
+        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
+        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
+
+        // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
+        expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
+
+        //Get the wallet data of the address
+        const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
+            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
+            = await upgradeableHYAXRewards.wallets(addr2.address);
+
+        console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
+            hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
+            currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
+            "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
+    });
+
+    it("26.29. Should successfully recover team tokens on year 6 with rewards after team token withdrawal", async function () {
+        const { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount*BigInt(2));
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards} - Fund with team tokens
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards} - Fund with rewards tokens
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        // Add the address to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
+
+        // Update the rewards for the wallet
+        await upgradeableHYAXRewards.connect(owner).updateRewardsSingle(addr1.address, ethers.parseUnits("700000", 18));
+
+        // Get the timestamp of the block before
+        const blockNumBefore = await ethers.provider.getBlockNumber();
+        const blockBefore = await ethers.provider.getBlock(blockNumBefore);
+        const timestampOfBlockBefore = blockBefore?.timestamp;
+
+        //Withdraw rewards tokens
+        await upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens();
+
+        // Get the timestamp of the block before
+        const blockNumBefore2 = await ethers.provider.getBlockNumber();
+        const blockBefore2 = await ethers.provider.getBlock(blockNumBefore2);
+        const timestampOfBlockBefore2 = blockBefore2?.timestamp;
+
+        //Wait for 6 years
+        const sixYears = 6 * 365 * 24 * 60 * 60; // Six years in seconds
+        await network.provider.send("evm_increaseTime", [sixYears]);
+        await network.provider.send("evm_mine");
+
+        //Withdraw 20% of the team tokens available. 20% of 1,000,000 is 200,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Withdraw 40% of the team tokens available. 40% of 1,000,000 is 400,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Withdraw 60% of the team tokens available. 60% of 1,000,000 is 600,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Recover team tokens from addr1 to addr2
+        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+
+        await expect(tx)
+            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .withArgs(addr1.address, addr2.address, ethers.parseUnits("400000", 18), ethers.parseUnits("0", 18));
+
+        // Check that the new wallet has inherited the properties of the old wallet
+        const newWallet = await upgradeableHYAXRewards.wallets(addr2.address);
+        expect(newWallet.isWhitelisted).to.be.true;
+        expect(newWallet.isTeamWallet).to.be.true;
+        expect(newWallet.isBlacklisted).to.be.false;
+        expect(newWallet.hyaxHoldingAmount).to.equal(ethers.parseUnits("400000", 18));
+        expect(newWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(ethers.parseUnits("1000000", 18));
+        expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("700000", 18));
+        expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("0", 18));
+        expect(newWallet.rewardsWithdrawn).to.equal(ethers.parseUnits("700000", 18));
+        expect(newWallet.tokenWithdrawalTimes).to.equal(3);
+        expect(newWallet.lastRewardsWithdrawalTime).to.equal(timestampOfBlockBefore2);
+        expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
+
+        // Check that the old wallet has been properly reset
+        const oldWallet = await upgradeableHYAXRewards.wallets(addr1.address);
+        expect(oldWallet.isWhitelisted).to.be.false;
+        expect(oldWallet.isTeamWallet).to.be.false;
+        expect(oldWallet.isBlacklisted).to.be.true;
+        expect(oldWallet.hyaxHoldingAmount).to.equal(0);
+        expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
+        expect(oldWallet.currentRewardsAmount).to.equal(0);
+        expect(oldWallet.rewardsWithdrawn).to.equal(0);
+        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
+        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
+
+        // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
+        expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
+
+        //Get the wallet data of the address
+        const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
+            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
+            = await upgradeableHYAXRewards.wallets(addr2.address);
+
+        console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
+            hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
+            currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
+            "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
+    });
+
+    
+    it("26.30. Should successfully recover team tokens on year 7 with rewards after team token withdrawal", async function () {
+        const { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount*BigInt(2));
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards} - Fund with team tokens
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards} - Fund with rewards tokens
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        // Add the address to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
+        
+        // Update the rewards for the wallet
+        await upgradeableHYAXRewards.connect(owner).updateRewardsSingle(addr1.address, ethers.parseUnits("800000", 18));
+
+        // Get the timestamp of the block before
+        const blockNumBefore = await ethers.provider.getBlockNumber();
+        const blockBefore = await ethers.provider.getBlock(blockNumBefore);
+        const timestampOfBlockBefore = blockBefore?.timestamp;
+
+        //Withdraw rewards tokens
+        await upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens();
+
+        // Get the timestamp of the block before
+        const blockNumBefore2 = await ethers.provider.getBlockNumber();
+        const blockBefore2 = await ethers.provider.getBlock(blockNumBefore2);
+        const timestampOfBlockBefore2 = blockBefore2?.timestamp;
+
+        //Wait for 7 years
+        const sevenYears = 7 * 365 * 24 * 60 * 60; // Seven years in seconds
+        await network.provider.send("evm_increaseTime", [sevenYears]);
+        await network.provider.send("evm_mine");
+
+        //Withdraw 20% of the team tokens available. 20% of 1,000,000 is 200,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Withdraw 40% of the team tokens available. 40% of 1,000,000 is 400,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Withdraw 60% of the team tokens available. 60% of 1,000,000 is 600,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Withdraw 80% of the team tokens available. 80% of 1,000,000 is 800,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Recover team tokens from addr1 to addr2
+        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+
+        await expect(tx)
+            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .withArgs(addr1.address, addr2.address, ethers.parseUnits("200000", 18), ethers.parseUnits("0", 18));
+
+        // Check that the new wallet has inherited the properties of the old wallet
+        const newWallet = await upgradeableHYAXRewards.wallets(addr2.address);
+        expect(newWallet.isWhitelisted).to.be.true;
+        expect(newWallet.isTeamWallet).to.be.true;
+        expect(newWallet.isBlacklisted).to.be.false;
+        expect(newWallet.hyaxHoldingAmount).to.equal(ethers.parseUnits("200000", 18));
+        expect(newWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(ethers.parseUnits("1000000", 18));
+        expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("800000", 18));
+        expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("0", 18));
+        expect(newWallet.rewardsWithdrawn).to.equal(ethers.parseUnits("800000", 18));
+        expect(newWallet.tokenWithdrawalTimes).to.equal(4);
+        expect(newWallet.lastRewardsWithdrawalTime).to.equal(timestampOfBlockBefore2);
+        expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
+
+        // Check that the old wallet has been properly reset
+        const oldWallet = await upgradeableHYAXRewards.wallets(addr1.address);
+        expect(oldWallet.isWhitelisted).to.be.false;
+        expect(oldWallet.isTeamWallet).to.be.false;
+        expect(oldWallet.isBlacklisted).to.be.true;
+        expect(oldWallet.hyaxHoldingAmount).to.equal(0);
+        expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
+        expect(oldWallet.currentRewardsAmount).to.equal(0);
+        expect(oldWallet.rewardsWithdrawn).to.equal(0);
+        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
+        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
+
+        // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
+        expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
+
+        //Get the wallet data of the address
+        const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
+            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
+            = await upgradeableHYAXRewards.wallets(addr2.address);
+
+        console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
+            hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
+            currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
+            "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
+    });
+
+    
+    it("26.31. Should successfully recover team tokens on year 7 with rewards after team token withdrawal", async function () {
+        const { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, whitelisterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount*BigInt(2));
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards} - Fund with team tokens
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards} - Fund with rewards tokens
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        // Add the address to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
+        
+        // Update the rewards for the wallet
+        await upgradeableHYAXRewards.connect(owner).updateRewardsSingle(addr1.address, ethers.parseUnits("900000", 18));
+
+        // Get the timestamp of the block before
+        const blockNumBefore = await ethers.provider.getBlockNumber();
+        const blockBefore = await ethers.provider.getBlock(blockNumBefore);
+        const timestampOfBlockBefore = blockBefore?.timestamp;
+
+        //Withdraw rewards tokens
+        await upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens();
+
+        // Get the timestamp of the block before
+        const blockNumBefore2 = await ethers.provider.getBlockNumber();
+        const blockBefore2 = await ethers.provider.getBlock(blockNumBefore2);
+        const timestampOfBlockBefore2 = blockBefore2?.timestamp;
+
+        //Wait for 8 years
+        const eightYears = 8 * 365 * 24 * 60 * 60; // Eight years in seconds
+        await network.provider.send("evm_increaseTime", [eightYears]);
+        await network.provider.send("evm_mine");
+
+        //Withdraw 20% of the team tokens available. 20% of 1,000,000 is 200,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Withdraw 40% of the team tokens available. 40% of 1,000,000 is 400,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Withdraw 60% of the team tokens available. 60% of 1,000,000 is 600,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Withdraw 80% of the team tokens available. 80% of 1,000,000 is 800,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+        //Withdraw 100% of the team tokens available. 100% of 1,000,000 is 1,000,000
+        await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
+
+
+        //Recover team tokens from addr1 to addr2
+        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+
+        await expect(tx)
+            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .withArgs(addr1.address, addr2.address, ethers.parseUnits("0", 18), ethers.parseUnits("0", 18));
+
+        // Check that the new wallet has inherited the properties of the old wallet
+        const newWallet = await upgradeableHYAXRewards.wallets(addr2.address);
+        expect(newWallet.isWhitelisted).to.be.true;
+        expect(newWallet.isTeamWallet).to.be.true;
+        expect(newWallet.isBlacklisted).to.be.false;
+        expect(newWallet.hyaxHoldingAmount).to.equal(ethers.parseUnits("0", 18));
+        expect(newWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(ethers.parseUnits("1000000", 18));
+        expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("900000", 18));
+        expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("0", 18));
+        expect(newWallet.rewardsWithdrawn).to.equal(ethers.parseUnits("900000", 18));
+        expect(newWallet.tokenWithdrawalTimes).to.equal(5);
+        expect(newWallet.lastRewardsWithdrawalTime).to.equal(timestampOfBlockBefore2);
         expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
 
         // Check that the old wallet has been properly reset

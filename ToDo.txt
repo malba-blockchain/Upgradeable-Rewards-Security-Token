@@ -381,42 +381,65 @@ INPUT: address teamWallet, address newWallet
 26.9. Revert because New team member wallet address is blacklisted DONE
 
 WHITOUT REWARDS
--Successfully execute for a wallet in year zero DONE
--Successfully execute for a wallet in year one DONE
--Successfully execute for a wallet in year two DONE
--Successfully execute for a wallet in year three DONE
--Successfully execute for a wallet in year four DONE
--Successfully execute for a wallet in year five DONE
+26.10. Successfully execute for a wallet in year zero DONE
+26.11. Successfully execute for a wallet in year one DONE
+26.12. Successfully execute for a wallet in year two DONE
+26.13. Successfully execute for a wallet in year three DONE
+26.14. Successfully execute for a wallet in year four DONE
+26.15. Successfully execute for a wallet in year five DONE
 
 WITH REWARDS
--Successfully execute for a wallet in year zero DONE
--Successfully execute for a wallet in year one DONE
--Successfully execute for a wallet in year two DONE
--Successfully execute for a wallet in year three DONE
--Successfully execute for a wallet in year four DONE
--Successfully execute for a wallet in year five
+26.16. Successfully execute for a wallet in year zero DONE
+26.17. Successfully execute for a wallet in year one DONE
+26.18. Successfully execute for a wallet in year two DONE
+26.19. Successfully execute for a wallet in year three DONE
+26.20. Successfully execute for a wallet in year four DONE
+26.21. Successfully execute for a wallet in year five DONE
 
-CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE (Last tests in upgradeable rewards)
+WITH REWARDS AFTER TEAM TOKEN WITHDRAWAL
+26.22. Successfully execute for a wallet in year four DONE
+26.23. Successfully execute for a wallet in year five DONE
+26.24. Successfully execute for a wallet in year six DONE
+26.25. Successfully execute for a wallet in year seven DONE
+26.26. Successfully execute for a wallet in year eight DONE
 
-AFTER WITHDRAWAL WITH REWARDS
--Successfully execute for a wallet in year five
--Successfully execute for a wallet in year six
--Successfully execute for a wallet in year seven
--Successfully execute for a wallet in year eight
--Successfully execute for a wallet in year nine
+WITH REWARDS AFTER TEAM TOKEN WITHDRAWAL AND REWARDS WITHDRAWAL
+26.27. Successfully execute for a wallet in year four DONE
+26.28. Successfully execute for a wallet in year five DONE
+26.29. Successfully execute for a wallet in year six DONE
+26.30. Successfully execute for a wallet in year seven DONE
+26.31. Successfully execute for a wallet in year eight DONE
 
-Recover tokens allows vesting to work the right way? What if tries to recover afterwithdraw?
+9.13. Successfully withdraw team tokens after recovering the wallet DONE
+9.14. Revert when trying to withdraw tokens after recovering the wallet before a year has elapsed DONE
+9.15. Revert when trying to withdraw tokens after recovering the wallet after withdrawing all team tokens DONE
 
--Successfully execute for a wallet with something in rewards
+17.8. Successfully  withdraw reward tokens after recovering the wallet DONE
+17.9. Revert when trying to withdraw tokens after recovering the wallet after withdrawing all reward tokens that wallet has DONE
+
 
 19. Test fail cases
-If a single transaction update fails, everything fails. Make sure it executes everything right and the one that fails gets emited as event.
+19.1. If a single transaction update fails, everything fails. Make sure it executes everything right and the one that fails gets emited as event. DONE
 
-If the wallet gets updated from whitelist to false, its possible to add it again. Which shouldn't happen.
+19.2. If the wallet gets updated from whitelist to false, its possible to add it again. Which shouldn't happen. Add check by added to whitelist time. DONE
 
-Is it ok to "update whitelist" and "update blacklist" status without having the address added to the system?
+19.3. If updateWhitelistStatus gets executed, the wallet MUST be added to the whitelist BEFORE executing the function DONE
 
-Run test cases with for loops and increasing evm time to simulate the end of the days.
+19.4. The function updateBlacklistStatus can be executed WITHOUT adding the address to the whitelist. DONE
+
+
+CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+
+19.5. Run test cases with for loops and increasing evm time to simulate the end of the days.
+-withdrawGrowthTokens
+-withdrawTeamTokens
+-updateRewardsBatch
+-updateRewardsSingle
+-withdrawRewardTokens	
+
+#. Add upgradeable tests
+
+#. Add gas library to tests
 
 GOAL TUESDAY: UP TO HERE-------------------------------
 
@@ -426,13 +449,17 @@ Create script that interacts with local version and optimize it.
 
 21. Optimize updates script
 
+#. Clean comments and fix documentation on contract and tests
+
 22. Do initial deployment in local
 
 23. Launch in testnet
 
 24. Document
 
-25. Do realistic tests
+#. Share to the web2 team + rewards update script
+
+25. Do realistic tests with team + multisig testing for upgradeable.
 
 
 ---------INITIAL LOCAL DEPLOYMENT---------

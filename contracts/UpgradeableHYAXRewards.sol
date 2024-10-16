@@ -276,6 +276,9 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
 
         //Verify that the wallet is not in a blacklist
         require(wallets[_walletAddress].isBlacklisted == false, "Wallet has been blacklisted");
+
+        //Verify that the wallet has not been added to the whitelist
+        require(wallets[_walletAddress].addedToWhitelistTime == 0, "Wallet has already been added to the whitelist");
         
         //Add the wallet to the whitelist with the provided parameters
         wallets[_walletAddress].isWhitelisted = true; // Mark the wallet as whitelisted
@@ -317,6 +320,9 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         //Verify that the wallet is currently in a different status
         require(wallets[_walletAddress].isWhitelisted != _newStatus, "Wallet has already been updated to that status");
 
+        //Verify that the wallet has been added to the whitelist
+        require(wallets[_walletAddress].addedToWhitelistTime != 0, "Wallet has not been added to the whitelist");
+
         //Update the whitelist status
         wallets[_walletAddress].isWhitelisted = _newStatus; 
 
@@ -333,7 +339,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         
         //Verify that the wallet is currently in a different status
         require(wallets[_walletAddress].isBlacklisted != _newStatus, "Wallet has already been updated to that status");
-
+    
         //Update the blacklist status
         wallets[_walletAddress].isBlacklisted = _newStatus; 
 
@@ -467,7 +473,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
     function withdrawGrowthTokens() onlyOwner() nonReentrant() isNotPaused() public {
 
         // Check if growth tokens funding has started
-        require(growthTokensFundingStarted, "Funding has not started yet, no tokens to withdraw");
+        require(growthTokensFundingStarted, "Growth tokens funding has not started yet, no tokens to withdraw");
         
         // Ensure that at least one year has passed since the funding start time
         require(block.timestamp >= growthTokensStartFundingTime + TOKENS_WITHDRAWAL_PERIOD , "Cannot withdraw before 1 year after funding start");
@@ -523,7 +529,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         require(wallets[msg.sender].isTeamWallet == true, "Only team wallets can withdraw tokens using this function");
 
         // Check if team tokens funding has started
-        require(teamTokensFundingStarted, "Funding has not started yet, no tokens to withdraw");
+        require(teamTokensFundingStarted, "Team tokens funding has not started yet, no tokens to withdraw");
         
         // Ensure that at least four years have passed since the team wallet was added to the whitelist
         require(block.timestamp >= wallets[msg.sender].addedToWhitelistTime + TEAM_TOKENS_LOCKED_PERIOD , "Cannot withdraw before 4 years after being added to the whitelist");
@@ -692,7 +698,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         require(wallets[msg.sender].isBlacklisted == false, "Wallet has been blacklisted");
 
         // Check if rewards funding has started
-        require(rewardTokensFundingStarted, "Funding has not started yet, no tokens to withdraw");
+        require(rewardTokensFundingStarted, "Reward tokens funding has not started yet, no tokens to withdraw");
         
         // Verify that not all reward tokens have been withdrawn yet
         require(rewardTokensWithdrawn < REWARD_TOKENS_TOTAL, "All reward tokens have been withdrawn");
@@ -750,7 +756,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         // Check the funding type and perform the necessary actions
         if(_fundingType == FundingType.GrowthTokens){
             // Ensure that growth tokens funding has started
-            require(growthTokensFundingStarted, "Funding has not started yet, no tokens to withdraw");
+            require(growthTokensFundingStarted, "Growth tokens funding has not started yet, no tokens to withdraw");
             // Verify that there are sufficient growth tokens in the contract to withdraw
             require(_amount <= growthTokensInSmartContract, "Insufficient growth tokens in the contract to withdraw");
             // Update the growth tokens in the smart contract
@@ -758,7 +764,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         }
         else if(_fundingType == FundingType.TeamTokens){
             // Ensure that team tokens funding has started
-            require(teamTokensFundingStarted, "Funding has not started yet, no tokens to withdraw");
+            require(teamTokensFundingStarted, "Team tokens funding has not started yet, no tokens to withdraw");
             // Verify that there are sufficient team tokens in the contract to withdraw
             require(_amount <= teamTokensInSmartContract, "Insufficient team tokens in the contract to withdraw");
             // Update the team tokens in the smart contract
@@ -767,7 +773,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         }
         else if(_fundingType == FundingType.RewardTokens){
             // Ensure that reward tokens funding has started
-            require(rewardTokensFundingStarted, "Funding has not started yet, no tokens to withdraw");
+            require(rewardTokensFundingStarted, "Reward tokens funding has not started yet, no tokens to withdraw");
             // Verify that there are sufficient reward tokens in the contract to withdraw
             require(_amount <= rewardTokensInSmartContract, "Insufficient reward tokens in the contract to withdraw");
             // Update the reward tokens in the smart contract
@@ -783,7 +789,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
 
     function recoverTeamTokens(address _oldTeamMemberWalletAddress, address _newTeamMemberWalletAddress) onlyOwner() nonReentrant() public {
         // Ensure that team tokens funding has started
-        require(teamTokensFundingStarted, "Funding has not started yet, no tokens to recover");
+        require(teamTokensFundingStarted, "Team tokens funding has not started yet, no tokens to recover");
 
         // Validate that the old team member wallet address is a team wallet
         require(wallets[_oldTeamMemberWalletAddress].isTeamWallet == true, "Old wallet address is not a team wallet");
