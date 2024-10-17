@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Pausable.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+//import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+//import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
+//import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import "hardhat/console.sol";
 
 /**
@@ -17,7 +20,7 @@ interface ERC20TokenInterface {
     function symbol() external view returns (string memory);
 }
 
-contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
+contract UpgradeableHYAXRewards is OwnableUpgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable {
 
     ////////////////// SMART CONTRACT EVENTS //////////////////
     /**
@@ -186,8 +189,6 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
 
     uint256 public teamTokensInSmartContract; // Current balance of team tokens in the contract
 
-    uint256 public teamTokensLastWithdrawalTime; // Timestamp of the last team tokens withdrawal
-
     uint256 public teamTokensStartFundingTime; // Timestamp when team tokens funding started
 
     bool public teamTokensFundingStarted; // Flag to indicate if team tokens funding has begun
@@ -200,8 +201,6 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
     uint256 public constant REWARD_TOKENS_PER_YEAR = 150000000 * 10**18; // 150 Million tokens per year
 
     uint256 public constant REWARD_TOKENS_PER_WEEK =  REWARD_TOKENS_PER_YEAR / 52; // 150 Million tokens divided by 52 weeks
-
-    uint256 public constant REWARD_TOKENS_HOLDING_PERIOD = 7 days; // 7 days
 
     uint256 public rewardTokensFunded; // Total amount of reward tokens funded to the contract
 
@@ -231,7 +230,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         uint256 rewardsWithdrawn;                   // Total amount of rewards withdrawn by the wallet
         
         uint256 addedToWhitelistTime;               // Timestamp when the wallet was added to the whitelist
-        uint8 tokenWithdrawalTimes;                 // Times that there have been a token withdrawal
+        uint8 teamTokenWithdrawalTimes;            // Times that there have been a team token withdrawal
         uint256 lastRewardsWithdrawalTime;          // Timestamp of the last rewards withdrawal
         uint256 lastRewardsUpdateTime;              // Timestamp of the last rewards update
 
@@ -242,16 +241,30 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
     
     uint256 public constant MIN_INTERVAL_FOR_UPDATE_REWARDS = 6 days;
 
-    uint8 public maximumBatchSizeForUpdateRewards = 100;
+    uint8 public maximumBatchSizeForUpdateRewards;
     
     mapping(address => WalletData) public wallets;
 
     ////////////////// SMART CONTRACT CONSTRUCTOR /////////////////
-    constructor(address _hyaxTokenAddress) Ownable (msg.sender)  {
+    //constructor(address _hyaxTokenAddress) Ownable(msg.sender)  {
+
+    /**
+     * @dev Initializer function instead of constructor.
+     * This function will initialize the contract's state variables and call initializers for inherited contracts.
+     */
+    function initialize(address _hyaxTokenAddress) public initializer {
+
+        // Initialize inherited contracts
+        __Ownable_init(msg.sender);
+        __ReentrancyGuard_init();
+        __Pausable_init();
 
         // Make the deployer of the contract the administrator
         hyaxTokenAddress = _hyaxTokenAddress;
         hyaxToken = ERC20TokenInterface(hyaxTokenAddress);
+
+        // Set the initial maximum batch size for update rewards
+        maximumBatchSizeForUpdateRewards = 100;
 
         //Validate that the hyax token is valid based on the symbol
         require(keccak256(abi.encodePacked(hyaxToken.symbol())) == keccak256(abi.encodePacked("HYAX"))  , "Hyax token address is not valid");
@@ -287,7 +300,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
 
         wallets[_walletAddress].addedToWhitelistTime = block.timestamp; // Set the time when the wallet was added to the whitelist
         
-        wallets[_walletAddress].tokenWithdrawalTimes = 0; // Initialize the token withdrawal times to zero
+        wallets[_walletAddress].teamTokenWithdrawalTimes = 0; // Initialize the token withdrawal times to zero
         wallets[_walletAddress].lastRewardsWithdrawalTime = 0; // Initialize the last rewards withdrawal time to zero
         
         wallets[_walletAddress].currentRewardsAmount = 0; // Initialize the current rewards amount to zero
@@ -541,7 +554,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         require(wallets[msg.sender].hyaxHoldingAmount > 0, "No hyax holding amount to withdraw");
 
         // Ensure that the number of token withdrawal times is greater than or equal to the calculated year for team tokens
-        require(wallets[msg.sender].tokenWithdrawalTimes <  calculateYearForTeamTokens(), "Can only withdraw team tokens once per year");
+        require(wallets[msg.sender].teamTokenWithdrawalTimes <  calculateYearForTeamTokens(), "Can only withdraw team tokens once per year");
 
         // Set the initial withdrawable amount to the limit per year (20% of the hyax holding amount at whitelist time) 
         uint256 withdrawableAmount = wallets[msg.sender].hyaxHoldingAmountAtWhitelistTime / 5;
@@ -562,7 +575,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         teamTokensInSmartContract -= withdrawableAmount;
 
         //Increase the times that the team member has done a token withdrawal
-        wallets[msg.sender].tokenWithdrawalTimes ++;
+        wallets[msg.sender].teamTokenWithdrawalTimes ++;
     
         // Transfer the calculated amount to the wallet
         require(hyaxToken.transfer(msg.sender, withdrawableAmount), "Failed to transfer team tokens");
@@ -608,6 +621,9 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
      */
     function updateRewardsBatch(address[] calldata _walletAddresses, uint256[] calldata _hyaxRewards) public onlyOwnerOrRewardsUpdater nonReentrant {
         
+        // Check if rewards funding has started
+        require(rewardTokensFundingStarted, "Reward tokens funding has not started yet, no tokens to update");
+
         // Validate the batch size limit
         require(_walletAddresses.length <= maximumBatchSizeForUpdateRewards, "Batch size exceeds the defined limit");
         //console.log("Enters 1.1");
@@ -639,7 +655,9 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
      */
      function updateRewardsSingle(address _walletAddress, uint256 _hyaxRewards) public onlyOwnerOrRewardsUpdater {
         
-        //console.log("Enters 2.2");      
+        //console.log("Enters 2.2");
+        // Check if rewards funding has started
+        require(rewardTokensFundingStarted, "Reward tokens funding has not started yet, no tokens to update");
 
         // Validate that the wallet is whitelisted
         require(wallets[_walletAddress].isWhitelisted == true, "Wallet is not whitelisted");
@@ -660,6 +678,9 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         // Check if there are sufficient tokens in the contract to distribute as rewards
         require(_hyaxRewards <= rewardTokensInSmartContract, "Insufficient reward tokens to distribute as rewards");
         //console.log("Enters 2.7");
+
+        //Check that the token rewards already distributed is not higher than the total rewards that should be distributed
+        require(rewardTokensDistributed + _hyaxRewards <= REWARD_TOKENS_TOTAL, "All the reward tokens have been already distributed");
 
         // Update the total rewards distributed
         rewardTokensDistributed += _hyaxRewards;
@@ -830,7 +851,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         wallets[_newTeamMemberWalletAddress].currentRewardsAmount = wallets[_oldTeamMemberWalletAddress].currentRewardsAmount;
         wallets[_newTeamMemberWalletAddress].rewardsWithdrawn = wallets[_oldTeamMemberWalletAddress].rewardsWithdrawn;
         wallets[_newTeamMemberWalletAddress].addedToWhitelistTime = wallets[_oldTeamMemberWalletAddress].addedToWhitelistTime;
-        wallets[_newTeamMemberWalletAddress].tokenWithdrawalTimes = wallets[_oldTeamMemberWalletAddress].tokenWithdrawalTimes;
+        wallets[_newTeamMemberWalletAddress].teamTokenWithdrawalTimes = wallets[_oldTeamMemberWalletAddress].teamTokenWithdrawalTimes;
 
         //Remove the old team member wallet address from the lists
         wallets[_oldTeamMemberWalletAddress].isWhitelisted = false;
@@ -845,7 +866,7 @@ contract UpgradeableHYAXRewards is Ownable, Pausable, ReentrancyGuard {
         wallets[_oldTeamMemberWalletAddress].totalHyaxRewardsAmount = 0;
         wallets[_oldTeamMemberWalletAddress].currentRewardsAmount = 0;
         wallets[_oldTeamMemberWalletAddress].rewardsWithdrawn = 0;
-        wallets[_oldTeamMemberWalletAddress].tokenWithdrawalTimes = 0;
+        wallets[_oldTeamMemberWalletAddress].teamTokenWithdrawalTimes = 0;
 
         //Emit an event to notify that the team tokens were recovered
         emit TeamMemberTokensRecovered(_oldTeamMemberWalletAddress, _newTeamMemberWalletAddress,

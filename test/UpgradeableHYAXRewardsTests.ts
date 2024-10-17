@@ -1,5 +1,5 @@
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
-import { ethers, network } from "hardhat"
+import { ethers, network, upgrades } from "hardhat"
 import { expect } from "chai"
 
 describe("Testing Use Case #1: Constructor", function () {
@@ -10,8 +10,14 @@ describe("Testing Use Case #1: Constructor", function () {
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
+
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
 
         // Fixtures can return anything you consider useful for your tests
         return { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken };
@@ -40,7 +46,10 @@ describe("Testing Use Case #1: Constructor", function () {
 
         const invalidHyaxTokenAddress = usdcToken.target; // Example of an invalid parameter
 
-        await expect(ethers.deployContract("UpgradeableHYAXRewards", [invalidHyaxTokenAddress])
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+
+        await expect(upgrades.deployProxy(UpgradeableHYAXRewards, [invalidHyaxTokenAddress], { initializer: 'initialize' })
         ).to.be.revertedWith("Hyax token address is not valid");
     });
 });
@@ -54,9 +63,15 @@ describe("Testing Use Case #2: Update wallet whitelist status", function () {
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
 
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
+        
         //Update the whitelister address in the contract
         await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
 
@@ -82,14 +97,14 @@ describe("Testing Use Case #2: Update wallet whitelist status", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes,
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes,
             lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr1.address);
 
         console.log("\n   [Log]: Wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
 
@@ -109,7 +124,7 @@ describe("Testing Use Case #2: Update wallet whitelist status", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes,
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes,
             lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr1.address);
 
@@ -168,14 +183,14 @@ describe("Testing Use Case #2: Update wallet whitelist status", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes,
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes,
             lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted]
             = await upgradeableHYAXRewards.wallets(addr1.address);
 
         console.log("\n   [Log]: Wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted);
 
@@ -197,7 +212,7 @@ describe("Testing Use Case #2: Update wallet whitelist status", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes,
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes,
             lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted]
             = await upgradeableHYAXRewards.wallets(addr1.address);
 
@@ -233,8 +248,14 @@ describe("Testing Use Case #3: Update wallet blacklist status", function () {
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
+
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
 
         //Update the whitelister address in the contract
         await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
@@ -263,14 +284,14 @@ describe("Testing Use Case #3: Update wallet blacklist status", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes,
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes,
             lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr1.address);
 
         console.log("\n   [Log]: Wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
 
@@ -292,7 +313,7 @@ describe("Testing Use Case #3: Update wallet blacklist status", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes,
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes,
             lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr1.address);
 
@@ -338,14 +359,14 @@ describe("Testing Use Case #3: Update wallet blacklist status", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes,
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes,
             lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr1.address);
 
         console.log("\n   [Log]: Wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
 
@@ -370,7 +391,7 @@ describe("Testing Use Case #3: Update wallet blacklist status", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes,
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes,
             lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr1.address);
 
@@ -402,9 +423,14 @@ describe("Testing Use Case #4: Fund Smart Contract with growth tokens", function
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
 
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
         // Fixtures can return anything you consider useful for your tests
         return { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken };
     }
@@ -617,8 +643,14 @@ describe("Testing Use Case #5: Fund Smart Contract with growth tokens after havi
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
+
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
 
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
@@ -745,8 +777,14 @@ describe("Testing Use Case #6: Withdraw Growth Tokens ", function () {
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
+
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
 
         // Fixtures can return anything you consider useful for your tests
         return { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken };
@@ -1046,8 +1084,14 @@ describe("Testing Use Case #7: Fund Smart Contract with team tokens", function (
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
+
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
 
         // Fixtures can return anything you consider useful for your tests
         return { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken };
@@ -1259,8 +1303,14 @@ describe("Testing Use Case #8: Fund Smart Contract with team tokens after having
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
+
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
 
         const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
 
@@ -1381,9 +1431,15 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
 
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
+        
         // Update the whiteLister address
         await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
 
@@ -1523,12 +1579,12 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         console.log("\n   [Log]: TeamTokensWithdrawn:", teamTokensWithdrawn);
 
         // Check if the correct amount of tokens was withdrawn for the wallet
-        const [newHyaxHoldingAmount, , , , , , tokenWithdrawalTimes, , ,] = await upgradeableHYAXRewards.wallets(addr1.address);
+        const [newHyaxHoldingAmount, , , , , , teamTokenWithdrawalTimes, , ,] = await upgradeableHYAXRewards.wallets(addr1.address);
         console.log("   [Log]: NewHyaxHoldingAmount:", newHyaxHoldingAmount);
         console.log("   [Log]: PrevHyaxHoldingAmount:", prevHyaxHoldingAmount);
         expect(prevHyaxHoldingAmount - newHyaxHoldingAmount).to.equal(ethers.parseUnits("200000", 18));
         // Verify that the last withdrawal time was updated correctly
-        expect(tokenWithdrawalTimes).to.equal(1);
+        expect(teamTokenWithdrawalTimes).to.equal(1);
 
         // Check if the remaining tokens in the smart contract are correct
         const teamTokensInSmartContract = await upgradeableHYAXRewards.teamTokensInSmartContract();
@@ -1638,12 +1694,12 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         expect(teamTokensWithdrawn).to.equal(ethers.parseUnits("400000", 18));
 
         // Check if the correct amount of tokens was withdrawn for the wallet
-        const [newHyaxHoldingAmount, , , , , , tokenWithdrawalTimes, , ,] = await upgradeableHYAXRewards.wallets(addr1.address);
+        const [newHyaxHoldingAmount, , , , , , teamTokenWithdrawalTimes, , ,] = await upgradeableHYAXRewards.wallets(addr1.address);
         expect(prevHyaxHoldingAmount - newHyaxHoldingAmount).to.equal(ethers.parseUnits("200000", 18));
         console.log("\n   [Log]: NewHyaxHoldingAmount:", newHyaxHoldingAmount);
         console.log("   [Log]: PrevHyaxHoldingAmount:", prevHyaxHoldingAmount);
         // Verify that the last withdrawal time was updated correctly
-        expect(tokenWithdrawalTimes).to.equal(2);
+        expect(teamTokenWithdrawalTimes).to.equal(2);
 
         // Check if the remaining tokens in the smart contract are correct
         const teamTokensInSmartContract = await upgradeableHYAXRewards.teamTokensInSmartContract();
@@ -1711,9 +1767,9 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         }
 
         // Verify that the last withdrawal time was updated correctly
-        const [, , , , , , tokenWithdrawalTimes, , ,] = await upgradeableHYAXRewards.wallets(addr1.address);
-        console.log("\n   [Log]: Token Withdrawal Times:", tokenWithdrawalTimes);
-        expect(tokenWithdrawalTimes).to.equal(5);
+        const [, , , , , , teamTokenWithdrawalTimes, , ,] = await upgradeableHYAXRewards.wallets(addr1.address);
+        console.log("\n   [Log]: Token Withdrawal Times:", teamTokenWithdrawalTimes);
+        expect(teamTokenWithdrawalTimes).to.equal(5);
 
         // Check if the correct amount of tokens was withdrawn
         const teamTokensWithdrawn = await upgradeableHYAXRewards.teamTokensWithdrawn();
@@ -1793,9 +1849,9 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         }
 
         // Verify that the last withdrawal time was updated correctly
-        const [newHyaxHoldingAmount, , , , , , tokenWithdrawalTimes, , ,] = await upgradeableHYAXRewards.wallets(addr1.address);
-        console.log("\n   [Log]: Last Token Withdrawal Time:", tokenWithdrawalTimes);
-        expect(tokenWithdrawalTimes).to.equal(5);
+        const [newHyaxHoldingAmount, , , , , , teamTokenWithdrawalTimes, , ,] = await upgradeableHYAXRewards.wallets(addr1.address);
+        console.log("\n   [Log]: Last Token Withdrawal Time:", teamTokenWithdrawalTimes);
+        expect(teamTokenWithdrawalTimes).to.equal(5);
 
         // Check if the correct amount of tokens was withdrawn
         const teamTokensWithdrawn = await upgradeableHYAXRewards.teamTokensWithdrawn();
@@ -1879,12 +1935,12 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         console.log("\n   [Log]: TeamTokensWithdrawn:", teamTokensWithdrawn);
 
         // Check if the correct amount of tokens was withdrawn for the wallet
-        const [newHyaxHoldingAmount, , , , , , tokenWithdrawalTimes, , ,] = await upgradeableHYAXRewards.wallets(addr1.address);
+        const [newHyaxHoldingAmount, , , , , , teamTokenWithdrawalTimes, , ,] = await upgradeableHYAXRewards.wallets(addr1.address);
         console.log("   [Log]: NewHyaxHoldingAmount:", newHyaxHoldingAmount);
         console.log("   [Log]: PrevHyaxHoldingAmount:", prevHyaxHoldingAmount);
         expect(prevHyaxHoldingAmount - newHyaxHoldingAmount).to.equal(ethers.parseUnits("400000", 18));
         // Verify that the last withdrawal time was updated correctly
-        expect(tokenWithdrawalTimes).to.equal(2);
+        expect(teamTokenWithdrawalTimes).to.equal(2);
 
         // Check if the remaining tokens in the smart contract are correct
         const teamTokensInSmartContract = await upgradeableHYAXRewards.teamTokensInSmartContract();
@@ -1963,12 +2019,12 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         console.log("\n   [Log]: TeamTokensWithdrawn:", teamTokensWithdrawn);
 
         // Check if the correct amount of tokens was withdrawn for the wallet
-        const [newHyaxHoldingAmount, , , , , , tokenWithdrawalTimes, , ,] = await upgradeableHYAXRewards.wallets(addr1.address);
+        const [newHyaxHoldingAmount, , , , , , teamTokenWithdrawalTimes, , ,] = await upgradeableHYAXRewards.wallets(addr1.address);
         console.log("   [Log]: NewHyaxHoldingAmount:", newHyaxHoldingAmount);
         console.log("   [Log]: PrevHyaxHoldingAmount:", prevHyaxHoldingAmount);
         expect(prevHyaxHoldingAmount - newHyaxHoldingAmount).to.equal(ethers.parseUnits("1000000", 18));
         // Verify that the last withdrawal time was updated correctly
-        expect(tokenWithdrawalTimes).to.equal(5);
+        expect(teamTokenWithdrawalTimes).to.equal(5);
 
         // Check if the remaining tokens in the smart contract are correct
         const teamTokensInSmartContract = await upgradeableHYAXRewards.teamTokensInSmartContract();
@@ -2109,12 +2165,12 @@ describe("Testing Use Case #9: Withdraw Team Tokens", function () {
         console.log("\n   [Log]: TeamTokensWithdrawn:", teamTokensWithdrawn);
 
         // Check if the correct amount of tokens was withdrawn for the wallet
-        const [newHyaxHoldingAmount, , , , , , tokenWithdrawalTimes, , ,] = await upgradeableHYAXRewards.wallets(addr2.address);
+        const [newHyaxHoldingAmount, , , , , , teamTokenWithdrawalTimes, , ,] = await upgradeableHYAXRewards.wallets(addr2.address);
         console.log("   [Log]: NewHyaxHoldingAmount:", newHyaxHoldingAmount);
         console.log("   [Log]: PrevHyaxHoldingAmount:", prevHyaxHoldingAmount);
         expect(prevHyaxHoldingAmount - newHyaxHoldingAmount).to.equal(ethers.parseUnits("1000000", 18));
         // Verify that the last withdrawal time was updated correctly
-        expect(tokenWithdrawalTimes).to.equal(5);
+        expect(teamTokenWithdrawalTimes).to.equal(5);
 
         // Check if the remaining tokens in the smart contract are correct
         const teamTokensInSmartContract = await upgradeableHYAXRewards.teamTokensInSmartContract();
@@ -2243,9 +2299,15 @@ describe("Testing Use Case #10: Fund smart contract with reward tokens", functio
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
 
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
+        
         // Update the whiteLister address
         await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
 
@@ -2460,9 +2522,15 @@ describe("Testing Use Case #11: Fund Smart Contract with reward tokens after hav
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
 
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
+        
         const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 reward Tokens
 
         // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
@@ -2581,8 +2649,14 @@ describe("Testing Use Case #12: Update rewards for a single non team wallet", fu
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
+
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+  
+        await upgradeableHYAXRewards.waitForDeployment();
 
         // Update the whitelister address
         await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
@@ -2686,7 +2760,7 @@ describe("Testing Use Case #12: Update rewards for a single non team wallet", fu
         await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(walletAddress, rewardAmount);
 
         const [ hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, 
-            currentRewardsAmount, rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
+            currentRewardsAmount, rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, 
             lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(walletAddress);
         
@@ -2717,6 +2791,39 @@ describe("Testing Use Case #12: Update rewards for a single non team wallet", fu
             upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(walletAddress, rewardAmount)
         ).to.be.revertedWith('Too soon to update rewards for this wallet');
     });
+
+    it("12.7. Should revert the update of the rewards because all the reward tokens have been already distributed", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, false, 0);
+
+        const walletAddress = addr1.address;
+        const rewardAmount = "2884615000000000000000000";
+
+        const oneWeek = 7 * 24 * 60 * 60; // One week in seconds
+
+        const totalWeeks = 416; // 8 years * 52 weeks = 416 weeks + 14 weeks for rounding errors
+
+        //Initial successful update of wallet rewards
+        for (let i = 0; i < totalWeeks; i++) {
+
+            // Call the updateRewards function
+            await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(walletAddress, rewardAmount);
+
+            const rewardTokensDistributed = await upgradeableHYAXRewards.rewardTokensDistributed();
+            console.log("   [Log]: Year: ", Math.floor(i/52), ". Week in year: ", i%52, ". Absolute week: ", i, ". Total distributed rewards: ", rewardTokensDistributed);
+
+            // Wait for the specified time period to elapse (simulate one week)
+            await network.provider.send("evm_increaseTime", [oneWeek]);
+            await network.provider.send("evm_mine");
+        }
+
+        // Try to update the rewards of a wallet before the minimum interval
+        await expect(
+            upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(walletAddress, rewardAmount)
+        ).to.be.revertedWith('All the reward tokens have been already distributed');
+    });
     
 });
 
@@ -2727,9 +2834,15 @@ describe("Testing Use Case #13: Update rewards for a batch of non team wallets",
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
 
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
+        
         // Update the whitelister address
         await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
 
@@ -3152,7 +3265,7 @@ describe("Testing Use Case #13: Update rewards for a batch of non team wallets",
 
         for (const walletAddress of walletAddresses) {
             const [ hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, 
-                currentRewardsAmount, rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
+                currentRewardsAmount, rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, 
                 lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
                 = await upgradeableHYAXRewards.wallets(walletAddress);
 
@@ -3210,6 +3323,65 @@ describe("Testing Use Case #13: Update rewards for a batch of non team wallets",
           expect(numberOfSuccessfulUpdates).to.equal(0);
     });
 
+    it("13.13. Should revert because all reward tokens have been distributed", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+    
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, false, 0);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, false, 0);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, false, 0);
+
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        //The last wallet has rewards that exceed the weekly limit by 10%
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor]; 
+
+        const oneWeek = 7 * 24 * 60 * 60; // One week in seconds
+
+        const totalWeeks = 430; // 8 years * 52 weeks = 416 weeks + 14 weeks for rounding errors
+
+        //Initial successful update of wallet rewards
+        for (let i = 0; i < totalWeeks; i++) {
+
+            await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+
+            const rewardTokensDistributed = await upgradeableHYAXRewards.rewardTokensDistributed();
+            console.log("   [Log]: Year: ", Math.floor(i/52), ". Week in year: ", i%52, ". Absolute week: ", i, ". Total distributed rewards: ", rewardTokensDistributed);
+
+            // Wait for the specified time period to elapse (simulate one week)
+            await network.provider.send("evm_increaseTime", [oneWeek]);
+            await network.provider.send("evm_mine");
+        }
+
+        // Call the updateRewards function
+        const updateRewardsBatchTx = await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+        const updateRewardsBatchReceipt = await updateRewardsBatchTx.wait();
+        const events = updateRewardsBatchReceipt?.logs || [];
+            
+        let numberOfFailedUpdates = 0;
+        let numberOfSuccessfulUpdates = 0;
+
+        for (const event of events) {
+            //'Wallet is not whitelisted'
+            if(event.fragment.name === "RewardUpdateFailed") {
+                expect(event.args[2]).to.equal('All the reward tokens have been already distributed');
+                numberOfFailedUpdates++;
+            }
+            else if(event.fragment.name === "RewardUpdateSuccess") {
+                numberOfSuccessfulUpdates++;
+            }
+          }
+          //There should be 3 events where the update reverted
+          expect(numberOfFailedUpdates).to.equal(3);
+  
+          //There should be 0 events where the update was successful
+          expect(numberOfSuccessfulUpdates).to.equal(0);
+    });
+
 });
 
 describe("Testing Use Case #14: Withdraw Rewards Tokens of non team wallets", function () {
@@ -3219,9 +3391,15 @@ describe("Testing Use Case #14: Withdraw Rewards Tokens of non team wallets", fu
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
 
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
+        
         // Update the whitelister address
         await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
 
@@ -3453,6 +3631,48 @@ describe("Testing Use Case #14: Withdraw Rewards Tokens of non team wallets", fu
         const rewardTokensLeftToWithdraw = await upgradeableHYAXRewards.REWARD_TOKENS_TOTAL() - await upgradeableHYAXRewards.rewardTokensWithdrawn();
         console.log("   [Log]: RewardTokensLeftToWithdraw:", ethers.formatEther(rewardTokensLeftToWithdraw.toString())); 
     });
+    
+    it("14.8. Should revert if trying to withdraw reward tokens after all the reward tokens have been already distributed", async function () {
+        const {  upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const fundingAmount = ethers.parseUnits("1200000000", 18); // Fund with (1,2 B) 1,200,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.connect(owner).approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        // Add the wallet 1 and wallet 2 to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, false, 0);
+
+        const oneWeek = 7 * 24 * 60 * 60; // One week in seconds
+
+        const rewardAmount = "2884615000000000000000000"; //Equivalent to 2'884.615 M Tokens or 50% of the total reward tokens per week
+
+        //Run a for loop for 416 weeks to update the rewards for the wallet, simulating the rewards distribution for 8 years
+        for (let i = 0; i < 416; i++) {
+
+            await network.provider.send("evm_increaseTime", [oneWeek]);
+            await network.provider.send("evm_mine");
+
+            // Update the rewards for the wallet
+            await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(addr1.address, rewardAmount);
+
+            await upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens();
+            /*
+            console.log("   [Log]: Week:", i);
+            console.log("   [Log]: RewardTokensDistributed:", await upgradeableHYAXRewards.rewardTokensDistributed());
+            console.log("   [Log]: RewardTokensInSmartContract:", await upgradeableHYAXRewards.rewardTokensInSmartContract());
+            console.log("   [Log]: RewardTokensWithdrawn:", await upgradeableHYAXRewards.rewardTokensWithdrawn());
+            console.log("   [Log]: Total Reward Tokens:", await upgradeableHYAXRewards.REWARD_TOKENS_TOTAL());
+            */
+        }
+        //Withdraw the remaining reward tokens
+        await expect(
+            upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens()
+        ).to.be.revertedWith('No rewards available to withdraw');
+    });
 });
 
 
@@ -3463,8 +3683,14 @@ describe("Testing Use Case #15: Update rewards for a single team wallet", functi
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
+ 
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+ 
+        await upgradeableHYAXRewards.waitForDeployment();
 
         // Update the whitelister address
         await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
@@ -3567,7 +3793,7 @@ describe("Testing Use Case #15: Update rewards for a single team wallet", functi
         await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(walletAddress, rewardAmount);
 
         const [ hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, 
-            currentRewardsAmount, rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
+            currentRewardsAmount, rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, 
             lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(walletAddress);
         
@@ -3599,6 +3825,41 @@ describe("Testing Use Case #15: Update rewards for a single team wallet", functi
             upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(walletAddress, rewardAmount)
         ).to.be.revertedWith('Too soon to update rewards for this wallet');
     });
+
+    it("15.7. Should revert the update of the rewards because all the reward tokens have been already distributed", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+
+        const walletAddress = addr1.address;
+        const rewardAmount = "2884615000000000000000000";
+
+        const oneWeek = 7 * 24 * 60 * 60; // One week in seconds
+
+        const totalWeeks = 416; // 8 years * 52 weeks = 416 weeks + 14 weeks for rounding errors
+
+        //Initial successful update of wallet rewards
+        for (let i = 0; i < totalWeeks; i++) {
+
+            // Call the updateRewards function
+            await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(walletAddress, rewardAmount);
+
+            const rewardTokensDistributed = await upgradeableHYAXRewards.rewardTokensDistributed();
+            console.log("   [Log]: Year: ", Math.floor(i/52), ". Week in year: ", i%52, ". Absolute week: ", i, ". Total distributed rewards: ", rewardTokensDistributed);
+
+            // Wait for the specified time period to elapse (simulate one week)
+            await network.provider.send("evm_increaseTime", [oneWeek]);
+            await network.provider.send("evm_mine");
+        }
+
+        // Try to update the rewards of a wallet before the minimum interval
+        await expect(
+            upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(walletAddress, rewardAmount)
+        ).to.be.revertedWith('All the reward tokens have been already distributed');
+    });
 });
 
 
@@ -3609,9 +3870,15 @@ describe("Testing Use Case #16: Update rewards for a batch of team wallets", fun
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
 
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
+        
         // Update the whitelister address
         await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
 
@@ -4049,7 +4316,7 @@ describe("Testing Use Case #16: Update rewards for a batch of team wallets", fun
 
         for (const walletAddress of walletAddresses) {
             const [ hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, 
-                currentRewardsAmount, rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
+                currentRewardsAmount, rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, 
                 lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
                 = await upgradeableHYAXRewards.wallets(walletAddress);
 
@@ -4108,6 +4375,67 @@ describe("Testing Use Case #16: Update rewards for a batch of team wallets", fun
           //There should be 0 events where the update was successful
           expect(numberOfSuccessfulUpdates).to.equal(0);
     });
+
+    it("16.13. Should revert because all reward tokens have been distributed", async function () {
+        const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+    
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        //Add the whitelisted addresses
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, true, oneMillionTokens);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, true, oneMillionTokens);
+
+        const walletAddresses = [addr1.address, addr2.address, addr3.address];
+
+        let totalRewards = 2884615384615384615384615;
+        const divisor = BigInt(10 ** 18); // 18 digits
+        
+        //The last wallet has rewards that exceed the weekly limit by 10%
+        const walletRewards = [(BigInt(totalRewards*0.16) / divisor) * divisor, 
+            (BigInt(totalRewards*0.33) / divisor) * divisor, (BigInt(totalRewards*0.5) / divisor) * divisor]; 
+
+            const oneWeek = 7 * 24 * 60 * 60; // One week in seconds
+
+            const totalWeeks = 430; // 8 years * 52 weeks = 416 weeks + 14 weeks for rounding errors
+    
+            //Initial successful update of wallet rewards
+            for (let i = 0; i < totalWeeks; i++) {
+    
+                await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+                
+                const rewardTokensDistributed = await upgradeableHYAXRewards.rewardTokensDistributed();
+                console.log("   [Log]: Year: ", Math.floor(i/52), ". Week in year: ", i%52, ". Absolute week: ", i, ". Total distributed rewards: ", rewardTokensDistributed);
+    
+                // Wait for the specified time period to elapse (simulate one week)
+                await network.provider.send("evm_increaseTime", [oneWeek]);
+                await network.provider.send("evm_mine");
+            }
+    
+            // Call the updateRewards function
+            const updateRewardsBatchTx = await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsBatch(walletAddresses, walletRewards);
+            const updateRewardsBatchReceipt = await updateRewardsBatchTx.wait();
+            const events = updateRewardsBatchReceipt?.logs || [];
+                
+            let numberOfFailedUpdates = 0;
+            let numberOfSuccessfulUpdates = 0;
+    
+            for (const event of events) {
+                //'Wallet is not whitelisted'
+                if(event.fragment.name === "RewardUpdateFailed") {
+                    expect(event.args[2]).to.equal('All the reward tokens have been already distributed');
+                    numberOfFailedUpdates++;
+                }
+                else if(event.fragment.name === "RewardUpdateSuccess") {
+                    numberOfSuccessfulUpdates++;
+                }
+              }
+              //There should be 3 events where the update reverted
+              expect(numberOfFailedUpdates).to.equal(3);
+      
+              //There should be 0 events where the update was successful
+              expect(numberOfSuccessfulUpdates).to.equal(0);
+        });
 });
 
 
@@ -4118,9 +4446,15 @@ describe("Testing Use Case #17: Withdraw Rewards Tokens of team wallets", functi
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
 
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
+        
         // Update the whitelister address
         await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
 
@@ -4380,6 +4714,50 @@ describe("Testing Use Case #17: Withdraw Rewards Tokens of team wallets", functi
             console.log("   [Log]: Total Reward Tokens:", await upgradeableHYAXRewards.REWARD_TOKENS_TOTAL());
             */
         }
+        //Withdraw the remaining reward tokens
+        await expect(
+            upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens()
+        ).to.be.revertedWith('No rewards available to withdraw');
+    });
+
+    it("17.9. Should revert if trying to withdraw reward tokens after all the reward tokens have been already distributed", async function () {
+        const {  upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
+
+        const fundingAmount = ethers.parseUnits("1200000000", 18); // Fund with (1,2 B) 1,200,000,000 Growth Tokens
+
+        // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+        await hyaxToken.connect(owner).approve(upgradeableHYAXRewards.target, fundingAmount);
+
+        //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+        await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount);
+
+        const oneMillionTokens = ethers.parseUnits("1000000", 18);
+
+        // Add the wallet 1 and wallet 2 to the whitelist
+        await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
+
+        const oneWeek = 7 * 24 * 60 * 60; // One week in seconds
+
+        const rewardAmount = "2884615000000000000000000"; //Equivalent to 2'884.615 M Tokens or 50% of the total reward tokens per week
+
+        //Run a for loop for 416 weeks to update the rewards for the wallet, simulating the rewards distribution for 8 years
+        for (let i = 0; i < 416; i++) {
+
+            await network.provider.send("evm_increaseTime", [oneWeek]);
+            await network.provider.send("evm_mine");
+
+            // Update the rewards for the wallet
+            await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(addr1.address, rewardAmount);
+
+            await upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens();
+            /*
+            console.log("   [Log]: Week:", i);
+            console.log("   [Log]: RewardTokensDistributed:", await upgradeableHYAXRewards.rewardTokensDistributed());
+            console.log("   [Log]: RewardTokensInSmartContract:", await upgradeableHYAXRewards.rewardTokensInSmartContract());
+            console.log("   [Log]: RewardTokensWithdrawn:", await upgradeableHYAXRewards.rewardTokensWithdrawn());
+            console.log("   [Log]: Total Reward Tokens:", await upgradeableHYAXRewards.REWARD_TOKENS_TOTAL());
+            */
+        }
 
         //Calculate reward tokens that are currently left. Margin error of 160 tokens due to rounding
         const rewardTokensLeftToDistribute = await upgradeableHYAXRewards.REWARD_TOKENS_TOTAL() - await upgradeableHYAXRewards.rewardTokensDistributed();
@@ -4390,7 +4768,8 @@ describe("Testing Use Case #17: Withdraw Rewards Tokens of team wallets", functi
         console.log("   [Log]: RewardTokensLeftToWithdraw:", ethers.formatEther(rewardTokensLeftToWithdraw.toString())); 
     });
 
-    it("17.9. Should withdraw the correct amount of team tokens after being distributed by the rewards updater and recovering the wallet", async function () {
+
+    it("17.10. Should withdraw the correct amount of team tokens after being distributed by the rewards updater and recovering the wallet", async function () {
         const {  upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
@@ -4465,7 +4844,7 @@ describe("Testing Use Case #17: Withdraw Rewards Tokens of team wallets", functi
         expect(newWalletTokenBalance - prevWalletTokenBalance).to.equal(rewardAmount);
     });
 
-    it("17.10. Should revert when trying to withdraw tokens after recovering the wallet after withdrawing all reward tokens that wallet has", async function () {
+    it("17.11. Should revert when trying to withdraw tokens after recovering the wallet after withdrawing all reward tokens that wallet has", async function () {
         const {  upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
@@ -4508,8 +4887,14 @@ describe("Testing Use Case #18: Calculate year for team tokens", function () {
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
+
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
 
         // Fixtures can return anything you consider useful for your tests
         return { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken };
@@ -4810,8 +5195,14 @@ describe("Testing Use Case #19: Withdrawal of tokens to burn", function () {
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
+
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
 
         // Update the whiteLister address
         await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
@@ -5088,8 +5479,14 @@ describe("Testing Use Case #20: Update whiteLister address", function () {
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
+
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
 
         // Fixtures can return anything you consider useful for your tests
         return { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, whitelisterAddress };
@@ -5131,8 +5528,14 @@ describe("Testing Use Case #21: Update rewardsUpdater address", function () {
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
+
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
 
         // Fixtures can return anything you consider useful for your tests
         return { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, rewardsUpdater };
@@ -5174,8 +5577,14 @@ describe("Testing Use Case #22: Update hyax token address", function () {
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
+
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
 
         // Fixtures can return anything you consider useful for your tests
         return { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, rewardsUpdater };
@@ -5226,8 +5635,14 @@ describe("Testing Use Case #23: Update maximum batch size for update rewards", f
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
+
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
 
         // Fixtures can return anything you consider useful for your tests
         return { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, rewardsUpdater };
@@ -5279,8 +5694,14 @@ describe("Testing Use Case #24: Pause and unpause the contract", function () {
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
+
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
 
         // Update the whitelister address
         await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
@@ -5419,8 +5840,14 @@ describe("Testing Use Case #25: Transfer ownership of the contract", function ()
         //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
 
-        //Deploy the UpgradeableHYAXRewards contract
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
+
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
 
         // Fixtures can return anything you consider useful for your tests
         return { upgradeableHYAXRewards, owner, addr1, addr2, hyaxToken, rewardsUpdater };
@@ -5469,8 +5896,19 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
     async function deployUpgradeableHYAXRewardsFixture() {
         const [owner, addr1, addr2, addr3, whitelisterAddress] = await ethers.getSigners();
 
+        //Deploy the HYAX token mock
         const hyaxToken = await ethers.deployContract("HYAXToken");
-        const upgradeableHYAXRewards = await ethers.deployContract("UpgradeableHYAXRewards", [await hyaxToken.target]);
+        
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
+        
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
+
+        // Update the whitelister address
         await upgradeableHYAXRewards.connect(owner).updateWhiteListerAddress(whitelisterAddress.address);
 
         return { upgradeableHYAXRewards, owner, addr1, addr2, addr3, hyaxToken, whitelisterAddress };
@@ -5691,7 +6129,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(newWallet.currentRewardsAmount).to.equal(0);
         expect(newWallet.rewardsWithdrawn).to.equal(0);
-        expect(newWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(newWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -5705,7 +6143,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -5714,14 +6152,14 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
@@ -5769,7 +6207,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(newWallet.currentRewardsAmount).to.equal(0);
         expect(newWallet.rewardsWithdrawn).to.equal(0);
-        expect(newWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(newWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -5783,7 +6221,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -5792,14 +6230,14 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
@@ -5847,7 +6285,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(newWallet.currentRewardsAmount).to.equal(0);
         expect(newWallet.rewardsWithdrawn).to.equal(0);
-        expect(newWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(newWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -5861,7 +6299,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -5870,14 +6308,14 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
@@ -5925,7 +6363,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(newWallet.currentRewardsAmount).to.equal(0);
         expect(newWallet.rewardsWithdrawn).to.equal(0);
-        expect(newWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(newWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -5939,7 +6377,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -5948,14 +6386,14 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
@@ -6003,7 +6441,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(newWallet.currentRewardsAmount).to.equal(0);
         expect(newWallet.rewardsWithdrawn).to.equal(0);
-        expect(newWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(newWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -6017,7 +6455,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -6026,14 +6464,14 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
@@ -6081,7 +6519,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(newWallet.currentRewardsAmount).to.equal(0);
         expect(newWallet.rewardsWithdrawn).to.equal(0);
-        expect(newWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(newWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -6095,7 +6533,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -6104,14 +6542,14 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
@@ -6159,7 +6597,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("100000", 18));
         expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("100000", 18));
         expect(newWallet.rewardsWithdrawn).to.equal(0);
-        expect(newWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
 
@@ -6173,7 +6611,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -6182,14 +6620,14 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
@@ -6242,7 +6680,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("200000", 18));
         expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("200000", 18));
         expect(newWallet.rewardsWithdrawn).to.equal(0);
-        expect(newWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
 
@@ -6256,7 +6694,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -6265,14 +6703,14 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
@@ -6326,7 +6764,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("300000", 18));
         expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("300000", 18));
         expect(newWallet.rewardsWithdrawn).to.equal(0);
-        expect(newWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
 
@@ -6340,7 +6778,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -6349,14 +6787,14 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
@@ -6410,7 +6848,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("400000", 18));
         expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("400000", 18));
         expect(newWallet.rewardsWithdrawn).to.equal(0);
-        expect(newWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
 
@@ -6424,7 +6862,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -6433,14 +6871,14 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
@@ -6494,7 +6932,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("500000", 18));
         expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("500000", 18));
         expect(newWallet.rewardsWithdrawn).to.equal(0);
-        expect(newWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
 
@@ -6508,7 +6946,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -6517,14 +6955,14 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
@@ -6578,7 +7016,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("600000", 18));
         expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("600000", 18));
         expect(newWallet.rewardsWithdrawn).to.equal(0);
-        expect(newWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
 
@@ -6592,7 +7030,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -6601,14 +7039,14 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
@@ -6665,7 +7103,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("500000", 18));
         expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("500000", 18));
         expect(newWallet.rewardsWithdrawn).to.equal(0);
-        expect(newWallet.tokenWithdrawalTimes).to.equal(1);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(1);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
 
@@ -6679,7 +7117,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -6688,14 +7126,14 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
@@ -6754,7 +7192,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("600000", 18));
         expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("600000", 18));
         expect(newWallet.rewardsWithdrawn).to.equal(0);
-        expect(newWallet.tokenWithdrawalTimes).to.equal(2);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(2);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
 
@@ -6768,7 +7206,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
         
@@ -6777,14 +7215,14 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
@@ -6846,7 +7284,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("700000", 18));
         expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("700000", 18));
         expect(newWallet.rewardsWithdrawn).to.equal(0);
-        expect(newWallet.tokenWithdrawalTimes).to.equal(3);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(3);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
 
@@ -6860,7 +7298,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
         
@@ -6869,14 +7307,14 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
@@ -6941,7 +7379,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("800000", 18));
         expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("800000", 18));
         expect(newWallet.rewardsWithdrawn).to.equal(0);
-        expect(newWallet.tokenWithdrawalTimes).to.equal(4);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(4);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
 
@@ -6955,7 +7393,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
         
@@ -6964,14 +7402,14 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
@@ -7040,7 +7478,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("900000", 18));
         expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("900000", 18));
         expect(newWallet.rewardsWithdrawn).to.equal(0);
-        expect(newWallet.tokenWithdrawalTimes).to.equal(5);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(5);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
 
@@ -7054,7 +7492,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
         
@@ -7063,14 +7501,14 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
@@ -7134,7 +7572,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("500000", 18));
         expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("0", 18));
         expect(newWallet.rewardsWithdrawn).to.equal(ethers.parseUnits("500000", 18));
-        expect(newWallet.tokenWithdrawalTimes).to.equal(1);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(1);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(timestampOfBlockBefore2);
         expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
 
@@ -7148,7 +7586,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -7157,14 +7595,14 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
@@ -7232,7 +7670,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("600000", 18));
         expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("0", 18));
         expect(newWallet.rewardsWithdrawn).to.equal(ethers.parseUnits("600000", 18));
-        expect(newWallet.tokenWithdrawalTimes).to.equal(2);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(2);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(timestampOfBlockBefore2);
         expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
 
@@ -7246,7 +7684,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -7255,14 +7693,14 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
@@ -7332,7 +7770,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("700000", 18));
         expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("0", 18));
         expect(newWallet.rewardsWithdrawn).to.equal(ethers.parseUnits("700000", 18));
-        expect(newWallet.tokenWithdrawalTimes).to.equal(3);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(3);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(timestampOfBlockBefore2);
         expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
 
@@ -7346,7 +7784,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -7355,14 +7793,14 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
@@ -7436,7 +7874,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("800000", 18));
         expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("0", 18));
         expect(newWallet.rewardsWithdrawn).to.equal(ethers.parseUnits("800000", 18));
-        expect(newWallet.tokenWithdrawalTimes).to.equal(4);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(4);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(timestampOfBlockBefore2);
         expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
 
@@ -7450,7 +7888,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -7459,14 +7897,14 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
@@ -7544,7 +7982,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(newWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("900000", 18));
         expect(newWallet.currentRewardsAmount).to.equal(ethers.parseUnits("0", 18));
         expect(newWallet.rewardsWithdrawn).to.equal(ethers.parseUnits("900000", 18));
-        expect(newWallet.tokenWithdrawalTimes).to.equal(5);
+        expect(newWallet.teamTokenWithdrawalTimes).to.equal(5);
         expect(newWallet.lastRewardsWithdrawalTime).to.equal(timestampOfBlockBefore2);
         expect(newWallet.lastRewardsUpdateTime).to.equal(timestampOfBlockBefore);
 
@@ -7558,7 +7996,7 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
         expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
         expect(oldWallet.currentRewardsAmount).to.equal(0);
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
-        expect(oldWallet.tokenWithdrawalTimes).to.equal(0);
+        expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
         expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
@@ -7567,15 +8005,135 @@ describe("Testing Use Case #26: Recover Team Tokens", function () {
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
-            rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, lastRewardsWithdrawalTime, 
+            rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes, lastRewardsWithdrawalTime, 
             lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await upgradeableHYAXRewards.wallets(addr2.address);
 
         console.log("\n   [Log]: New wallet data.", "hyaxHoldingAmount:", hyaxHoldingAmount, "\n   ", "hyaxHoldingAmountAtWhitelistTime:",
             hyaxHoldingAmountAtWhitelistTime, "totalHyaxRewardsAmount:", totalHyaxRewardsAmount, "\n   ", "currentRewardsAmount:",
             currentRewardsAmount, "rewardsWithdrawn:", rewardsWithdrawn, "\n   ",
-            "addedToWhitelistTime:", addedToWhitelistTime, "tokenWithdrawalTimes:", tokenWithdrawalTimes, "\n   ",
+            "addedToWhitelistTime:", addedToWhitelistTime, "teamTokenWithdrawalTimes:", teamTokenWithdrawalTimes, "\n   ",
             "lastRewardsWithdrawalTime:", lastRewardsWithdrawalTime, "lastRewardsUpdateTime:", lastRewardsUpdateTime, "isTeamWallet:", isTeamWallet,
             "isWhitelisted:", isWhitelisted, "isBlacklisted:", isBlacklisted);
     });
 });
+
+describe("Test case #27. Upgradeable functionalities", function () {
+    // Create fixture to deploy smart contract and set initial variables
+    async function deployContractAndSetVariables() {
+        const [owner, addr1, addr2, addr3, whitelisterAddress] = await ethers.getSigners();
+
+        //Deploy the HYAX token mock
+        const hyaxToken = await ethers.deployContract("HYAXToken");
+  
+        //Asociate the smart contract with its name in the context
+        const UpgradeableHYAXRewards = await ethers.getContractFactory('UpgradeableHYAXRewards');
+        console.log("\n   [Log]: Deploying UpgradeableHYAXRewards...");
+        
+        // Deploy proxy with 'initialize' function
+        const upgradeableHYAXRewards = await upgrades.deployProxy(UpgradeableHYAXRewards, [await hyaxToken.target], { initializer: 'initialize' });
+
+        await upgradeableHYAXRewards.waitForDeployment();
+
+        return { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress };
+    }
+    it("27.1. Should deploy the proxy contract successfully", async function () {
+      const { upgradeableHYAXRewards } = await deployContractAndSetVariables();
+  
+      // Expect the proxy contract to have a valid address
+      expect(await upgradeableHYAXRewards.getAddress()).to.properAddress;
+    });
+  
+    it("27.2. Should initialize with the correct team tokens total", async function () {
+      const { upgradeableHYAXRewards } = await deployContractAndSetVariables();
+      const teamTokensTotal = await upgradeableHYAXRewards.TEAM_TOKENS_TOTAL();
+  
+      // Expect the total supply to be 1,500,000,000 HYAX tokens
+      expect(teamTokensTotal).to.equal(ethers.parseEther("1500000000"));
+    });
+  
+    it("27.3. Should transfer growth tokens to the contract address", async function () {
+      const { upgradeableHYAXRewards, hyaxToken, owner } = await deployContractAndSetVariables();
+    
+       //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+       const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+
+       // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
+       await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
+        
+       //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
+       await upgradeableHYAXRewards.connect(owner).fundSmartContract(0, fundingAmount);
+
+       // Get the initial balance of the smart contract
+       const contractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
+
+       // Expect the contract balance to equal the total supply
+       expect(contractBalance).to.equal(ethers.parseUnits("1000000000", 18));
+    });
+  
+    it("27.4. Should allow upgrading the contract", async function () {
+      const { upgradeableHYAXRewards, deployer } = await deployContractAndSetVariables();
+      const HYAXUpgradeableV2 = await ethers.getContractFactory('HYAXUpgradeableV2');
+      const upgradedHyax = await upgrades.upgradeProxy(upgradeableHYAXRewards.target, HYAXUpgradeableV2);
+  
+      // Expect the upgraded contract to have the same address as the original
+      expect(await upgradedHyax.getAddress()).to.equal(await hyax.getAddress());
+    });
+  
+    it("27.5. Should maintain state after upgrade", async function () {
+      const { upgradeableHYAXRewards, deployer } = await deployContractAndSetVariables();
+      const HYAXUpgradeableV2 = await ethers.getContractFactory('HYAXUpgradeableV2');
+      const upgradedHyax = await upgrades.upgradeProxy(upgradeableHYAXRewards.target, HYAXUpgradeableV2);
+      const totalSupplyAfterUpgrade = await upgradedHyax.totalSupply();
+  
+      // Expect the total supply to remain unchanged after the upgrade
+      expect(totalSupplyAfterUpgrade).to.equal(ethers.parseEther("500000000"));
+    });
+  
+    it("27.6. Should allow calling new functions after upgrade", async function () {
+      const { upgradeableHYAXRewards, deployer } = await deployContractAndSetVariables();
+      const HYAXUpgradeableV2 = await ethers.getContractFactory('HYAXUpgradeableV2');
+      const upgradedHyax = await upgrades.upgradeProxy(hyax.target, HYAXUpgradeableV2);
+  
+      // Expect the new function to return the expected string
+      expect(await upgradedHyax.newFunction()).to.equal("New function in V2");
+    });
+  
+    it("27.7. Should not allow initialization after deployment", async function () {
+      const { upgradeableHYAXRewards } = await deployContractAndSetVariables();
+  
+      // Attempt to initialize the contract again and expect it to revert
+      await expect(hyax.initialize()).to.be.revertedWith("Initializable: contract is already initialized");
+    });
+  
+    it("27.8. Should have different state in implementation contract", async function () {
+      const { upgradeableHYAXRewards, owner } = await deployContractAndSetVariables();
+      const implementationAddress = await upgrades.erc1967.getImplementationAddress(upgradeableHYAXRewards.target);
+      const HYAXUpgradeable = await ethers.getContractFactory('HYAXUpgradeable');
+      const implementationContract = HYAXUpgradeable.attach(implementationAddress);
+  
+      // The implementation contract should have a different state than the proxy
+      const implTotalSupply = await implementationContract.totalSupply();
+      const proxyTotalSupply = await upgradeableHYAXRewards.totalSupply();
+      
+      // Expect the implementation contract to have an uninitialized state
+      expect(implTotalSupply).to.not.equal(proxyTotalSupply);
+      expect(implTotalSupply).to.equal(0); // Implementation contract should have uninitialized state
+    });
+  
+    it("27.9. Should allow admin to upgrade the contract", async function () {
+      const { upgradeableHYAXRewards, deployer } = await deployContractAndSetVariables();
+      const HYAXUpgradeableV2 = await ethers.getContractFactory('HYAXUpgradeableV2');
+  
+      // Attempt to upgrade the contract as the admin and expect it to not revert
+      await expect(upgrades.upgradeProxy(upgradeableHYAXRewards.target, HYAXUpgradeableV2)).to.not.be.reverted;
+    });
+  
+    it("27.10. Should not allow non-admin to upgrade the contract", async function () {
+      const { upgradeableHYAXRewards, addr1 } = await deployContractAndSetVariables();
+      const HYAXUpgradeableV2 = await ethers.getContractFactory('HYAXUpgradeableV2', addr1);
+  
+      // Attempt to upgrade the contract as a non-admin and expect it to revert
+      await expect(upgrades.upgradeProxy(upgradeableHYAXRewards.target, HYAXUpgradeableV2)).to.be.reverted;
+    });
+  });

@@ -29,7 +29,6 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "GROWTH_TOKENS_TOTAL"
       | "GROWTH_TOKENS_WITHDRAWAL_PER_YEAR"
       | "MIN_INTERVAL_FOR_UPDATE_REWARDS"
-      | "REWARD_TOKENS_HOLDING_PERIOD"
       | "REWARD_TOKENS_PER_WEEK"
       | "REWARD_TOKENS_PER_YEAR"
       | "REWARD_TOKENS_TOTAL"
@@ -48,6 +47,7 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "growthTokensWithdrawn"
       | "hyaxToken"
       | "hyaxTokenAddress"
+      | "initialize"
       | "maximumBatchSizeForUpdateRewards"
       | "owner"
       | "pause"
@@ -64,7 +64,6 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "teamTokensFunded"
       | "teamTokensFundingStarted"
       | "teamTokensInSmartContract"
-      | "teamTokensLastWithdrawalTime"
       | "teamTokensStartFundingTime"
       | "teamTokensWithdrawn"
       | "transferOwnership"
@@ -91,6 +90,7 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "FundingAdded"
       | "GrowthTokensWithdrawn"
       | "HyaxTokenAddressUpdated"
+      | "Initialized"
       | "LogSenderAndOrigin"
       | "MaximumBatchSizeForUpdateRewardsUpdated"
       | "OwnershipTransferred"
@@ -119,10 +119,6 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "MIN_INTERVAL_FOR_UPDATE_REWARDS",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "REWARD_TOKENS_HOLDING_PERIOD",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -195,6 +191,10 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "initialize",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "maximumBatchSizeForUpdateRewards",
     values?: undefined
   ): string;
@@ -247,10 +247,6 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "teamTokensInSmartContract",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "teamTokensLastWithdrawalTime",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -336,10 +332,6 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "REWARD_TOKENS_HOLDING_PERIOD",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "REWARD_TOKENS_PER_WEEK",
     data: BytesLike
   ): Result;
@@ -408,6 +400,7 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     functionFragment: "hyaxTokenAddress",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "maximumBatchSizeForUpdateRewards",
     data: BytesLike
@@ -461,10 +454,6 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "teamTokensInSmartContract",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "teamTokensLastWithdrawalTime",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -588,6 +577,18 @@ export namespace HyaxTokenAddressUpdatedEvent {
   export type OutputTuple = [_hyaxTokenAddress: string];
   export interface OutputObject {
     _hyaxTokenAddress: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace InitializedEvent {
+  export type InputTuple = [version: BigNumberish];
+  export type OutputTuple = [version: bigint];
+  export interface OutputObject {
+    version: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -907,8 +908,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
 
   MIN_INTERVAL_FOR_UPDATE_REWARDS: TypedContractMethod<[], [bigint], "view">;
 
-  REWARD_TOKENS_HOLDING_PERIOD: TypedContractMethod<[], [bigint], "view">;
-
   REWARD_TOKENS_PER_WEEK: TypedContractMethod<[], [bigint], "view">;
 
   REWARD_TOKENS_PER_YEAR: TypedContractMethod<[], [bigint], "view">;
@@ -957,6 +956,12 @@ export interface UpgradeableHYAXRewards extends BaseContract {
 
   hyaxTokenAddress: TypedContractMethod<[], [string], "view">;
 
+  initialize: TypedContractMethod<
+    [_hyaxTokenAddress: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
   maximumBatchSizeForUpdateRewards: TypedContractMethod<[], [bigint], "view">;
 
   owner: TypedContractMethod<[], [string], "view">;
@@ -995,8 +1000,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
   teamTokensFundingStarted: TypedContractMethod<[], [boolean], "view">;
 
   teamTokensInSmartContract: TypedContractMethod<[], [bigint], "view">;
-
-  teamTokensLastWithdrawalTime: TypedContractMethod<[], [bigint], "view">;
 
   teamTokensStartFundingTime: TypedContractMethod<[], [bigint], "view">;
 
@@ -1081,7 +1084,7 @@ export interface UpgradeableHYAXRewards extends BaseContract {
         currentRewardsAmount: bigint;
         rewardsWithdrawn: bigint;
         addedToWhitelistTime: bigint;
-        tokenWithdrawalTimes: bigint;
+        teamTokenWithdrawalTimes: bigint;
         lastRewardsWithdrawalTime: bigint;
         lastRewardsUpdateTime: bigint;
         isTeamWallet: boolean;
@@ -1118,9 +1121,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "MIN_INTERVAL_FOR_UPDATE_REWARDS"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "REWARD_TOKENS_HOLDING_PERIOD"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "REWARD_TOKENS_PER_WEEK"
@@ -1189,6 +1189,13 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     nameOrSignature: "hyaxTokenAddress"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
+    nameOrSignature: "initialize"
+  ): TypedContractMethod<
+    [_hyaxTokenAddress: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "maximumBatchSizeForUpdateRewards"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
@@ -1242,9 +1249,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
     nameOrSignature: "teamTokensInSmartContract"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "teamTokensLastWithdrawalTime"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "teamTokensStartFundingTime"
@@ -1339,7 +1343,7 @@ export interface UpgradeableHYAXRewards extends BaseContract {
         currentRewardsAmount: bigint;
         rewardsWithdrawn: bigint;
         addedToWhitelistTime: bigint;
-        tokenWithdrawalTimes: bigint;
+        teamTokenWithdrawalTimes: bigint;
         lastRewardsWithdrawalTime: bigint;
         lastRewardsUpdateTime: bigint;
         isTeamWallet: boolean;
@@ -1396,6 +1400,13 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     HyaxTokenAddressUpdatedEvent.InputTuple,
     HyaxTokenAddressUpdatedEvent.OutputTuple,
     HyaxTokenAddressUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "Initialized"
+  ): TypedContractEvent<
+    InitializedEvent.InputTuple,
+    InitializedEvent.OutputTuple,
+    InitializedEvent.OutputObject
   >;
   getEvent(
     key: "LogSenderAndOrigin"
@@ -1553,6 +1564,17 @@ export interface UpgradeableHYAXRewards extends BaseContract {
       HyaxTokenAddressUpdatedEvent.InputTuple,
       HyaxTokenAddressUpdatedEvent.OutputTuple,
       HyaxTokenAddressUpdatedEvent.OutputObject
+    >;
+
+    "Initialized(uint64)": TypedContractEvent<
+      InitializedEvent.InputTuple,
+      InitializedEvent.OutputTuple,
+      InitializedEvent.OutputObject
+    >;
+    Initialized: TypedContractEvent<
+      InitializedEvent.InputTuple,
+      InitializedEvent.OutputTuple,
+      InitializedEvent.OutputObject
     >;
 
     "LogSenderAndOrigin(address,address)": TypedContractEvent<

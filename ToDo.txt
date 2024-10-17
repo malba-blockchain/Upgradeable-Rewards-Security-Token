@@ -428,38 +428,39 @@ WITH REWARDS AFTER TEAM TOKEN WITHDRAWAL AND REWARDS WITHDRAWAL
 19.4. The function updateBlacklistStatus can be executed WITHOUT adding the address to the whitelist. DONE
 
 
+19.5. Run test cases with for loops and increasing evm time to simulate the end of the days.
+-withdrawGrowthTokens DONE
+-withdrawTeamTokens DONE
+-updateRewardsBatch 13.13. 16.13 DONE
+-updateRewardsSingle 12.7. 15.7. DONE
+-withdrawRewardTokens 14.8 - 17.8 DONE
+
+
 CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
-19.5. Run test cases with for loops and increasing evm time to simulate the end of the days.
--withdrawGrowthTokens
--withdrawTeamTokens
--updateRewardsBatch
--updateRewardsSingle
--withdrawRewardTokens	
+20. Add upgradeable tests
 
-#. Add upgradeable tests
-
-#. Add gas library to tests
+21. Add gas library to tests
 
 GOAL TUESDAY: UP TO HERE-------------------------------
 
-20. Update updates script
+22. Update updates script
 Updates are made based on the tokens of a week ago.
 Create script that interacts with local version and optimize it.
 
-21. Optimize updates script
+23. Optimize updates script
 
-#. Clean comments and fix documentation on contract and tests
+24. Clean comments and fix documentation on contract and tests
 
-22. Do initial deployment in local
+25. Do initial deployment in local
 
-23. Launch in testnet
+26. Launch in testnet
 
-24. Document
+27. Document
 
-#. Share to the web2 team + rewards update script
+28. Share to the web2 team + rewards update script
 
-25. Do realistic tests with team + multisig testing for upgradeable.
+29. Do realistic tests with team + multisig testing for upgradeable.
 
 
 ---------INITIAL LOCAL DEPLOYMENT---------
