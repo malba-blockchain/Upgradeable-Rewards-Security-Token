@@ -2,5 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as upgradeableHyaxRewardsSol from "./UpgradeableHYAXRewards.sol";
+export * as upgradeableHyaxRewardsV2Sol from "./UpgradeableHYAXRewardsV2.sol";
 export { HYAXToken__factory } from "./HYAXToken__factory";
 export { USDCToken__factory } from "./USDCToken__factory";

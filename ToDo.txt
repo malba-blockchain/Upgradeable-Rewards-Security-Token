@@ -435,32 +435,45 @@ WITH REWARDS AFTER TEAM TOKEN WITHDRAWAL AND REWARDS WITHDRAWAL
 -updateRewardsSingle 12.7. 15.7. DONE
 -withdrawRewardTokens 14.8 - 17.8 DONE
 
+20. Add upgradeable tests DONE
+
+21. Add gas library to tests DONE
+
+npm i hardhat-gas-reporter 
+
 
 CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
-20. Add upgradeable tests
+22. Update updates script
 
-21. Add gas library to tests
+npx hardhat run scripts/updateWeeklyRewards.ts
+
+Updates are made based on the tokens of a week ago. 
+Create script that interacts with local version and optimize it.
+
+-Deploy realistic local environment of upgradeable token contract
+-Deploy realistic local environment of upgradeable rewards contract
+-Create token distribution scripts and everything required to launch the whole environment with just running a command
+-Create local version of upgradeable script
+-Show reward balances of team and non team wallets in smart contract
+-Automate distribution of rewards every 5 seconds
+-Create scripts that simulate executing an upgrade and executing other functions (like withdraw tokens and whitelisting) with just a command
+
 
 GOAL TUESDAY: UP TO HERE-------------------------------
 
-22. Update updates script
-Updates are made based on the tokens of a week ago.
-Create script that interacts with local version and optimize it.
 
 23. Optimize updates script
 
 24. Clean comments and fix documentation on contract and tests
 
-25. Do initial deployment in local
-
-26. Launch in testnet
+26. Deploy in testnet
 
 27. Document
 
 28. Share to the web2 team + rewards update script
 
-29. Do realistic tests with team + multisig testing for upgradeable.
+29. Do realistic tests with team + multisig testing for upgradeable. I.e. 1 Day = week of rewards
 
 
 ---------INITIAL LOCAL DEPLOYMENT---------

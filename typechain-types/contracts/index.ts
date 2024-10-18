@@ -3,5 +3,7 @@
 /* eslint-disable */
 import type * as upgradeableHyaxRewardsSol from "./UpgradeableHYAXRewards.sol";
 export type { upgradeableHyaxRewardsSol };
+import type * as upgradeableHyaxRewardsV2Sol from "./UpgradeableHYAXRewardsV2.sol";
+export type { upgradeableHyaxRewardsV2Sol };
 export type { HYAXToken } from "./HYAXToken";
 export type { USDCToken } from "./USDCToken";

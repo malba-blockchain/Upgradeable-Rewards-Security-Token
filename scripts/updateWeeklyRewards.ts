@@ -32,6 +32,12 @@ const whitelisterWalletInstance = new ethers.Wallet(process.env.REACT_APP_WHITEL
 // Connect the wallet to the provider
 const whitelisterWallet = whitelisterWalletInstance.connect(alchemyProvider);
 
+// Create a wallet instance using the private key from .env
+const rewardsUpdaterWalletInstance = new ethers.Wallet(process.env.REACT_APP_REWARDS_UPDATER_PRIVATE_KEY || "");
+
+// Connect the wallet to the provider
+const rewardsUpdaterWallet = rewardsUpdaterWalletInstance.connect(alchemyProvider);
+
 const alchemy = new Alchemy({
     apiKey: process.env.REACT_APP_ALCHEMY_API_KEY, // Replace with your Alchemy API key
     network: SMART_CONTRACT_NETWORK, // Adjust the network if needed
@@ -275,7 +281,7 @@ async function calculateRewardsForAllWallets(): Promise<{ balances: Map<string, 
         const divisor = BigInt(10 ** 18); // 18 digits
         amountRewards = (amountRewards / divisor) * divisor; // Remove lower 18 digits and append zeros
 
-        console.log("\nAddress: ", balanceTokenHolder[0], ". Token rewards: ", Number(ethers.formatEther(amountRewards.toString())) ,
+        console.log("\nAddress: ", balanceTokenHolder[0], "Token balance: ", balanceTokenHolder[1], ". Token rewards: ", Number(ethers.formatEther(amountRewards.toString())) ,
             ". Percentage: ", percentageRewards*100, "%");
         
         totalRewards += amountRewards;
@@ -296,13 +302,13 @@ async function updateRewardsSingle(): Promise<string> {
 
     const walletToBeUpdated = "0x34795B6a05543Fe097C8BbBc221e3119f27B793E";
 
-    const rewardAmount = "1602867000000000000000000";
+    const rewardAmount = "1552720000000000000000000";
 
-    console.log("\nUpdater wallet address: ", whitelisterWallet.address); // Log the deployer wallet's address
+    console.log("\nUpdater wallet address: ", rewardsUpdaterWallet.address); // Log the deployer wallet's address
 
-    console.log("\nUpdater wallet balance: ", await alchemyProvider.getBalance(whitelisterWallet.address)); // Log the deployer wallet's balance
+    console.log("\nUpdater wallet balance: ", await alchemyProvider.getBalance(rewardsUpdaterWallet.address)); // Log the deployer wallet's balance
 
-    const tx = await rewardsContract.connect(whitelisterWallet).updateRewardsSingle(walletToBeUpdated, rewardAmount);
+    const tx = await rewardsContract.connect(rewardsUpdaterWallet).updateRewardsSingle(walletToBeUpdated, rewardAmount);
 
     console.log("Waiting for single transaction to finish...");
 
@@ -327,9 +333,9 @@ async function updateRewardsSingle(): Promise<string> {
 
 async function updateRewardsBatch(): Promise<string> {
 
-    console.log("\nUpdater wallet address: ", whitelisterWallet.address); // Log the deployer wallet's address
+    console.log("\nUpdater wallet address: ", rewardsUpdaterWallet.address); // Log the deployer wallet's address
 
-    console.log("\nUpdater wallet balance: ", await alchemyProvider.getBalance(whitelisterWallet.address)); // Log the deployer wallet's balance
+    console.log("\nUpdater wallet balance: ", await alchemyProvider.getBalance(rewardsUpdaterWallet.address)); // Log the deployer wallet's balance
 
     const calculatedRewardsForAllWallets = await calculateRewardsForAllWallets();
 
@@ -338,7 +344,6 @@ async function updateRewardsBatch(): Promise<string> {
     const rewardsForWallets = calculatedRewardsForAllWallets.balances;
 
     if (totalRewards <= REWARD_TOKENS_PER_WEEK) {
-        //await rewardsContract.connect(whitelisterWallet).updateRewardsBatch(walletToBeUpdated, "50823357270723456401408");
 
         const walletAddresses = Array.from(rewardsForWallets.keys());
 
@@ -352,12 +357,15 @@ async function updateRewardsBatch(): Promise<string> {
 
         if (walletAddresses.length == walletRewards.length) {
             
-            const tx = await rewardsContract.connect(whitelisterWallet).updateRewardsBatch(walletAddresses, walletRewards);
-            console.log("Waiting for batch transaction to finish...");
-            const receipt = await tx.wait();
+            try {
+                const tx = await rewardsContract.connect(rewardsUpdaterWallet).updateRewardsBatch(walletAddresses, walletRewards);
+                console.log("Waiting for batch transaction to finish...");
+                const receipt = await tx.wait();
 
-            console.log(receipt);
-            
+                console.log(receipt);   
+            } catch (error) {
+                console.error("Transaction failed:", error);
+            }
         }
         else {
             console.log("[ERROR]: There is a mismatch in the list of number of wallets and number of rewards to do the batch update");

@@ -40,5 +40,7 @@ export type { ERC20TokenInterface } from "./contracts/UpgradeableHYAXRewards.sol
 export { ERC20TokenInterface__factory } from "./factories/contracts/UpgradeableHYAXRewards.sol/ERC20TokenInterface__factory";
 export type { UpgradeableHYAXRewards } from "./contracts/UpgradeableHYAXRewards.sol/UpgradeableHYAXRewards";
 export { UpgradeableHYAXRewards__factory } from "./factories/contracts/UpgradeableHYAXRewards.sol/UpgradeableHYAXRewards__factory";
+export type { UpgradeableHYAXRewardsV2 } from "./contracts/UpgradeableHYAXRewardsV2.sol/UpgradeableHYAXRewardsV2";
+export { UpgradeableHYAXRewardsV2__factory } from "./factories/contracts/UpgradeableHYAXRewardsV2.sol/UpgradeableHYAXRewardsV2__factory";
 export type { USDCToken } from "./contracts/USDCToken";
 export { USDCToken__factory } from "./factories/contracts/USDCToken__factory";

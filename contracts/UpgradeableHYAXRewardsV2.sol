@@ -20,7 +20,7 @@ interface ERC20TokenInterface {
     function symbol() external view returns (string memory);
 }
 
-contract UpgradeableHYAXRewards is OwnableUpgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable {
+contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable {
 
     ////////////////// SMART CONTRACT EVENTS //////////////////
     /**
@@ -627,7 +627,7 @@ contract UpgradeableHYAXRewards is OwnableUpgradeable, PausableUpgradeable, Reen
         // Validate the batch size limit
         require(_walletAddresses.length <= maximumBatchSizeForUpdateRewards, "Batch size exceeds the defined limit");
         //console.log("Enters 1.1");
-        
+
         // Validate the length of the arrays
         require(_walletAddresses.length == _hyaxRewards.length, "Array lengths must match");
         //console.log("Enters 1.2");
@@ -976,5 +976,14 @@ contract UpgradeableHYAXRewards is OwnableUpgradeable, PausableUpgradeable, Reen
         
         // Transfer the ownership to the new owner
         _transferOwnership(newOwner);
+    }
+
+    /**
+     * @dev This function returns a string indicating it's a new function in V2.
+     * It's a pure function, meaning it doesn't modify the state of the contract.
+     * @return A string indicating it's a new function in V2.
+     */
+    function newFunction() public pure returns (string memory) {
+        return "New function in V2";
     }
 }

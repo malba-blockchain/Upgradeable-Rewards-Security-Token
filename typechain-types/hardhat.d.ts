@@ -82,6 +82,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.UpgradeableHYAXRewards__factory>;
     getContractFactory(
+      name: "ERC20TokenInterface",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20TokenInterface__factory>;
+    getContractFactory(
+      name: "UpgradeableHYAXRewardsV2",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.UpgradeableHYAXRewardsV2__factory>;
+    getContractFactory(
       name: "USDCToken",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.USDCToken__factory>;
@@ -172,6 +180,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.UpgradeableHYAXRewards>;
     getContractAt(
+      name: "ERC20TokenInterface",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20TokenInterface>;
+    getContractAt(
+      name: "UpgradeableHYAXRewardsV2",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.UpgradeableHYAXRewardsV2>;
+    getContractAt(
       name: "USDCToken",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -246,6 +264,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.UpgradeableHYAXRewards>;
     deployContract(
+      name: "ERC20TokenInterface",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20TokenInterface>;
+    deployContract(
+      name: "UpgradeableHYAXRewardsV2",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UpgradeableHYAXRewardsV2>;
+    deployContract(
       name: "USDCToken",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.USDCToken>;
@@ -335,6 +361,16 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.UpgradeableHYAXRewards>;
+    deployContract(
+      name: "ERC20TokenInterface",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20TokenInterface>;
+    deployContract(
+      name: "UpgradeableHYAXRewardsV2",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UpgradeableHYAXRewardsV2>;
     deployContract(
       name: "USDCToken",
       args: any[],

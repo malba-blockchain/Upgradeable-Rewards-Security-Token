@@ -1,0 +1,45 @@
+D:&cd D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Rewards
+
+
+22. Update updates script
+
+npx hardhat run scripts/updateWeeklyRewards.ts
+
+Updates are made based on the tokens of a week ago. 
+Create script that interacts with local version and optimize it.
+
+Updater wallet address:  0x01c2f012de19e6436744c3F81f56E9e70C93a8C3
+
+Investor wallets
+0x6Fbc023ACCBA56c1b32bDaFA2F27D4cd58145AB1 100 WBTC Approved 1 WBTC Transfered
+0x9a4B007a10E1d1EC63157c8D69eBa76F30B4a2B4 100 WBTC Approved 3 WBTC Transfered
+0x34795B6a05543Fe097C8BbBc221e3119f27B793E 100 WBTC Approved 5 WBTC Transfered
+0xb44e0C06718534F27847e607B6AE9368798fB974 100 WBTC Approved 10 WBTC Transfered
+0xEDfcDEf54AE487Bd2F49e88E5b447cC26eB48e47 100 WBTC Approved 7 WBTC Transfered
+
+---
+Team wallets
+0x350441F8a82680a785FFA9d3EfEa60BB4cA417f8 3000000000000000000000000 3M HYAX 100 WBTC
+0x01c2f012de19e6436744c3F81f56E9e70C93a8C3 2000000000000000000000000 2M HYAX
+0x7dE9a234E67b9Ac172c803555f5aA7fFf3DB5581 5000000000000000000000000 5M HYAX
+
+
+CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+
+-Find out why is the current script failing. The transaction is just reverting. I don't know why.
+I need a way to figure out why a transaction would revert. Transaction simulator?
+
+https://www.alchemy.com/transaction-simulation
+
+
+-Deploy realistic local environment of upgradeable token contract
+-Deploy realistic local environment of upgradeable rewards contract
+-Create token distribution scripts and everything required to launch the whole environment with just running a command
+-Create local version of upgradeable script
+-Show reward balances of team and non team wallets in smart contract
+-Automate distribution of rewards every 5 seconds
+-Create scripts that simulate executing an upgrade and executing other functions (like withdraw tokens and whitelisting) with just a command
+-Clean the upgrades script
+
+
+GOAL TUESDAY: UP TO HERE-------------------------------
