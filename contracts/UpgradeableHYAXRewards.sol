@@ -693,7 +693,7 @@ contract UpgradeableHYAXRewards is OwnableUpgradeable, PausableUpgradeable, Reen
         // Update the total rewards for the wallet
         wallets[_walletAddress].totalHyaxRewardsAmount += _hyaxRewards;
         //console.log("Enters 2.10");
-
+    
         // Update the current rewards amount for the wallet
         wallets[_walletAddress].currentRewardsAmount += _hyaxRewards;
         //console.log("Enters 2.11");

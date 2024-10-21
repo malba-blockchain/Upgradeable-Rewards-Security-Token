@@ -25,6 +25,11 @@ const config: HardhatUserConfig = {
       url: `https://polygon-amoy.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`,
       accounts: { mnemonic: process.env.REACT_APP_MNEMONIC },
     },
+    hardhat: {
+      accounts: {
+        accountsBalance: "100000000000000000000000"
+      },
+    }
   },
    // configuration for harhdat-verify plugin
   etherscan: {

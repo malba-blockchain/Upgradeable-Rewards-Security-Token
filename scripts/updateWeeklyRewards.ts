@@ -377,6 +377,53 @@ async function updateRewardsBatch(): Promise<string> {
     return "";
 }
 
+async function simulateExecution(){
+
+    console.log("\nUpdater wallet address: ", rewardsUpdaterWallet.address); // Log the deployer wallet's address
+
+    console.log("\nUpdater wallet balance: ", await alchemyProvider.getBalance(rewardsUpdaterWallet.address)); // Log the deployer wallet's balance
+
+    const calculatedRewardsForAllWallets = await calculateRewardsForAllWallets();
+
+    const totalRewards = calculatedRewardsForAllWallets.totalRewards;
+
+    const rewardsForWallets = calculatedRewardsForAllWallets.balances;
+
+    if (totalRewards <= REWARD_TOKENS_PER_WEEK) {
+
+        const walletAddresses = Array.from(rewardsForWallets.keys());
+
+        const walletRewards = Array.from(rewardsForWallets.values()).map(([rewardAmount]) => rewardAmount);
+
+        const walletToBeUpdated = "0x34795B6a05543Fe097C8BbBc221e3119f27B793E";
+
+        const rewardAmount = "1552720000000000000000000";
+
+        console.log("walletAddresses");
+        console.log(walletAddresses);
+        
+        console.log("walletRewards");
+        console.log(walletRewards);
+
+        const transaction = {
+            from: rewardsUpdaterWallet.address,
+            to: REWARDS_SMART_CONTRACT_ADDRESS,
+            value: "0x0",
+            data: rewardsContract.interface.encodeFunctionData("updateRewardsSingle", [walletToBeUpdated, rewardAmount]),
+        };
+
+        const result = await alchemy.transact.simulateExecution(transaction);
+
+        console.log("Simulation Results =>", result);
+        console.log("Simulation Logs =>", result.logs);
+        console.log("Simulation Logs 0 topics =>", result.logs[0].topics);
+        console.log("Simulation Logs 1 topics =>", result.logs[1].topics);
+        
+    } else {
+        console.log("[ERROR]: The calculated rewards to distribute are greater than the limited allowed per week by the smart contract");
+    }
+}
+
 
 async function main() {
     /*
@@ -419,8 +466,9 @@ async function main() {
 
     //await updateRewardsSingle();
 
-    await updateRewardsBatch();
+    //await updateRewardsBatch();
 
+    await simulateExecution();
 }
 
 main(); // Call the async function
