@@ -156,7 +156,7 @@ contract UpgradeableHYAXRewards is OwnableUpgradeable, PausableUpgradeable, Reen
 
     ////////////////// GROWTH TOKENS VARIABLES //////////////////
 
-    uint256 public constant GROWTH_TOKENS_TOTAL = 2400000000 * 10**18; // Total of 2.4 Billion growth tokens
+    uint256 public constant GROWTH_TOKENS_TOTAL = 2400000000 * 10**18; // Total of 2.4 Billion growth tokens. 60% of 4B.
     
     uint256 public constant GROWTH_TOKENS_WITHDRAWAL_PER_YEAR = 120000000 * 10**18; // 120 Million tokens per year
 

@@ -5,7 +5,7 @@ import { Wallet } from 'ethers'; // Import the Wallet class from the ethers libr
 require('dotenv').config(); // Load environment variables from a .env file
 
 async function main() {
-
+    
     const smartContractToDeploy = 'UpgradeableHYAXRewards'; // Define the name of the smart contract to deploy
 
     const HYAXSmartContractAddress = "0xCd1fA2C8626B023197158aC84C5DF56EDD1F3f0C";
@@ -53,7 +53,7 @@ async function main() {
     // Wait for the transaction to be mined and get the receipt
     const transactionReceipt = await sendSignedTxSmartContractDeployment.wait();
 
-    console.log("Contract deployed at address:", transactionReceipt.contractAddress); // Log the deployed contract's address
+    console.log("Contract deployed at address:", transactionReceipt?.contractAddress); // Log the deployed contract's address
 
     // Get the ABI of the deployed smart contract
     const smartContractAbi = smartContractFactory.interface.formatJson();

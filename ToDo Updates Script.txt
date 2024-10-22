@@ -32,7 +32,6 @@ https://docs.alchemy.com/reference/simulateexecution-sdk-v3
 
 Answer: The reason is I've been using a version with bugs of the smart contract. I need to deply a new one.
 
-CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
 22.2. Deploy realistic local environment of upgradeable token contract
 
@@ -51,24 +50,38 @@ npx hardhat run --network localhost scripts\deploy_local_token_environment.js
 22.2.7. Add 5 investor wallets to whitelist and qualified investor list DONE
 22.2.8. Approve transaction from native token to the smart contract  DONE
 22.2.9. Use the smart contract to buy the tokens for each address DONE
+22.2.10. Clean and order that script DONE
 
-22.2.10. Clean and order that script
+
+22.3. Deploy realistic local environment of upgradeable rewards contract 
+
+D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Rewards
+
+npx hardhat run --network localhost scripts\deploy_local_rewards_environment.ts
+
+22.3.1. Get the address and ABI of the token contract stored in files DONE
+22.3.2. Deploy upgradeable rewards token contract DONE
+22.3.3. Change ownership from deployer to owner DONE
+22.3.4. Update whitelister and rewards updater DONE
+22.3.5. Mint more tokens from the token contract to provide to a the 3 funding type DONE
+22.3.6. Fund contract with the 3 types of funding rewards. Don't forget to approve! DONE
+CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+ERROR WITH THE WHITELISTER IN THE FUNCTION IS NOT THE ONE EXPECTED PASSED BY PARAMETER
+
+Add 5 investor wallets
+
+Add 3 team wallets with tokens
+
+22.4. Create everything required to launch the whole environment with just running a command
+
+22.5. Create local version of upgradeable script
 
 GOAL MONDAY: UP TO HERE-------------------------------
 
 
-22.3. Deploy realistic local environment of upgradeable rewards contract
 
 
-
-
-
-
--Create token distribution scripts and everything required to launch the whole environment with just running a command
-
-
-22.4. Create local version of upgradeable script
-22.5. Transaction optimization? https://docs.alchemy.com/reference/alchemy-sendgasoptimizedtransaction
+22.6. Transaction optimization? https://docs.alchemy.com/reference/alchemy-sendgasoptimizedtransaction
 -Show reward balances of team and non team wallets in smart contract
 -Automate distribution of rewards every 5 seconds
 -Create scripts that simulate executing an upgrade and executing other functions (like withdraw tokens and whitelisting) with just a command
