@@ -52,10 +52,9 @@ npx hardhat run --network localhost scripts\deploy_local_token_environment.js
 22.2.9. Use the smart contract to buy the tokens for each address DONE
 22.2.10. Clean and order that script DONE
 
+22.3. Deploy realistic local environment of upgradeable rewards contract DONE
 
-22.3. Deploy realistic local environment of upgradeable rewards contract 
-
-D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Rewards
+D:&cd D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Rewards
 
 npx hardhat run --network localhost scripts\deploy_local_rewards_environment.ts
 
@@ -65,25 +64,31 @@ npx hardhat run --network localhost scripts\deploy_local_rewards_environment.ts
 22.3.4. Update whitelister and rewards updater DONE
 22.3.5. Mint more tokens from the token contract to provide to a the 3 funding type DONE
 22.3.6. Fund contract with the 3 types of funding rewards. Don't forget to approve! DONE
+
+Add 5 investor wallets DONE
+
+Add 3 team wallets with tokens DONE
+
+22.4. Create everything required to launch the whole environment with just running a command DONE
+
 CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-ERROR WITH THE WHITELISTER IN THE FUNCTION IS NOT THE ONE EXPECTED PASSED BY PARAMETER
-
-Add 5 investor wallets
-
-Add 3 team wallets with tokens
-
-22.4. Create everything required to launch the whole environment with just running a command
 
 22.5. Create local version of upgradeable script
 
-GOAL MONDAY: UP TO HERE-------------------------------
+22.5.1. Show reward balances of team and non team wallets in smart contract
+22.5.2. Automate distribution of rewards every 5 seconds
+22.5.3. Create scripts that simulate executing an upgrade and executing other functions (like withdraw tokens and whitelisting) with just a command
+22.5.4. Clean the upgrades script
+
+D:&cd D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Rewards
+
+npx hardhat run --network localhost scripts\update_local_Weekly_Rewards.ts
+
+Optimize the following typescript, ethers.js V6 and hardhat code as much as you can, reducing the code as much as you can WITHOUT AFFECTING THE UNDERLYING FUNCTIONALITY AT ALL. Also add detailed inline comments expaining the code:
 
 
-
+GOAL TODAY: UP TO HERE-------------------------------
 
 22.6. Transaction optimization? https://docs.alchemy.com/reference/alchemy-sendgasoptimizedtransaction
--Show reward balances of team and non team wallets in smart contract
--Automate distribution of rewards every 5 seconds
--Create scripts that simulate executing an upgrade and executing other functions (like withdraw tokens and whitelisting) with just a command
--Clean the upgrades script
+
 

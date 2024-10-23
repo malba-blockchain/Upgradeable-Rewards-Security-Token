@@ -435,7 +435,6 @@ async function main() {
     const whitelistedTokenHolders = await getAllWhitelistedTokenHolders();
     console.log(whitelistedTokenHolders);
     
-
     console.log("\nTotal holdings last week");
     const totalTokenHoldings = (await getTokenBalancesAndTotalHoldings()).totalTokenHoldings;
     console.log(totalTokenHoldings);
@@ -452,17 +451,12 @@ async function main() {
     const totalTeamTokenHoldings = (await getTokenBalancesAndTotalHoldingsTeam()).totalTokenHoldings;
     console.log(totalTeamTokenHoldings);
 
-
-    console.log("\nList of whitelisted token holders and their balances");  
-    const tokenBalances = (await getTokenBalancesAndTotalHoldings()).balances;
-    console.log(tokenBalances);
-
     console.log("\nList of whitelisted team token holders and their balances");  
     const tokenTeamBalances = (await getTokenBalancesAndTotalHoldingsTeam()).balances;
     console.log(tokenTeamBalances);
     */
 
-    //await calculateRewardsForTeamWallets();
+    //await calculateRewardsForAllWallets();
 
     //await updateRewardsSingle();
 

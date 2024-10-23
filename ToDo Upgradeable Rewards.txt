@@ -446,34 +446,24 @@ CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
 22. Update updates script
 
-npx hardhat run scripts/updateWeeklyRewards.ts
 
-Updates are made based on the tokens of a week ago. 
-Create script that interacts with local version and optimize it.
+UP TO HERE-------------------------------
 
--Deploy realistic local environment of upgradeable token contract
--Deploy realistic local environment of upgradeable rewards contract
--Create token distribution scripts and everything required to launch the whole environment with just running a command
--Create local version of upgradeable script
--Show reward balances of team and non team wallets in smart contract
--Automate distribution of rewards every 5 seconds
--Create scripts that simulate executing an upgrade and executing other functions (like withdraw tokens and whitelisting) with just a command
+23. Optimize updates script. (1 day)
 
+npx hardhat run scripts/updateWeeklyRewards.ts 
 
-GOAL TUESDAY: UP TO HERE-------------------------------
+24. Add all security checks fuzzy testing and more learned in skills and job hunting experience (3 days)
 
+26. Deploy in testnet (2 days)
 
-23. Optimize updates script
+25. Clean comments and fix documentation on contract and tests (1 day)
 
-24. Clean comments and fix documentation on contract and tests
+27. Document (3days)
 
-26. Deploy in testnet
+28. Share to the web2 team + rewards update script (3 days)
 
-27. Document
-
-28. Share to the web2 team + rewards update script
-
-29. Do realistic tests with team + multisig testing for upgradeable. I.e. 1 Day = week of rewards
+29. Do realistic tests with team + multisig testing for upgradeable. I.e. 1 Day = week of rewards (1 week)
 
 
 ---------INITIAL LOCAL DEPLOYMENT---------

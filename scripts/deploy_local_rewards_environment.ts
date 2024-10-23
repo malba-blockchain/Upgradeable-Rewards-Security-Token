@@ -156,27 +156,25 @@ async function fundHYAXRewardsContract(hyaxUpgradeable:any, upgradeableHYAXRewar
   console.log("\nRewards smart contract balance: ", Number(ethers.formatEther(await hyaxUpgradeable.balanceOf(upgradeableHYAXRewards.target))));
 }
 
-async function addInvestorWalletsToWhitelist(upgradeableHYAXRewards:any, whiteListerAddress:any, addr1:any, addr2:any, addr3:any, addr4:any, addr5:any) {
+async function addInvestorWalletsToWhitelist(upgradeableHYAXRewards:any, addr1:any, addr2:any, addr3:any, addr4:any, addr5:any, whiteListerAddress:any) {
 
   console.log("\nAdding investor wallets to the rewards smart contract whitelist...");
 
-  console.log("WhiteLister address: ", whiteListerAddress.address);
-
   //Add investor wallets to the rewards smart contract whitelist
   await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(addr1.address, false, 0);
-  console.log("Investor wallet 1 added to the rewards smart contract whitelist");
+  console.log("Added investor wallet to whitelist", addr1.address);
 
   await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(addr2.address, false, 0);
-  console.log("Investor wallet 2 added to the rewards smart contract whitelist");
+  console.log("Added investor wallet to whitelist", addr2.address);
 
   await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(addr3.address, false, 0);
-  console.log("Investor wallet 3 added to the rewards smart contract whitelist");
+  console.log("Added investor wallet to whitelist", addr3.address);
 
   await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(addr4.address, false, 0);
-  console.log("Investor wallet 4 added to the rewards smart contract whitelist");
+  console.log("Added investor wallet to whitelist", addr4.address);
 
   await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(addr5.address, false, 0);
-  console.log("Investor wallet 5 added to the rewards smart contract whitelist");
+  console.log("Added investor wallet to whitelist", addr5.address);
 }
 
 async function addTeamWalletsToWhitelist(upgradeableHYAXRewards:any, whiteListerAddress:any, taddr1:any, taddr2:any, taddr3:any) {
@@ -185,13 +183,13 @@ async function addTeamWalletsToWhitelist(upgradeableHYAXRewards:any, whiteLister
 
   //Add team wallets to the rewards smart contract whitelist
   await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(taddr1.address, true, ethers.parseUnits("1000000", 18));
-  console.log("Team wallet 1 added to the rewards smart contract whitelist");
+  console.log("Added team wallet to whitelist", taddr1.address);
 
   await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(taddr2.address, true, ethers.parseUnits("3000000", 18));
-  console.log("Team wallet 2 added to the rewards smart contract whitelist");
+  console.log("Added team wallet to whitelist", taddr2.address);
 
   await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(taddr3.address, true, ethers.parseUnits("2000000", 18));
-  console.log("Team wallet 3 added to the rewards smart contract whitelist");
+  console.log("Added team wallet to whitelist", taddr3.address);
 }
 
 async function main() {
@@ -212,8 +210,6 @@ async function main() {
 
     //Add team wallets to the rewards smart contract whitelist
     await addTeamWalletsToWhitelist(upgradeableHYAXRewards, whiteListerAddress, taddr1, taddr2, taddr3);
-
-
 }
 
 main();
