@@ -126,7 +126,7 @@ async function getTokenBalancesAndTotalHoldings(): Promise<{ balances: Map<strin
         const balance = await tokenContract.balanceOf(whiteListedtokenHolder, {
             blockTag: targetBlockNumber, // Fetch at a specific block
           });
-
+          
         const formattedBalance = Number(ethers.formatEther(balance.toString()));
 
         whitelistedAddressesAndBalances.set(whiteListedtokenHolder,formattedBalance);

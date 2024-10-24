@@ -449,19 +449,19 @@ CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
 UP TO HERE-------------------------------
 
-23. Optimize updates script. (1 day)
+23. Optimize updates script. (2 day)
 
 npx hardhat run scripts/updateWeeklyRewards.ts 
 
-24. Add all security checks fuzzy testing and more learned in skills and job hunting experience (3 days)
+24. Add all security checks fuzzy testing and more learned in skills and job hunting experience (4 days)
 
-26. Deploy in testnet (2 days)
+26. Deploy in testnet (3 days)
 
-25. Clean comments and fix documentation on contract and tests (1 day)
+25. Clean comments and fix documentation on contract and tests (2 day)
 
-27. Document (3days)
+27. Document (4 days)
 
-28. Share to the web2 team + rewards update script (3 days)
+28. Share to the web2 team + rewards update script (4 days)
 
 29. Do realistic tests with team + multisig testing for upgradeable. I.e. 1 Day = week of rewards (1 week)
 

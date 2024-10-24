@@ -193,7 +193,7 @@ contract UpgradeableHYAXRewards is OwnableUpgradeable, PausableUpgradeable, Reen
 
     bool public teamTokensFundingStarted; // Flag to indicate if team tokens funding has begun
 
-
+    
     ////////////////// REWARD TOKENS VARIABLES //////////////////
 
     uint256 public constant REWARD_TOKENS_TOTAL = 1200000000 * 10**18; // Total of 1.2 Billion as reward tokens
@@ -240,7 +240,7 @@ contract UpgradeableHYAXRewards is OwnableUpgradeable, PausableUpgradeable, Reen
     }
     
     uint256 public constant MIN_INTERVAL_FOR_UPDATE_REWARDS = 6 days;
-
+    
     uint8 public maximumBatchSizeForUpdateRewards;
     
     mapping(address => WalletData) public wallets;
@@ -624,7 +624,10 @@ contract UpgradeableHYAXRewards is OwnableUpgradeable, PausableUpgradeable, Reen
         // Check if rewards funding has started
         require(rewardTokensFundingStarted, "Reward tokens funding has not started yet, no tokens to update");
 
-        // Validate the batch size limit
+        // Validate the batch size limit in the lower limit
+        require(_walletAddresses.length > 0, "Batch size cannot be 0");
+    
+        // Validate the batch size limit in the upper limit
         require(_walletAddresses.length <= maximumBatchSizeForUpdateRewards, "Batch size exceeds the defined limit");
         //console.log("Enters 1.1");
         

@@ -1,6 +1,5 @@
-import { artifacts, ethers, upgrades} from 'hardhat'; // Import the ethers object from Hardhat
+import { artifacts, ethers, upgrades } from 'hardhat'; // Import the ethers object from Hardhat
 import { Alchemy, Network } from "alchemy-sdk";
-import { mine } from "@nomicfoundation/hardhat-network-helpers";
 
 const { LOCAL_TOKEN_SMART_CONTRACT_ADDRESS } = require('D:/USER/Downloads/ATLAS/Projects/HYAX-Upgradeable-Token/utils/addresses.ts');
 const { TOKEN_SMART_CONTRACT_ABI } = require('D:/USER/Downloads/ATLAS/Projects/HYAX-Upgradeable-Token/utils/abi.ts');
@@ -25,7 +24,6 @@ const rewardsContract = new ethers.Contract(LOCAL_REWARDS_SMART_CONTRACT_ADDRESS
 let deployer: any, owner: any, addr1: any, addr2: any, addr3: any, addr4: any, addr5: any, whiteListerAddress: any, treasuryAddress: any, 
     taddr1: any, taddr2: any, taddr3: any, rewardsUpdaterAddress: any;
 
-//Get the signers of the wallets
 async function getTheSigners() { 
     const [_deployer, _owner, _addr1, _addr2, _addr3, _addr4, _addr5, _whiteListerAddress, _treasuryAddress, 
         _taddr1, _taddr2, _taddr3, _rewardsUpdaterAddress] = await ethers.getSigners();
@@ -35,8 +33,9 @@ async function getTheSigners() {
     taddr1 = _taddr1; taddr2 = _taddr2; taddr3 = _taddr3; rewardsUpdaterAddress = _rewardsUpdaterAddress;
 }
 
-//Get all the whitelisted investor wallets
-async function getAllWhitelistedInvestorWallets(): Promise<Set<string>> {
+
+//Get all the whitelisted token holders
+async function getAllWhitelistedTokenHolders(): Promise<Set<string>> {
     // Fetch all transfer events to identify holders
     const transferEvents = await tokenContract.queryFilter(tokenContract.filters.Transfer());
     // Initialize a Set to store whitelisted token holders
@@ -67,24 +66,24 @@ async function getAllWhitelistedInvestorWallets(): Promise<Set<string>> {
     return whitelistedTokenHolders;
 }
 
-//Get the token balances and total holdings of the whitelisted investor wallets
-async function getTokenBalancesInvestors(): Promise<{ balances: Map<string, number>, totalTokenHoldings: number }> {
+//Get the token balances and total holdings of the whitelisted token holders
+async function getTokenBalancesAndTotalHoldingsInvestors(): Promise<{ balances: Map<string, number>, totalTokenHoldings: number }> {
     // Fetch all whitelisted token holders
-    const whitelistedTokenHolders = await getAllWhitelistedInvestorWallets();
-
-    // Get the current block number and compute the number of blocks in a week
+    const whitelistedTokenHolders = await getAllWhitelistedTokenHolders();
+    // Get the current block number
     const currentBlock = await ethers.provider.getBlockNumber();
-    const blocksInAWeek = Math.floor(7 * 24 * 60 * 60 / AVERAGE_BLOCK_TIME_IN_BLOCKCHAIN);
-    
-    // Define target block number as the current block for now (can change if historical data is needed)
-    const targetBlockNumber = currentBlock - blocksInAWeek; // Change to currentBlock - blocksInAWeek for last week's data
-    
-    //Fetch the block details for the target block number
-    console.log("   [Log]: Current block number: ", currentBlock);
-    console.log("   [Log]: Block target number: ", targetBlockNumber);
+    // Set the target block number to the current block
+    const targetBlockNumber = currentBlock;  
+    // Fetch the block details for the target block number
     const block = await ethers.provider.getBlock(targetBlockNumber);
-    const blockDate = new Date(block.timestamp * 1000); // Convert timestamp to milliseconds
-    console.log("   [Log]: Block date: ", blockDate.toISOString());
+    
+    // Log the target block number and its date
+    //console.log(`[LOG]: Block target number: ${targetBlockNumber}`);
+    if (block) {
+        //console.log(`[LOG]: Block date: ${new Date(block.timestamp * 1000).toISOString()}`);
+    } else {
+        //console.log(`[LOG]: Block details not available`);
+    }
 
     // Initialize total holdings last week to 0
     let totalHoldingsLastWeek = 0;
@@ -134,8 +133,8 @@ async function getAllWhitelistedTeamWallets(): Promise<Set<string>> {
     return whitelistedTeamWallets;
 }
 
-//Get the token balances and total holdings of the whitelisted team wallets
-async function getTokenBalancesTeam(): Promise<{ balances: Map<string, number>, totalTokenHoldings: number }> {
+
+async function getTokenBalancesAndTotalHoldingsTeam(): Promise<{ balances: Map<string, number>, totalTokenHoldings: number }> {
     
     // Retrieve all whitelisted team wallets
     const whitelistedTeamWallets = await getAllWhitelistedTeamWallets();
@@ -149,14 +148,16 @@ async function getTokenBalancesTeam(): Promise<{ balances: Map<string, number>, 
     const blocksInAWeek = Math.floor(7 * 24 * 60 * 60 / AVERAGE_BLOCK_TIME_IN_BLOCKCHAIN);
     
     // Define target block number as the current block for now (can change if historical data is needed)
-    const targetBlockNumber = currentBlock - blocksInAWeek; // Change to currentBlock - blocksInAWeek for last week's data
-    
-    //Fetch the block details for the target block number
-    console.log("   [Log]: Current block number: ", currentBlock);
-    console.log("   [Log]: Block target number: ", targetBlockNumber);
+    const targetBlockNumber = currentBlock; // Change to currentBlock - blocksInAWeek for last week's data
+    //console.log("[LOG]: Block target number: ", targetBlockNumber);
+
+    // Fetch the block details at the target block number to get its timestamp
     const block = await ethers.provider.getBlock(targetBlockNumber);
-    const blockDate = new Date(block.timestamp * 1000); // Convert timestamp to milliseconds
-    console.log("   [Log]: Block date: ", blockDate.toISOString());
+    if (block) {
+        //console.log("[LOG]: Block date: ", new Date(block.timestamp * 1000).toISOString()); // Convert UNIX timestamp to readable date
+    } else {
+        //console.log("[LOG]: Block details not available");
+    }
 
     // Loop through all whitelisted team wallets and fetch their token data
     for (const wallet of whitelistedTeamWallets) {
@@ -186,8 +187,8 @@ async function calculateRewardsForAllWallets(): Promise<{ balances: Map<string, 
     const rewardsForWallets = new Map<string, [bigint, number]>();
 
     // Fetch token balances and total holdings for both investors and team wallets
-    const { balances: investorBalances, totalTokenHoldings: investorHoldings } = await getTokenBalancesInvestors();
-    const { balances: teamBalances, totalTokenHoldings: teamHoldings } = await getTokenBalancesTeam();
+    const { balances: investorBalances, totalTokenHoldings: investorHoldings } = await getTokenBalancesAndTotalHoldingsInvestors();
+    const { balances: teamBalances, totalTokenHoldings: teamHoldings } = await getTokenBalancesAndTotalHoldingsTeam();
 
     // Combine investor and team token balances, and calculate total token holdings
     const totalTokenBalances = new Set([...investorBalances, ...teamBalances]);
@@ -219,7 +220,42 @@ async function calculateRewardsForAllWallets(): Promise<{ balances: Map<string, 
     return { balances: rewardsForWallets, totalRewards }; // Return final rewards map and total rewards
 }
 
-//Update the rewards for a single wallet
+async function updateWalletWhitelistStatus() {
+
+    const walletToBeUpdated = addr1.address;
+
+    const newStatus = false;
+    try {
+
+        const tx = await rewardsContract.connect(whiteListerAddress).updateWhitelistStatus(walletToBeUpdated, newStatus);
+
+        await tx.wait();
+
+        console.log("\n   Wallet updated whitelist status successfully!", walletToBeUpdated, "to", newStatus);
+        
+    } catch (error) {
+        console.error("\n   [ERROR]: Wallet update whitelist status failed:", error);
+    }
+}
+
+async function withdrawRewardTokens() {
+
+    const walletToWithdraw = addr5;
+
+    try {
+
+        const tx = await rewardsContract.connect(walletToWithdraw).withdrawRewardTokens();
+
+        await tx.wait();
+
+        console.log("\n   Wallet withdrew reward tokens successfully!", walletToWithdraw.address);
+        
+    } catch (error) {
+        console.error("\n   [ERROR]: Wallet withdrew reward tokens failed:", error);
+    }
+}
+
+
 async function updateRewardsSingle(): Promise<string> {
 
     // Address of the wallet to update
@@ -258,14 +294,11 @@ async function updateRewardsSingle(): Promise<string> {
     return totalHyaxRewardsAmount;
 }
 
-//Update the rewards for all wallets in a batch
+
 async function updateRewardsBatch(): Promise<string> {
     // Log the updater wallet's address and balance
     const { address } = rewardsUpdaterAddress;
     const balance = await ethers.provider.getBalance(address);
-
-    console.log("\n   [LOG]: EXECUTION OF BATCH UPDATE");
-
     console.log("\n   Updater wallet address:", address, "\n   Updater wallet balance:", balance.toString());
 
     // Get rewards data from the calculateRewardsForAllWallets function
@@ -278,6 +311,9 @@ async function updateRewardsBatch(): Promise<string> {
         // Extract wallet addresses and reward amounts
         const walletAddresses = Array.from(rewardsForWallets.keys());
         const walletRewards = Array.from(rewardsForWallets.values()).map(([rewardAmount]) => rewardAmount);
+
+        // Log wallet addresses and rewards
+        //console.log("walletAddresses:", walletAddresses, "\nwalletRewards:", walletRewards);
 
         // Ensure the addresses and rewards lists are of the same length
         if (walletAddresses.length === walletRewards.length) {
@@ -318,6 +354,7 @@ async function updateRewardsBatch(): Promise<string> {
     return "";
 }
 
+
 //Show the rewards of all wallets
 async function showRewardsOfAllWallets(){
 
@@ -333,11 +370,10 @@ async function showRewardsOfAllWallets(){
             lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await rewardsContract.wallets(address);
 
-            console.log(`\n     Address: ${address}. Total rewards: ${Number(ethers.formatEther(totalHyaxRewardsAmount))}. Current rewards: ${Number(ethers.formatEther(currentRewardsAmount))}. Rewards withdrawn: ${Number(ethers.formatEther(rewardsWithdrawn))}`);
+            console.log(`\n     Address: ${address}. Total rewards: ${Number(ethers.formatEther(totalHyaxRewardsAmount))}. Current rewards: ${Number(ethers.formatEther(currentRewardsAmount))}. Rewards withdrawn: ${rewardsWithdrawn}`);
     }
 }
 
-//Show the state of the rewards smart contract
 async function showRewardsSmartContractState() {
 
     console.log("\n   [LOG]: SMART CONTRACT STATE");
@@ -347,15 +383,11 @@ async function showRewardsSmartContractState() {
     console.log("\n     Rewards token withdrawn:", Number(ethers.formatEther((await rewardsContract.rewardTokensWithdrawn()).toString())));
 }
 
-//Simulate the weekly reward distribution
 async function weeklyRewardDistributionSimulation() {
 
     const oneWeek = 7 * 24 * 60 * 60; // One week in seconds
 
     const totalWeeks = 416; // 8 years * 52 weeks = 416 weeks + 14 weeks for rounding errors = 430 weeks
-
-    //Mine 100000 blocks to move the time to simulate an already existing blockchain
-    await mine(100000);
 
     for (let i = 0; i < totalWeeks; i++) {
 
@@ -365,8 +397,6 @@ async function weeklyRewardDistributionSimulation() {
         console.log("\n   --------------------------------------------------------------------------------------------------------");
         console.log("\n   [LOG]: Year: ", Math.floor(i / 52), ". Week in year: ", i % 52, ". Absolute week: ", i);
         console.log("\n   --------------------------------------------------------------------------------------------------------");
-
-        await showRewardsSmartContractState();
 
         const updateRewardsBatchResult = await updateRewardsBatch();
 
@@ -380,7 +410,9 @@ async function weeklyRewardDistributionSimulation() {
 
         await showRewardsOfAllWallets();
 
-        await new Promise(f => setTimeout(f, 1000));
+        //await new Promise(f => setTimeout(f, 5000));
+
+        await showRewardsSmartContractState();
     }
 }
 
@@ -389,48 +421,8 @@ async function main() {
 
     //////////////GET THE SIGNERS/////////////
     await getTheSigners();
-    /*
-    console.log("\nList of all whitelisted token holders");   
-    const whitelistedTokenHolders = await getAllWhitelistedTokenHolders();
-    console.log(whitelistedTokenHolders);
 
-    console.log("\nTotal holdings last week");
-    const totalTokenHoldings = (await getTokenBalancesAndTotalHoldingsInvestors()).totalTokenHoldings;
-    console.log(totalTokenHoldings);
-
-    console.log("\nToken balances of the whitelisted token holders last week");
-    const tokenBalances = (await getTokenBalancesAndTotalHoldingsInvestors()).balances;
-    console.log(tokenBalances);
-
-    console.log("\nList of all whitelisted team wallets");  
-    const whitelistedTeamWallets = await getAllWhitelistedTeamWallets();
-    console.log(whitelistedTeamWallets);
-
-    console.log("\nTotal team holdings last week");
-    const totalTeamTokenHoldings = (await getTokenBalancesAndTotalHoldingsTeam()).totalTokenHoldings;
-    console.log(totalTeamTokenHoldings);
-
-    console.log("\nToken balances of the whitelisted team wallets last week");
-    const teamTokenBalances = (await getTokenBalancesAndTotalHoldingsTeam()).balances;
-    console.log(teamTokenBalances);
-
-    console.log("\nTotal rewards for all wallets");
-    const totalRewards = (await calculateRewardsForAllWallets()).totalRewards;
-    console.log(totalRewards);
-    
-    console.log("\nRewards balances for each wallet");
-    const rewardsForWallets = (await calculateRewardsForAllWallets()).balances;
-    console.log(rewardsForWallets);
-
-    await updateRewardsSingle();
-
-    await updateRewardsBatch();
-
-    await showRewardsOfAllWallets();
-
-    */
-
-    await weeklyRewardDistributionSimulation();
+    await withdrawRewardTokens();
 }
 
 main(); // Call the async function

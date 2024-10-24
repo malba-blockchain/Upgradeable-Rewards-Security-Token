@@ -71,24 +71,38 @@ Add 3 team wallets with tokens DONE
 
 22.4. Create everything required to launch the whole environment with just running a command DONE
 
+
+22.5. Create local version of upgradeable script 
+
+22.5.1. Show reward balances of team and non team wallets in smart contract DONE
+
+22.5.2. Automate distribution of rewards every 5 seconds DONE
+
+22.5.3. Create scripts that simulate executing an upgrade and executing other functions (like withdraw tokens and whitelisting) with just a command DONE
+
 CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
-22.5. Create local version of upgradeable script
 
-22.5.1. Show reward balances of team and non team wallets in smart contract
-22.5.2. Automate distribution of rewards every 5 seconds
-22.5.3. Create scripts that simulate executing an upgrade and executing other functions (like withdraw tokens and whitelisting) with just a command
-22.5.4. Clean the upgrades script
+22.5.4. Make the script based on last week token holdings. FIX THE ERROR RELATED TO THE BLOCKS AND TIMESTAMP
+
+22.5.5. Clean and optimize the local upgrades script 
+
+22.5.6. Create the testnet version of the upgrades script 
 
 D:&cd D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Rewards
 
-npx hardhat run --network localhost scripts\update_local_Weekly_Rewards.ts
+npx hardhat run --network localhost scripts\update_local_weekly_rewards.ts
 
-Optimize the following typescript, ethers.js V6 and hardhat code as much as you can, reducing the code as much as you can WITHOUT AFFECTING THE UNDERLYING FUNCTIONALITY AT ALL. Also add detailed inline comments expaining the code:
+npx hardhat run --network localhost scripts\transaction_local_rewards_contract.ts
+
 
 
 GOAL TODAY: UP TO HERE-------------------------------
 
 22.6. Transaction optimization? https://docs.alchemy.com/reference/alchemy-sendgasoptimizedtransaction
+
+
+Optimize the following typescript, ethers.js V6 and hardhat code as much as you can, reducing the code as much as you can WITHOUT AFFECTING THE UNDERLYING FUNCTIONALITY AT ALL. Also add detailed inline comments expaining the code:
+
 
 

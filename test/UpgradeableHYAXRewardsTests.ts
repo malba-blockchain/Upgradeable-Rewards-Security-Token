@@ -2883,7 +2883,7 @@ describe("Testing Use Case #13: Update rewards for a batch of non team wallets",
         const events = updateRewardsBatchReceipt?.logs || [];
 
         let numberOfFailedUpdates = 0;
-
+            
         for (const event of events) {
             //'Wallet is not whitelisted'
             if (event.fragment.name === "RewardUpdateFailed") {
