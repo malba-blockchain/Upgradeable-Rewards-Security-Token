@@ -8,7 +8,7 @@ const { TOKEN_SMART_CONTRACT_ABI } = require('D:/USER/Downloads/ATLAS/Projects/H
 const { LOCAL_REWARDS_SMART_CONTRACT_ADDRESS } = require('D:/USER/Downloads/ATLAS/Projects/HYAX-Upgradeable-Rewards/utils/addresses.ts');
 const { REWARDS_SMART_CONTRACT_ABI } = require('D:/USER/Downloads/ATLAS/Projects/HYAX-Upgradeable-Rewards/utils/abi.ts');
 
-const AVERAGE_BLOCK_TIME_IN_BLOCKCHAIN = 2.1;
+const AVERAGE_BLOCK_TIME_IN_BLOCKCHAIN = 2;
 
 const REWARD_TOKENS_PER_YEAR = 150000000 * 10**18; // 150 Million tokens per year
 
@@ -73,18 +73,24 @@ async function getTokenBalancesInvestors(): Promise<{ balances: Map<string, numb
     const whitelistedTokenHolders = await getAllWhitelistedInvestorWallets();
 
     // Get the current block number and compute the number of blocks in a week
-    const currentBlock = await ethers.provider.getBlockNumber();
+    const currentBlockNumber = await ethers.provider.getBlockNumber();
     const blocksInAWeek = Math.floor(7 * 24 * 60 * 60 / AVERAGE_BLOCK_TIME_IN_BLOCKCHAIN);
-    
+    console.log("\n   [Log]: Blocks in a week: ", blocksInAWeek);
+
     // Define target block number as the current block for now (can change if historical data is needed)
-    const targetBlockNumber = currentBlock - blocksInAWeek; // Change to currentBlock - blocksInAWeek for last week's data
-    
+    const targetBlockNumber = currentBlockNumber - blocksInAWeek; // Change to currentBlock - blocksInAWeek for last week's data
+
     //Fetch the block details for the target block number
-    console.log("   [Log]: Current block number: ", currentBlock);
-    console.log("   [Log]: Block target number: ", targetBlockNumber);
-    const block = await ethers.provider.getBlock(targetBlockNumber);
-    const blockDate = new Date(block.timestamp * 1000); // Convert timestamp to milliseconds
-    console.log("   [Log]: Block date: ", blockDate.toISOString());
+    console.log("   [Log]: Current block number: ", currentBlockNumber);
+    console.log("   [Log]: Target block number: ", targetBlockNumber);
+
+    const currentBlock = await ethers.provider.getBlock(currentBlockNumber);
+    const currentBlockDate = new Date(currentBlock.timestamp * 1000); // Convert timestamp to milliseconds
+    console.log("   [Log]: Current block date: ", currentBlockDate.toISOString());
+    
+    const targetBlock = await ethers.provider.getBlock(targetBlockNumber);
+    const targetBlockDate = new Date(targetBlock.timestamp * 1000); // Convert timestamp to milliseconds
+    console.log("   [Log]: Target block date: ", targetBlockDate.toISOString());
 
     // Initialize total holdings last week to 0
     let totalHoldingsLastWeek = 0;
@@ -145,18 +151,11 @@ async function getTokenBalancesTeam(): Promise<{ balances: Map<string, number>, 
     const balances = new Map<string, number>();
 
     // Get the current block number and compute the number of blocks in a week
-    const currentBlock = await ethers.provider.getBlockNumber();
+    const currentBlockNumber = await ethers.provider.getBlockNumber();
     const blocksInAWeek = Math.floor(7 * 24 * 60 * 60 / AVERAGE_BLOCK_TIME_IN_BLOCKCHAIN);
     
     // Define target block number as the current block for now (can change if historical data is needed)
-    const targetBlockNumber = currentBlock - blocksInAWeek; // Change to currentBlock - blocksInAWeek for last week's data
-    
-    //Fetch the block details for the target block number
-    console.log("   [Log]: Current block number: ", currentBlock);
-    console.log("   [Log]: Block target number: ", targetBlockNumber);
-    const block = await ethers.provider.getBlock(targetBlockNumber);
-    const blockDate = new Date(block.timestamp * 1000); // Convert timestamp to milliseconds
-    console.log("   [Log]: Block date: ", blockDate.toISOString());
+    const targetBlockNumber = currentBlockNumber - blocksInAWeek; // Change to currentBlock - blocksInAWeek for last week's data
 
     // Loop through all whitelisted team wallets and fetch their token data
     for (const wallet of whitelistedTeamWallets) {
@@ -349,38 +348,41 @@ async function showRewardsSmartContractState() {
 
 //Simulate the weekly reward distribution
 async function weeklyRewardDistributionSimulation() {
-
-    const oneWeek = 7 * 24 * 60 * 60; // One week in seconds
-
+    // Calculate the total number of weeks to simulate, assuming 8 years with 52 weeks per year, plus 14 weeks for rounding errors.
     const totalWeeks = 416; // 8 years * 52 weeks = 416 weeks + 14 weeks for rounding errors = 430 weeks
 
-    //Mine 100000 blocks to move the time to simulate an already existing blockchain
-    await mine(100000);
-
+    // Loop through each week to simulate the reward distribution process.
     for (let i = 0; i < totalWeeks; i++) {
 
-        // Wait for the specified time period to elapse (simulate one week)
-        await ethers.provider.send("evm_increaseTime", [oneWeek]);
-        await ethers.provider.send("evm_mine");
+        // Mine the approximate number of blocks in a week to move forward in time. 
+        // Assuming 2 seconds per block, we mine 302400 seconds (approximately 1 week) worth of blocks.
+        await mine(302400, { interval: AVERAGE_BLOCK_TIME_IN_BLOCKCHAIN });
+        
+        // Log the current week's information, including the year, week in the year, and the absolute week number.
         console.log("\n   --------------------------------------------------------------------------------------------------------");
         console.log("\n   [LOG]: Year: ", Math.floor(i / 52), ". Week in year: ", i % 52, ". Absolute week: ", i);
         console.log("\n   --------------------------------------------------------------------------------------------------------");
 
+        // Show the current state of the rewards smart contract.
         await showRewardsSmartContractState();
 
+        // Attempt to update the rewards batch for the current week.
         const updateRewardsBatchResult = await updateRewardsBatch();
 
+        // If the update process fails, log the error and exit the simulation.
         if (updateRewardsBatchResult != "") {
             console.error(updateRewardsBatchResult);
             return;
         }
+        // If the update process succeeds, log a success message.
         else {
             console.log("   [LOG]: Batch rewards updated successfully!");
         }
 
+        // Show the rewards of all wallets after the batch update.
         await showRewardsOfAllWallets();
 
-        await new Promise(f => setTimeout(f, 1000));
+        //await new Promise(f => setTimeout(f, 0));
     }
 }
 

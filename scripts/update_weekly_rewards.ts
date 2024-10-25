@@ -43,58 +43,165 @@ const alchemy = new Alchemy({
     network: SMART_CONTRACT_NETWORK, // Adjust the network if needed
 });
 
-// Function to get all unique holders of a token by querying the Transfer events.
-async function getAllTokenHolders(): Promise<Set<string>> {
 
-    //Create a filter that allows you to see all events and get all transfers no matter the from nor the to
-    const transferEventFilter = tokenContract.filters.Transfer(null, null);
+//Get all the whitelisted investor wallets
+async function getAllWhitelistedInvestorWallets(): Promise<Set<string>> {
+    // Fetch all transfer events to identify holders
+    const transferEvents = await tokenContract.queryFilter(tokenContract.filters.Transfer());
+    // Initialize a Set to store whitelisted token holders
+    const whitelistedTokenHolders = new Set<string>();
 
-    //Now add the filter the restriction of until 1 week ago
-    const oneWeekAgoTimestamp = Date.now() - 7 * 24 * 60 * 60 * 1000;
-    (transferEventFilter as any).fromBlock = 0;
-    //(transferEventFilter as any).toBlock = oneWeekAgoTimestamp; //BLOCK FROM A WEEK AGO
-
-    //Get the whole list of transfer events, query filter helps determine the range of blocks to to the query
-    const transferEvents = await tokenContract.queryFilter(transferEventFilter);
-
-    //Create a set to store the addresses because a set doesn't store repeated values
-    const holders: Set<string> = new Set();
-
-    transferEvents.forEach((event) => {
-
-        if ("args" in event) { //Ensure the event has the expected arguments
-            const { from, to } = event.args; //Destructure from and to addresses from the event
-
-            if (from !== ethers.ZeroAddress) holders.add(from); //Add the from address if its not a minting transaction
-
-            holders.add(to); //Always add the to address
+    // Use Set to track all unique holders
+    const holders = new Set<string>();
+    // Iterate through each transfer event to extract from and to addresses
+    transferEvents.forEach(({ args }: any) => {
+        if (args) {
+            const { from, to } = args;
+            // Add the from address if it's not the zero address (minting transaction)
+            if (from !== ethers.ZeroAddress) holders.add(from);
+            // Always add the to address
+            holders.add(to);
         }
     });
 
-    return holders;
-}
+    // Check whitelisting status for each holder
+    await Promise.all(Array.from(holders).map(async (holder) => {
+        // Fetch the wallet details for the current holder
+        const { isWhitelisted, isBlacklisted } = await rewardsContract.wallets(holder);
+        // If the holder is whitelisted and not blacklisted, add them to the whitelisted set
+        if (isWhitelisted && !isBlacklisted) whitelistedTokenHolders.add(holder);
+    }));
 
-
-async function getAllWhitelistedTokenHolders(): Promise<Set<string>> {
-
-    var allTokenHolders = await getAllTokenHolders();
-
-    var whitelistedTokenHolders: Set<string> = new Set();
-
-    for (const tokenHolder of allTokenHolders) {
-        //Check the address is in the whitelist
-        const [ hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, 
-            currentRewardsAmount, rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
-            lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
-            = await rewardsContract.wallets(tokenHolder);
-
-        if (isWhitelisted == true && isBlacklisted == false ) {
-            whitelistedTokenHolders.add(tokenHolder);
-        }
-    }
-
+    // Return the set of whitelisted token holders
     return whitelistedTokenHolders;
 }
+
+
+//Get the token balances and total holdings of the whitelisted investor wallets
+async function getTokenBalancesInvestors(): Promise<{ balances: Map<string, number>, totalTokenHoldings: number }> {
+    // Fetch all whitelisted token holders
+    const whitelistedTokenHolders = await getAllWhitelistedInvestorWallets();
+
+    // Get the current block number and compute the number of blocks in a week
+    const currentBlockNumber  = await alchemy.core.getBlockNumber();
+    const blocksInAWeek = Math.floor(7 * 24 * 60 * 60 / AVERAGE_BLOCK_TIME_IN_BLOCKCHAIN);
+
+    // Define target block number as the current block for now (can change if historical data is needed)
+    const targetBlockNumber = currentBlockNumber - blocksInAWeek; // Change to currentBlock - blocksInAWeek for last week's data
+
+    //Fetch the block details for the target block number
+    console.log("   [Log]: Current block number: ", currentBlockNumber);
+    console.log("   [Log]: Target block number: ", targetBlockNumber);
+
+    const currentBlock = await alchemy.core.getBlock(currentBlockNumber);
+    const currentBlockDate = new Date(currentBlock.timestamp * 1000); // Convert timestamp to milliseconds
+    console.log("   [Log]: Current block date: ", currentBlockDate.toISOString());
+    
+    const targetBlock = await alchemy.core.getBlock(targetBlockNumber);
+    const targetBlockDate = new Date(targetBlock.timestamp * 1000); // Convert timestamp to milliseconds
+    console.log("   [Log]: Target block date: ", targetBlockDate.toISOString());
+
+    // Initialize total holdings last week to 0
+    let totalHoldingsLastWeek = 0;
+    // Create a map to store balances
+    const balances = new Map<string, number>();
+
+    // Iterate through each whitelisted token holder to fetch their balance
+    await Promise.all(Array.from(whitelistedTokenHolders).map(async (holder) => {
+        // Fetch the balance of the holder at the target block number
+        const balance = await tokenContract.balanceOf(holder, { blockTag: targetBlockNumber });
+        // Format the balance from wei to ether
+        const formattedBalance = Number(ethers.formatEther(balance));
+        // Store the formatted balance in the balances map
+        balances.set(holder, formattedBalance);
+        // Add the formatted balance to the total holdings last week
+        totalHoldingsLastWeek += formattedBalance;
+    }));
+
+    // Return the balances and total holdings last week
+    return { balances, totalTokenHoldings: totalHoldingsLastWeek };
+}
+
+
+//Get all the whitelisted team wallets  
+async function getAllWhitelistedTeamWallets(): Promise<Set<string>> {
+    // Create a filter for WalletAddedToWhitelist events
+    const transferEventFilter = rewardsContract.filters.WalletAddedToWhitelist();
+
+    // Query the blockchain for events that match the filter
+    const addToWhitelistEvents = await rewardsContract.queryFilter(transferEventFilter);
+
+    // Use a set to store the whitelisted team wallets
+    const whitelistedTeamWallets: Set<string> = new Set();
+
+    // Process all events to filter out team wallets and check their whitelisted status
+    await Promise.all(addToWhitelistEvents.map(async (event) => {
+        const [ , walletAddress, isTeamWallet ] = event.args;
+        
+        // If it's a team wallet, check its whitelist and blacklist status
+        if (isTeamWallet) {
+            const { isWhitelisted, isBlacklisted } = await rewardsContract.wallets(walletAddress);
+            if (isWhitelisted && !isBlacklisted) {
+                whitelistedTeamWallets.add(walletAddress);
+            }
+        }
+    }));
+
+    return whitelistedTeamWallets;
+}
+
+
+//Get the token balances and total holdings of the whitelisted team wallets
+async function getTokenBalancesTeam(): Promise<{ balances: Map<string, number>, totalTokenHoldings: number }> {
+    
+    // Retrieve all whitelisted team wallets
+    const whitelistedTeamWallets = await getAllWhitelistedTeamWallets();
+
+    // Initialize the total token holdings counter and map for storing balances
+    let totalTokenHoldings = 0;
+    const balances = new Map<string, number>();
+
+    // Get the current block number and compute the number of blocks in a week
+    const currentBlockNumber = await alchemy.core.getBlockNumber();
+    const blocksInAWeek = Math.floor(7 * 24 * 60 * 60 / AVERAGE_BLOCK_TIME_IN_BLOCKCHAIN);
+    
+    // Define target block number as the current block for now (can change if historical data is needed)
+    const targetBlockNumber = currentBlockNumber - blocksInAWeek; // Change to currentBlock - blocksInAWeek for last week's data
+
+    // Loop through all whitelisted team wallets and fetch their token data
+    for (const wallet of whitelistedTeamWallets) {
+        
+        // Fetch multiple token-related properties from the rewards contract for each wallet at the target block
+        const { hyaxHoldingAmountAtWhitelistTime } = await rewardsContract.wallets(wallet, { blockTag: targetBlockNumber });
+
+        // Format balance from BigNumber (wei) to a readable number (ether)
+        const balance = Number(ethers.formatEther(hyaxHoldingAmountAtWhitelistTime.toString()));
+
+        // Update map of wallet balances and add the balance to the total holdings
+        balances.set(wallet, balance);
+        totalTokenHoldings += balance;
+    }
+
+    // Return the final balances map and the total token holdings
+    return { balances, totalTokenHoldings };
+}
+
+//CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 async function getTokenBalancesAndTotalHoldings(): Promise<{ balances: Map<string, number>, totalTokenHoldings: number }> {
     
@@ -174,7 +281,7 @@ async function getAllTeamWallets(): Promise<Set<string>> {
 }
 
 
-async function getAllWhitelistedTeamWallets(): Promise<Set<string>> {
+async function getAllWhitelistedTeamWallets2(): Promise<Set<string>> {
 
     var allTeamWallets = await getAllTeamWallets();
 

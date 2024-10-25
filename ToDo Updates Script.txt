@@ -83,7 +83,7 @@ Add 3 team wallets with tokens DONE
 CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
 
-22.5.4. Make the script based on last week token holdings. FIX THE ERROR RELATED TO THE BLOCKS AND TIMESTAMP
+22.5.4. Make the script based on last week token holdings. DONE
 
 22.5.5. Clean and optimize the local upgrades script 
 
@@ -95,9 +95,8 @@ npx hardhat run --network localhost scripts\update_local_weekly_rewards.ts
 
 npx hardhat run --network localhost scripts\transaction_local_rewards_contract.ts
 
-
-
 GOAL TODAY: UP TO HERE-------------------------------
+
 
 22.6. Transaction optimization? https://docs.alchemy.com/reference/alchemy-sendgasoptimizedtransaction
 
