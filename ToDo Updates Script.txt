@@ -85,9 +85,19 @@ CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
 22.5.4. Make the script based on last week token holdings. DONE
 
-22.5.5. Clean and optimize the local upgrades script 
+22.5.5. Clean and optimize the local upgrades script DONE 
 
-22.5.6. Create the testnet version of the upgrades script 
+
+
+22.5.6. Create the testnet version of the upgrades script DONE
+
+
+23. Adjust for reward token non recovery  
+
+
+34. Identify way to automate execution with AWS
+
+
 
 D:&cd D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Rewards
 
@@ -95,13 +105,21 @@ npx hardhat run --network localhost scripts\update_local_weekly_rewards.ts
 
 npx hardhat run --network localhost scripts\transaction_local_rewards_contract.ts
 
+
+
+
 GOAL TODAY: UP TO HERE-------------------------------
 
 
-22.6. Transaction optimization? https://docs.alchemy.com/reference/alchemy-sendgasoptimizedtransaction
-
 
 Optimize the following typescript, ethers.js V6 and hardhat code as much as you can, reducing the code as much as you can WITHOUT AFFECTING THE UNDERLYING FUNCTIONALITY AT ALL. Also add detailed inline comments expaining the code:
+
+QUESTIONS
+Qué hacer con el registro de la wallet perdida?
+Se deja en fuera de whitelist, en blacklist y fuera del listado de wallets de equipo?
+Se heredan los datos de fechas de retiro de tokens de equipo?
+Los saldos de rewards antiguos se ponen en cero?
+
 
 
 

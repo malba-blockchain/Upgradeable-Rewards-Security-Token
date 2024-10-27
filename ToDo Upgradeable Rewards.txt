@@ -449,13 +449,17 @@ CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
 UP TO HERE-------------------------------
 
+23. Add gitlab updates
+
 23. Optimize updates script. (2 day)
 
 npx hardhat run scripts/updateWeeklyRewards.ts 
 
 24. Add all security checks fuzzy testing and more learned in skills and job hunting experience (4 days)
 
-26. Deploy in testnet (3 days)
+26. Deploy in testnet (3 days) 
+
+26. Transacion optimization and simulation? https://docs.alchemy.com/reference/alchemy-sendgasoptimizedtransaction
 
 25. Clean comments and fix documentation on contract and tests (2 day)
 

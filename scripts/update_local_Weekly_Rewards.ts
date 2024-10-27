@@ -332,7 +332,7 @@ async function showRewardsOfAllWallets(){
             lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await rewardsContract.wallets(address);
 
-            console.log(`\n     Address: ${address}. Total rewards: ${Number(ethers.formatEther(totalHyaxRewardsAmount))}. Current rewards: ${Number(ethers.formatEther(currentRewardsAmount))}. Rewards withdrawn: ${Number(ethers.formatEther(rewardsWithdrawn))}`);
+        console.log(`\n     Address: ${address}. Total rewards: ${Number(ethers.formatEther(totalHyaxRewardsAmount))}. Current rewards: ${Number(ethers.formatEther(currentRewardsAmount))}. Rewards withdrawn: ${Number(ethers.formatEther(rewardsWithdrawn))}`);
     }
 }
 
@@ -349,8 +349,8 @@ async function showRewardsSmartContractState() {
 //Simulate the weekly reward distribution
 async function weeklyRewardDistributionSimulation() {
     // Calculate the total number of weeks to simulate, assuming 8 years with 52 weeks per year, plus 14 weeks for rounding errors.
-    const totalWeeks = 416; // 8 years * 52 weeks = 416 weeks + 14 weeks for rounding errors = 430 weeks
-
+    const totalWeeks = 500; // 8 years * 52 weeks = 416 weeks + 14 weeks for rounding errors = 430 weeks
+    
     // Loop through each week to simulate the reward distribution process.
     for (let i = 0; i < totalWeeks; i++) {
 

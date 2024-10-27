@@ -120,7 +120,7 @@ contract UpgradeableHYAXRewards is OwnableUpgradeable, PausableUpgradeable, Reen
      * @param _newTeamMemberWalletAddress The address of the new team member wallet
      */
     event TeamMemberTokensRecovered(address _oldTeamMemberWalletAddress, address _newTeamMemberWalletAddress, 
-        uint256 _hyaxHoldingAmount, uint256 _currentRewardsAmount);
+        uint256 _hyaxHoldingAmount);
 
     /**
      * @dev Emitted when the white lister address is updated
@@ -844,15 +844,9 @@ contract UpgradeableHYAXRewards is OwnableUpgradeable, PausableUpgradeable, Reen
         wallets[_newTeamMemberWalletAddress].isTeamWallet = true;
         wallets[_newTeamMemberWalletAddress].isBlacklisted = false;
         
-
-        //Do the transfer of the old values to the new team member wallet address
+        //Do the transfer of the previous values to the new team member wallet address
         wallets[_newTeamMemberWalletAddress].hyaxHoldingAmountAtWhitelistTime = wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmountAtWhitelistTime;
         wallets[_newTeamMemberWalletAddress].hyaxHoldingAmount = wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmount;
-        wallets[_newTeamMemberWalletAddress].lastRewardsUpdateTime = wallets[_oldTeamMemberWalletAddress].lastRewardsUpdateTime;
-        wallets[_newTeamMemberWalletAddress].lastRewardsWithdrawalTime = wallets[_oldTeamMemberWalletAddress].lastRewardsWithdrawalTime;
-        wallets[_newTeamMemberWalletAddress].totalHyaxRewardsAmount = wallets[_oldTeamMemberWalletAddress].totalHyaxRewardsAmount;
-        wallets[_newTeamMemberWalletAddress].currentRewardsAmount = wallets[_oldTeamMemberWalletAddress].currentRewardsAmount;
-        wallets[_newTeamMemberWalletAddress].rewardsWithdrawn = wallets[_oldTeamMemberWalletAddress].rewardsWithdrawn;
         wallets[_newTeamMemberWalletAddress].addedToWhitelistTime = wallets[_oldTeamMemberWalletAddress].addedToWhitelistTime;
         wallets[_newTeamMemberWalletAddress].teamTokenWithdrawalTimes = wallets[_oldTeamMemberWalletAddress].teamTokenWithdrawalTimes;
 
@@ -863,7 +857,7 @@ contract UpgradeableHYAXRewards is OwnableUpgradeable, PausableUpgradeable, Reen
         
         //Update values of the old team member wallet address to 0
         wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmountAtWhitelistTime = 0;
-        wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmount = 0;
+        wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmount = 0; 
         wallets[_oldTeamMemberWalletAddress].lastRewardsUpdateTime = 0;
         wallets[_oldTeamMemberWalletAddress].lastRewardsWithdrawalTime = 0;
         wallets[_oldTeamMemberWalletAddress].totalHyaxRewardsAmount = 0;
@@ -873,7 +867,7 @@ contract UpgradeableHYAXRewards is OwnableUpgradeable, PausableUpgradeable, Reen
 
         //Emit an event to notify that the team tokens were recovered
         emit TeamMemberTokensRecovered(_oldTeamMemberWalletAddress, _newTeamMemberWalletAddress,
-            wallets[_newTeamMemberWalletAddress].hyaxHoldingAmount, wallets[_newTeamMemberWalletAddress].currentRewardsAmount);
+            wallets[_newTeamMemberWalletAddress].hyaxHoldingAmount);
     }
     
     /**

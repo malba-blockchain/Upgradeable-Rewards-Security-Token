@@ -186,390 +186,183 @@ async function getTokenBalancesTeam(): Promise<{ balances: Map<string, number>, 
     return { balances, totalTokenHoldings };
 }
 
-//CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEE
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-async function getTokenBalancesAndTotalHoldings(): Promise<{ balances: Map<string, number>, totalTokenHoldings: number }> {
-    
-    const whitelistedTokenHolders = await getAllWhitelistedTokenHolders();
-
-    let totalHoldingsLastWeek = 0;
-
-    let whitelistedAddressesAndBalances = new Map<string, number>();
-
-    const currentBlock = await alchemy.core.getBlockNumber();
-
-    const secondsInAWeek = 7 * 24 * 60 * 60;
-
-    const blocksInAWeek = Math.floor(secondsInAWeek / AVERAGE_BLOCK_TIME_IN_BLOCKCHAIN);
-
-    //const targetBlockNumber = currentBlock - blocksInAWeek; //BLOCK IN A WEEK AGO
-
-    const targetBlockNumber = currentBlock;
-
-    console.log("[Log]: Block target number: ", targetBlockNumber);
-
-    const block = await alchemy.core.getBlock(targetBlockNumber);
-
-    const blockDate = new Date(block.timestamp * 1000); // Convert timestamp to milliseconds
-    console.log("[Log]: Block date: ", blockDate.toISOString());
-
-    for (const whiteListedtokenHolder of whitelistedTokenHolders) {
- 
-        const balance = await tokenContract.balanceOf(whiteListedtokenHolder, {
-            blockTag: targetBlockNumber, // Fetch at a specific block
-          });
-          
-        const formattedBalance = Number(ethers.formatEther(balance.toString()));
-
-        whitelistedAddressesAndBalances.set(whiteListedtokenHolder,formattedBalance);
-
-        totalHoldingsLastWeek += formattedBalance;
-    }
-
-   return { balances: whitelistedAddressesAndBalances, totalTokenHoldings: totalHoldingsLastWeek }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//CALCULUS FOR TEAM WALLETS
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-async function getAllTeamWallets(): Promise<Set<string>> {
-
-    // Create a filter for WalletAddedToWhitelist events with no specific parameters
-    const transferEventFilter = rewardsContract.filters.WalletAddedToWhitelist(null, null, null, null);
-
-    // Calculate the timestamp for 1 week ago to filter events up to that point
-    const oneWeekAgoTimestamp = Date.now() - 7 * 24 * 60 * 60 * 1000;
-    // Set the filter to start from the first block (0) and end at the block corresponding to 1 week ago
-    (transferEventFilter as any).fromBlock = 0;
-    //(transferEventFilter as any).toBlock = oneWeekAgoTimestamp; //BLOCK FROM A WEEK AGO
-
-    // Query the blockchain for events that match the filter
-    const addToWhitelistEvents = await rewardsContract.queryFilter(transferEventFilter);
-
-    //Create a set to store the addresses because a set doesn't store repeated values
-    const teamWallets: Set<string> = new Set();
-
-    addToWhitelistEvents.forEach((event) => {
-
-        if ("args" in event) { //Ensure the event has the expected arguments
-            const [ sender, walletAddress, isTeamWallet, hyaxHoldingAmount ] = event.args; //Destructure from and to addresses from the event
-            
-            if (isTeamWallet == true) 
-            {
-                teamWallets.add(walletAddress); //Add the from address if its not a minting transaction
-            }     
-        }
-    });
-
-    return teamWallets;
-}
-
-
-async function getAllWhitelistedTeamWallets2(): Promise<Set<string>> {
-
-    var allTeamWallets = await getAllTeamWallets();
-
-    var whitelistedTeamWallets: Set<string> = new Set();
-
-    for (const teamWallet of allTeamWallets) {
-        //Check the address is in the whitelist
-        const [ hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, 
-            currentRewardsAmount, rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
-            lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
-            = await rewardsContract.wallets(teamWallet);
-
-        if (isWhitelisted == true && isBlacklisted == false ) {
-            whitelistedTeamWallets.add(teamWallet);
-        }
-    }
-
-    return whitelistedTeamWallets;
-}
-
-
-async function getTokenBalancesAndTotalHoldingsTeam(): Promise<{ balances: Map<string, number>, totalTokenHoldings: number }> {
-    
-    const whitelistedTeamWallets = await getAllWhitelistedTeamWallets();
-
-    let totalTeamHoldingsLastWeek = 0;
-
-    let whitelistedTeamAddressesAndBalances = new Map<string, number>();
-
-    const currentBlock = await alchemy.core.getBlockNumber();
-
-    const secondsInAWeek = 7 * 24 * 60 * 60;
-
-    const blocksInAWeek = Math.floor(secondsInAWeek / AVERAGE_BLOCK_TIME_IN_BLOCKCHAIN);
-
-    //const targetBlockNumber = currentBlock - blocksInAWeek; //BLOCK IN A WEEK AGO
-
-    const targetBlockNumber = currentBlock;
-
-    console.log("[Log]: Block target number: ", targetBlockNumber);
-
-    const block = await alchemy.core.getBlock(targetBlockNumber);
-
-    const blockDate = new Date(block.timestamp * 1000); // Convert timestamp to milliseconds
-    console.log("[Log]: Block date: ", blockDate.toISOString());
-
-    for (const whiteListedTeamtokenHolder of whitelistedTeamWallets) {
-
-        const [ hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, 
-            currentRewardsAmount, rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
-            lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
-            = await rewardsContract.wallets(whiteListedTeamtokenHolder,{
-                blockTag: targetBlockNumber, // Fetch at a specific block
-            });
-
-        const formattedBalance = Number(ethers.formatEther(hyaxHoldingAmountAtWhitelistTime.toString()));
-
-        whitelistedTeamAddressesAndBalances.set(whiteListedTeamtokenHolder,formattedBalance);
-
-        totalTeamHoldingsLastWeek += formattedBalance;
-    }
-
-   return { balances: whitelistedTeamAddressesAndBalances, totalTokenHoldings: totalTeamHoldingsLastWeek }
-}
-
+//Calculate the rewards for all wallets
 async function calculateRewardsForAllWallets(): Promise<{ balances: Map<string, [bigint, number]>, totalRewards: bigint }> {
     
-    let totalRewards = BigInt(0); 
+    let totalRewards = BigInt(0); // Track total rewards
+    let totalPercentage = 0.0; // Track total percentage for sanity check
 
-    let totalPercentage = 0.0;
+    // Map to store rewards and percentage of rewards for each wallet
+    const rewardsForWallets = new Map<string, [bigint, number]>();
 
-    //Mapping stores rewards per wallet and percentage of those rewards
-    let rewardsForWallets = new Map<string, [bigint, number]>();
+    // Fetch token balances and total holdings for both investors and team wallets
+    const { balances: investorBalances, totalTokenHoldings: investorHoldings } = await getTokenBalancesInvestors();
+    const { balances: teamBalances, totalTokenHoldings: teamHoldings } = await getTokenBalancesTeam();
 
-    // Fetch token balances and total holdings for investors
-    const tokenBalancesAndTotalHoldings = await getTokenBalancesAndTotalHoldings();
+    // Combine investor and team token balances, and calculate total token holdings
+    const totalTokenBalances = new Set([...investorBalances, ...teamBalances]);
+    const totalTokenHoldings = investorHoldings + teamHoldings;
 
-    const tokenHoldingsInvestors = tokenBalancesAndTotalHoldings.totalTokenHoldings;
+    // Iterate through all token holders and calculate rewards based on their token balance percentage
+    for (const [address, balance] of totalTokenBalances) {
 
-    const tokenBalancesInvestors = tokenBalancesAndTotalHoldings.balances;
-    
+        const percentageRewards = balance / totalTokenHoldings; // Calculate percentage of total token holdings
+        let amountRewards = BigInt(percentageRewards * REWARD_TOKENS_PER_WEEK); // Calculate initial reward amount
 
-    // Fetch token balances and total holdings for team wallets
-    const tokenBalancesAndTotalHoldingsTeam = await getTokenBalancesAndTotalHoldingsTeam();
+        // Remove lower 18 digits to eliminate decimal part and ensure precision
+        const divisor = BigInt(10 ** 18);
+        amountRewards = (amountRewards / divisor) * divisor;
 
-    const tokenHoldingsTeam = tokenBalancesAndTotalHoldingsTeam.totalTokenHoldings;
-    
-    const tokenBalancesTeam = tokenBalancesAndTotalHoldingsTeam.balances;
+        //console.log(`\nAddress: ${address}, Token balance: ${balance}, Token rewards: ${Number(ethers.formatEther(amountRewards.toString()))}, Percentage: ${(percentageRewards * 100).toFixed(2)}%`);
 
-
-    // Combine token balances of investors and team wallets into a single set
-    const totalTokenBalances = new Set([...tokenBalancesInvestors, ...tokenBalancesTeam]);
-
-    const totalTokenHoldings = tokenHoldingsInvestors + tokenHoldingsTeam;
-
-    for (const balanceTokenHolder of totalTokenBalances) {
-
-        const percentageRewards = balanceTokenHolder[1] / totalTokenHoldings;
-
-        // Convert the product of percentageRewards and REWARD_TOKENS_PER_WEEK to a string to avoid overflow
-        let amountRewards = BigInt(percentageRewards * REWARD_TOKENS_PER_WEEK);
-
-        // Zero out the first 18 digits from the right in order to eliminate the decimal part.
-        const divisor = BigInt(10 ** 18); // 18 digits
-        amountRewards = (amountRewards / divisor) * divisor; // Remove lower 18 digits and append zeros
-
-        console.log("\nAddress: ", balanceTokenHolder[0], "Token balance: ", balanceTokenHolder[1], ". Token rewards: ", Number(ethers.formatEther(amountRewards.toString())) ,
-            ". Percentage: ", percentageRewards*100, "%");
+        totalRewards += amountRewards; // Update total rewards
+        totalPercentage += percentageRewards; // Update total percentage
         
-        totalRewards += amountRewards;
-
-        totalPercentage += percentageRewards;
-
-        rewardsForWallets.set(balanceTokenHolder[0], [amountRewards, percentageRewards]);
+        rewardsForWallets.set(address, [amountRewards, percentageRewards]); // Store rewards and percentage in map
     }
 
-    console.log("\nPercentage rewards: ", totalPercentage*100, "%");
-    console.log("Expected rewards:", BigInt(REWARD_TOKENS_PER_WEEK));
-    console.log("Distributed rewards: ",  BigInt(totalRewards.toString()));
+    // Log sanity checks for total percentage and rewards distribution
+    //console.log(`\nTotal Percentage Rewards: ${(totalPercentage * 100).toFixed(2)}%`);
+    //console.log(`Expected Weekly Rewards: ${BigInt(REWARD_TOKENS_PER_WEEK)}`);
+    //console.log(`Distributed Rewards: ${totalRewards}`);
 
-    return { balances: rewardsForWallets, totalRewards: totalRewards }
+    return { balances: rewardsForWallets, totalRewards }; // Return final rewards map and total rewards
 }
 
-async function updateRewardsSingle(): Promise<string> {
 
-    const walletToBeUpdated = "0x34795B6a05543Fe097C8BbBc221e3119f27B793E";
-
-    const rewardAmount = "1552720000000000000000000";
-
-    console.log("\nUpdater wallet address: ", rewardsUpdaterWallet.address); // Log the deployer wallet's address
-
-    console.log("\nUpdater wallet balance: ", await alchemyProvider.getBalance(rewardsUpdaterWallet.address)); // Log the deployer wallet's balance
-
-    const tx = await rewardsContract.connect(rewardsUpdaterWallet).updateRewardsSingle(walletToBeUpdated, rewardAmount);
-
-    console.log("Waiting for single transaction to finish...");
-
-    const receipt = await tx.wait();
-
-    console.log(receipt);
-
-    const [ hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, 
-            currentRewardsAmount, rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
-            lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
-            = await rewardsContract.wallets(walletToBeUpdated);
-
-    console.log("\nUpdated wallet: ", walletToBeUpdated);
-    console.log("Updated wallet totalHyaxRewardsAmount: ", totalHyaxRewardsAmount);
-    console.log("Updated wallet currentRewardsAmount: ", currentRewardsAmount);
-    console.log("Updated wallet rewardsWithdrawn: ", rewardsWithdrawn);
-    console.log("Updated wallet lastRewardsWithdrawalTime: ", lastRewardsWithdrawalTime);
-    console.log("Updated wallet lastRewardsUpdateTime: ", lastRewardsUpdateTime);
-
-    return totalHyaxRewardsAmount;
-}
-
+//Update the rewards for all wallets in a batch
 async function updateRewardsBatch(): Promise<string> {
+    // Log the updater wallet's address and balance
 
-    console.log("\nUpdater wallet address: ", rewardsUpdaterWallet.address); // Log the deployer wallet's address
+    console.log("\n   [LOG]: EXECUTION OF BATCH UPDATE");
 
-    console.log("\nUpdater wallet balance: ", await alchemyProvider.getBalance(rewardsUpdaterWallet.address)); // Log the deployer wallet's balance
+    console.log("\n   Updater wallet address:", rewardsUpdaterWallet.address, 
+                "\n   Updater wallet balance:", await alchemyProvider.getBalance(rewardsUpdaterWallet.address));
 
-    const calculatedRewardsForAllWallets = await calculateRewardsForAllWallets();
+    // Get rewards data from the calculateRewardsForAllWallets function
+    const { totalRewards, balances: rewardsForWallets } = await calculateRewardsForAllWallets();
 
-    const totalRewards = calculatedRewardsForAllWallets.totalRewards;
+    console.log("\n   Rewards to distribute this week:", Number(ethers.formatEther(totalRewards.toString())));
 
-    const rewardsForWallets = calculatedRewardsForAllWallets.balances;
-
+    // Check if total rewards exceed the weekly cap
     if (totalRewards <= REWARD_TOKENS_PER_WEEK) {
-
+        // Extract wallet addresses and reward amounts
         const walletAddresses = Array.from(rewardsForWallets.keys());
-
         const walletRewards = Array.from(rewardsForWallets.values()).map(([rewardAmount]) => rewardAmount);
 
-        console.log("walletAddresses");
-        console.log(walletAddresses);
-
-        console.log("walletRewards");
-        console.log(walletRewards);
-
-        if (walletAddresses.length == walletRewards.length) {
-            
+        // Ensure the addresses and rewards lists are of the same length
+        if (walletAddresses.length === walletRewards.length) {
             try {
+                // Send the batch update transaction
                 const tx = await rewardsContract.connect(rewardsUpdaterWallet).updateRewardsBatch(walletAddresses, walletRewards);
-                console.log("Waiting for batch transaction to finish...");
-                const receipt = await tx.wait();
+                console.log("\n   [LOG]: Sending batch update transaction...");
+                const updateRewardsBatchReceipt = await tx.wait(); // Wait for the transaction to be mined
+                const events = updateRewardsBatchReceipt?.logs || [];
+                
+                let numberOfFailedUpdates = 0;
 
-                console.log(receipt);   
+                for (const event of events) {
+                    if (event.fragment.name === "RewardUpdateFailed") {
+                        numberOfFailedUpdates++;
+                    }
+                }
+                if (numberOfFailedUpdates == walletAddresses.length) {
+                    console.error("   [ERROR]: All rewards failed to be updated. Check blockchain explorer logs for more details.");
+                    return "   [ERROR]: All rewards failed to be updated. Check blockchain explorer logs for more details.";
+                }
+                if (numberOfFailedUpdates > 0) {
+                    console.error("   [ERROR]: Some rewards failed to be updated. Check blockchain explorer logs for more details.");
+                    return "   [ERROR]: Some rewards failed to be updated. Check blockchain explorer logs for more details.";
+                }
             } catch (error) {
-                console.error("Transaction failed:", error);
+                console.error("   [ERROR]: Batch transaction failed:", error); // Handle transaction failure
+                return "   [ERROR]: Batch transaction failed:" + error;
             }
+        } else {
+            console.error("   [ERROR]: Mismatch in wallet addresses and rewards length.");
+            return "   [ERROR]: Mismatch in wallet addresses and rewards length.";
         }
-        else {
-            console.log("[ERROR]: There is a mismatch in the list of number of wallets and number of rewards to do the batch update");
-        }
-    }
-    else {
-        console.log("[ERROR]: The calculated rewards to distribute are greater than the limited allowed per week by the smart contract");
+    } else {
+        console.error("   [ERROR]: Total rewards exceed the weekly limit.");
+        return "   [ERROR]: Total rewards exceed the weekly limit.";
     }
     return "";
 }
 
-async function simulateExecution(){
+//Show the rewards of all wallets
+async function showRewardsOfAllWallets(){
 
-    console.log("\nUpdater wallet address: ", rewardsUpdaterWallet.address); // Log the deployer wallet's address
+    console.log("\n   [LOG]: WALLETS AND REWARDS LIST");
 
-    console.log("\nUpdater wallet balance: ", await alchemyProvider.getBalance(rewardsUpdaterWallet.address)); // Log the deployer wallet's balance
+    //Get the wallet addresses
+    const walletAddresses = Array.from(((await calculateRewardsForAllWallets()).balances).keys());
+    
+    for (const address of walletAddresses) {
 
-    const calculatedRewardsForAllWallets = await calculateRewardsForAllWallets();
+        const [ hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, 
+            currentRewardsAmount, rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
+            lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
+            = await rewardsContract.wallets(address);
 
-    const totalRewards = calculatedRewardsForAllWallets.totalRewards;
+        console.log(`\n     Address: ${address}. Total rewards: ${Number(ethers.formatEther(totalHyaxRewardsAmount))}. Current rewards: ${Number(ethers.formatEther(currentRewardsAmount))}. Rewards withdrawn: ${Number(ethers.formatEther(rewardsWithdrawn))}`);
+    }
+}
 
-    const rewardsForWallets = calculatedRewardsForAllWallets.balances;
+//Show the state of the rewards smart contract
+async function showRewardsSmartContractState() {
 
-    if (totalRewards <= REWARD_TOKENS_PER_WEEK) {
+    console.log("\n   [LOG]: SMART CONTRACT STATE");
+    console.log("\n     Rewards token funded:", Number(ethers.formatEther((await rewardsContract.rewardTokensFunded()).toString())));
+    console.log("\n     Rewards token in smart contract:", Number(ethers.formatEther((await rewardsContract.rewardTokensInSmartContract()).toString())));
+    console.log("\n     Rewards token distributed:", Number(ethers.formatEther((await rewardsContract.rewardTokensDistributed()).toString())));
+    console.log("\n     Rewards token withdrawn:", Number(ethers.formatEther((await rewardsContract.rewardTokensWithdrawn()).toString())));
+}
 
-        const walletAddresses = Array.from(rewardsForWallets.keys());
 
-        const walletRewards = Array.from(rewardsForWallets.values()).map(([rewardAmount]) => rewardAmount);
-
-        const walletToBeUpdated = "0x34795B6a05543Fe097C8BbBc221e3119f27B793E";
-
-        const rewardAmount = "1552720000000000000000000";
-
-        console.log("walletAddresses");
-        console.log(walletAddresses);
+//Simulate the weekly reward distribution
+async function automateWeeklyRewardsDistribution() {
+    // Calculate the total number of weeks to simulate, assuming 8 years with 52 weeks per year, plus 14 weeks for rounding errors.
+    const totalWeeks = 430; // 8 years * 52 weeks = 416 weeks + 14 weeks for rounding errors = 430 weeks
+    
+    // Loop through each week to simulate the reward distribution process.
+    for (let i = 0; i < totalWeeks; i++) {
         
-        console.log("walletRewards");
-        console.log(walletRewards);
+        // Log the current week's information, including the year, week in the year, and the absolute week number.
+        console.log("\n   --------------------------------------------------------------------------------------------------------");
+        console.log("\n   [LOG]: Year: ", Math.floor(i / 52), ". Week in year: ", i % 52, ". Absolute week: ", i);
+        console.log("\n   --------------------------------------------------------------------------------------------------------");
 
-        const transaction = {
-            from: rewardsUpdaterWallet.address,
-            to: REWARDS_SMART_CONTRACT_ADDRESS,
-            value: "0x0",
-            data: rewardsContract.interface.encodeFunctionData("updateRewardsSingle", [walletToBeUpdated, rewardAmount]),
-        };
+        // Show the current state of the rewards smart contract.
+        await showRewardsSmartContractState();
 
-        const result = await alchemy.transact.simulateExecution(transaction);
+        // Attempt to update the rewards batch for the current week.
+        const updateRewardsBatchResult = await updateRewardsBatch();
 
-        console.log("Simulation Results =>", result);
-        console.log("Simulation Logs =>", result.logs);
-        console.log("Simulation Logs 0 topics =>", result.logs[0].topics);
-        console.log("Simulation Logs 1 topics =>", result.logs[1].topics);
-        
-    } else {
-        console.log("[ERROR]: The calculated rewards to distribute are greater than the limited allowed per week by the smart contract");
+        // If the update process fails, log the error and exit the simulation.
+        if (updateRewardsBatchResult != "") {
+            console.error(updateRewardsBatchResult);
+            return;
+        }
+        // If the update process succeeds, log a success message.
+        else {
+            console.log("   [LOG]: Batch rewards updated successfully!");
+        }
+
+        // Show the rewards of all wallets after the batch update.
+        await showRewardsOfAllWallets();
+
+        const oneWeek = 7 * 24 * 60 * 60 * 1000; // One week in milliseconds
+
+        await new Promise(f => setTimeout(f, oneWeek));
     }
 }
 
 
 async function main() {
-    /*
-    console.log("\nList of all token holders");
-    const allTokenHolders = await getAllTokenHolders();
-    console.log(allTokenHolders);
 
-    console.log("\nList of all whitelisted token holders");   
-    const whitelistedTokenHolders = await getAllWhitelistedTokenHolders();
-    console.log(whitelistedTokenHolders);
-    
-    console.log("\nTotal holdings last week");
-    const totalTokenHoldings = (await getTokenBalancesAndTotalHoldings()).totalTokenHoldings;
-    console.log(totalTokenHoldings);
-
-    console.log("\nList of all team wallets");
-    const allTeamWallets = await getAllTeamWallets();
-    console.log(allTeamWallets);
-
-    console.log("\nList of all whitelisted team wallets");  
-    const whitelistedTeamWallets = await getAllWhitelistedTeamWallets();
-    console.log(whitelistedTeamWallets);
-
-    console.log("\nTotal team holdings last week");
-    const totalTeamTokenHoldings = (await getTokenBalancesAndTotalHoldingsTeam()).totalTokenHoldings;
-    console.log(totalTeamTokenHoldings);
-
-    console.log("\nList of whitelisted team token holders and their balances");  
-    const tokenTeamBalances = (await getTokenBalancesAndTotalHoldingsTeam()).balances;
-    console.log(tokenTeamBalances);
-    */
-
-    //await calculateRewardsForAllWallets();
-
-    //await updateRewardsSingle();
-
-    //await updateRewardsBatch();
-
-    await simulateExecution();
+    await automateWeeklyRewardsDistribution();
 }
 
 main(); // Call the async function

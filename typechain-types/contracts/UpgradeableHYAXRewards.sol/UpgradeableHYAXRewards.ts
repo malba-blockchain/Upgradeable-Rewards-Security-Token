@@ -741,20 +741,17 @@ export namespace TeamMemberTokensRecoveredEvent {
   export type InputTuple = [
     _oldTeamMemberWalletAddress: AddressLike,
     _newTeamMemberWalletAddress: AddressLike,
-    _hyaxHoldingAmount: BigNumberish,
-    _currentRewardsAmount: BigNumberish
+    _hyaxHoldingAmount: BigNumberish
   ];
   export type OutputTuple = [
     _oldTeamMemberWalletAddress: string,
     _newTeamMemberWalletAddress: string,
-    _hyaxHoldingAmount: bigint,
-    _currentRewardsAmount: bigint
+    _hyaxHoldingAmount: bigint
   ];
   export interface OutputObject {
     _oldTeamMemberWalletAddress: string;
     _newTeamMemberWalletAddress: string;
     _hyaxHoldingAmount: bigint;
-    _currentRewardsAmount: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -1676,7 +1673,7 @@ export interface UpgradeableHYAXRewards extends BaseContract {
       RewardsUpdaterAddressUpdatedEvent.OutputObject
     >;
 
-    "TeamMemberTokensRecovered(address,address,uint256,uint256)": TypedContractEvent<
+    "TeamMemberTokensRecovered(address,address,uint256)": TypedContractEvent<
       TeamMemberTokensRecoveredEvent.InputTuple,
       TeamMemberTokensRecoveredEvent.OutputTuple,
       TeamMemberTokensRecoveredEvent.OutputObject
