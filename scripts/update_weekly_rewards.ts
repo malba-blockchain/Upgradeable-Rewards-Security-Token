@@ -27,12 +27,6 @@ const tokenContract = new ethers.Contract(TOKEN_SMART_CONTRACT_ADDRESS, TOKEN_SM
 const rewardsContract = new ethers.Contract(REWARDS_SMART_CONTRACT_ADDRESS, REWARDS_SMART_CONTRACT_ABI, alchemyProvider);
 
 // Create a wallet instance using the private key from .env
-const whitelisterWalletInstance = new ethers.Wallet(process.env.REACT_APP_WHITELISTER_PRIVATE_KEY || "");
-
-// Connect the wallet to the provider
-const whitelisterWallet = whitelisterWalletInstance.connect(alchemyProvider);
-
-// Create a wallet instance using the private key from .env
 const rewardsUpdaterWalletInstance = new ethers.Wallet(process.env.REACT_APP_REWARDS_UPDATER_PRIVATE_KEY || "");
 
 // Connect the wallet to the provider
@@ -186,8 +180,6 @@ async function getTokenBalancesTeam(): Promise<{ balances: Map<string, number>, 
     return { balances, totalTokenHoldings };
 }
 
-
-
 //Calculate the rewards for all wallets
 async function calculateRewardsForAllWallets(): Promise<{ balances: Map<string, [bigint, number]>, totalRewards: bigint }> {
     
@@ -230,7 +222,6 @@ async function calculateRewardsForAllWallets(): Promise<{ balances: Map<string, 
 
     return { balances: rewardsForWallets, totalRewards }; // Return final rewards map and total rewards
 }
-
 
 //Update the rewards for all wallets in a batch
 async function updateRewardsBatch(): Promise<string> {
@@ -320,7 +311,6 @@ async function showRewardsSmartContractState() {
     console.log("\n     Rewards token withdrawn:", Number(ethers.formatEther((await rewardsContract.rewardTokensWithdrawn()).toString())));
 }
 
-
 //Simulate the weekly reward distribution
 async function automateWeeklyRewardsDistribution() {
     // Calculate the total number of weeks to simulate, assuming 8 years with 52 weeks per year, plus 14 weeks for rounding errors.
@@ -328,7 +318,7 @@ async function automateWeeklyRewardsDistribution() {
     
     // Loop through each week to simulate the reward distribution process.
     for (let i = 0; i < totalWeeks; i++) {
-        
+
         // Log the current week's information, including the year, week in the year, and the absolute week number.
         console.log("\n   --------------------------------------------------------------------------------------------------------");
         console.log("\n   [LOG]: Year: ", Math.floor(i / 52), ". Week in year: ", i % 52, ". Absolute week: ", i);
@@ -358,7 +348,6 @@ async function automateWeeklyRewardsDistribution() {
         await new Promise(f => setTimeout(f, oneWeek));
     }
 }
-
 
 async function main() {
 

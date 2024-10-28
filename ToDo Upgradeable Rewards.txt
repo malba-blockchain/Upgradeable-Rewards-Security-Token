@@ -441,33 +441,99 @@ WITH REWARDS AFTER TEAM TOKEN WITHDRAWAL AND REWARDS WITHDRAWAL
 
 npm i hardhat-gas-reporter 
 
+22. Update updates script DONE
+
 
 CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
-22. Update updates script
-
-
 UP TO HERE-------------------------------
-
-23. Add gitlab updates
-
-23. Optimize updates script. (2 day)
 
 npx hardhat run scripts/updateWeeklyRewards.ts 
 
 24. Add all security checks fuzzy testing and more learned in skills and job hunting experience (4 days)
 
+24.1. Create unit tests DONE
+
+24.2. Format the unit tests for both contracts DONE
+
+|_test
+|_ _unit_tests
+|_ _integration
+|_ _end-to-end tests
+
+24.3. Keep reading about testing DONE
+
+24.4. Perform initial testing for static analysis using LLMs
+
+24.4.1. Reentrancy attacks 
+24.4.2. Integer Overflow and Underflow vulnerabilities
+24.4.3. Unchecked Call Return Value attacks
+24.4.4. Denial of Service (DoS) attacks
+24.4.5. Front-Running attacks
+24.4.6. Insecure Access Control
+24.4.7. Short Address Attack
+24.4.8. Uninitialized Storage Pointers (Uninitialized State Variables)
+24.4.9. Delegatecall Injection
+24.4.10. Timestamp Dependence
+
+24.4.11. Tx.origin Authentication
+24.4.12. Unrestricted Ether Withdrawal
+24.4.13. Race Conditions
+24.4.14. Insufficient Gas Griefing
+24.4.15. Gas Limit Vulnerabilities
+24.4.16. Unchecked External Calls
+24.4.17. Unchecked Return Data
+24.4.18. Oracle Manipulation
+24.4.19. Logic Errors
+24.4.20. Flash Loan Attack Vectors
+
+24.4.21. Storage Collision
+24.4.22. Reentrancy Guard Bypass
+24.4.23. Improper Error Handling
+24.4.24. Ambiguous Evaluation Order
+24.4.25. ABI Hash Collisions
+24.4.26. Approval Vulnerabilities
+24.4.27. Exposed Data
+24.4.28. Incorrect Parameter Order
+24.4.29. Unexpected Ether Transfers (Force Feeding)
+24.4.30. Unchecked Low-Level Calls
+
+
+
+
+-Gas optimization
+-Suggestions for best practices
+
+-Linters and Formatters
+-Fuzzy testing
+-Static & dynamic analysis
+-End-to-end tests
+-Integration testing
+
+-Mythril, MythX, Slither
+-Mainnet Forking
+
+
+
+
+
+23. Add gitlab updates 
+
 26. Deploy in testnet (3 days) 
 
-26. Transacion optimization and simulation? https://docs.alchemy.com/reference/alchemy-sendgasoptimizedtransaction
+23. Optimize updates script. (2 days)
 
-25. Clean comments and fix documentation on contract and tests (2 day)
+26. Transacion optimization and simulation? https://docs.alchemy.com/reference/alchemy-sendgasoptimizedtransaction (2 days)
+
+25. Clean comments and fix documentation on contract and tests (2 days)
+
+26. Test upgradeability with multisig transaction (2 days)
 
 27. Document (4 days)
 
 28. Share to the web2 team + rewards update script (4 days)
 
-29. Do realistic tests with team + multisig testing for upgradeable. I.e. 1 Day = week of rewards (1 week)
+29. Do realistic tests with team . I.e. 1 Day = week of rewards (1 week)
 
 
 ---------INITIAL LOCAL DEPLOYMENT---------

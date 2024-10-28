@@ -80,22 +80,13 @@ Add 3 team wallets with tokens DONE
 
 22.5.3. Create scripts that simulate executing an upgrade and executing other functions (like withdraw tokens and whitelisting) with just a command DONE
 
-CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-
-
 22.5.4. Make the script based on last week token holdings. DONE
 
 22.5.5. Clean and optimize the local upgrades script DONE 
 
-
-
 22.5.6. Create the testnet version of the upgrades script DONE
 
-
-23. Adjust for reward token non recovery  
-
-
-34. Identify way to automate execution with AWS
+23. Adjust for reward token non recovery DONE
 
 
 
@@ -108,18 +99,12 @@ npx hardhat run --network localhost scripts\transaction_local_rewards_contract.t
 
 
 
-GOAL TODAY: UP TO HERE-------------------------------
-
-
-
-Optimize the following typescript, ethers.js V6 and hardhat code as much as you can, reducing the code as much as you can WITHOUT AFFECTING THE UNDERLYING FUNCTIONALITY AT ALL. Also add detailed inline comments expaining the code:
-
 QUESTIONS
 Qué hacer con el registro de la wallet perdida?
 Se deja en fuera de whitelist, en blacklist y fuera del listado de wallets de equipo?
 Se heredan los datos de fechas de retiro de tokens de equipo?
 Los saldos de rewards antiguos se ponen en cero?
-
+Dia y hora para ejecutar la actualización de recompensas?
 
 
 

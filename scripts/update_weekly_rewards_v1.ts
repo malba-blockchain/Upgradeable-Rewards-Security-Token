@@ -27,12 +27,6 @@ const tokenContract = new ethers.Contract(TOKEN_SMART_CONTRACT_ADDRESS, TOKEN_SM
 const rewardsContract = new ethers.Contract(REWARDS_SMART_CONTRACT_ADDRESS, REWARDS_SMART_CONTRACT_ABI, alchemyProvider);
 
 // Create a wallet instance using the private key from .env
-const whitelisterWalletInstance = new ethers.Wallet(process.env.REACT_APP_WHITELISTER_PRIVATE_KEY || "");
-
-// Connect the wallet to the provider
-const whitelisterWallet = whitelisterWalletInstance.connect(alchemyProvider);
-
-// Create a wallet instance using the private key from .env
 const rewardsUpdaterWalletInstance = new ethers.Wallet(process.env.REACT_APP_REWARDS_UPDATER_PRIVATE_KEY || "");
 
 // Connect the wallet to the provider

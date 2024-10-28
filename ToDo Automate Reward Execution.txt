@@ -1,0 +1,19 @@
+Schedule Weekly Execution: EventBridge /EC2 (AWS) 
+
+Secure and Reliable Environment: AWS Lambda. Secure environments that are also designed for scheduled functions
+
+Secrets Management: AWS Secrets Manager
+
+Immutable Codebase: Use containerization (Docker) to package your script and deploy it as a container on AWS Fargate
+
+Deploying on managed cloud platforms with serverless functions or containerized environments enables automatic restarts.
+
+EXTRA QUESTIONS
+
+Updated smart contract version
+
+How to deal with logs? Store them and give the team access to them?
+
+
+
+

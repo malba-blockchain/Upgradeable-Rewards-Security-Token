@@ -14,7 +14,6 @@ const REWARD_TOKENS_PER_YEAR = 150000000 * 10**18; // 150 Million tokens per yea
 
 const REWARD_TOKENS_PER_WEEK =  REWARD_TOKENS_PER_YEAR / 52; // 150 Million tokens divided by 52 weeks
 
-
 //Create an instance of the token contract to interact with it
 const tokenContract = new ethers.Contract(LOCAL_TOKEN_SMART_CONTRACT_ADDRESS, TOKEN_SMART_CONTRACT_ABI, ethers.provider);
 
