@@ -1,0 +1,48 @@
+I just finished sharing you the code, and here is what I want you to do: 
+
+Based on the code I just shared with you:
+
+Take as much time as you need to analyze in depth and extremely fine detail the following smart contract solidity code.
+
+Your duty is to identify as many of the following vulnerabilities as you can. You are competing with other LLMs for this task is the one that performs the best will be chosen for a multibillion dollar contract for several years.
+
+Explanations don’t need to be very lengthy, only on point. For example:
+
+Generate a report with the following format:
+
+FORMAT:
+
+Line: 89
+Impact: Critical
+Detail: There is a re-entrancy attack due to the sending ETH to a user controllable address. Someone could drain the whole contract of the ETH funds by calling the withdraw function multiple times in the fallback function making the bug Critical in nature.
+
+
+THESE ARE THE VULNERABILITIES YOU WILL BE LOOKING FOR:
+
+24.4.1. Reentrancy attacks 
+24.4.2. Integer Overflow and Underflow vulnerabilities
+24.4.3. Unchecked Call Return Value attacks
+24.4.4. Denial of Service (DoS) attacks
+24.4.5. Front-Running attacks
+24.4.6. Insecure Access Control
+24.4.7. Short Address Attack
+24.4.8. Uninitialized Storage Pointers (Uninitialized State Variables)
+24.4.9. Delegatecall Injection
+24.4.10. Timestamp Dependence
+
+MAKE SURE TO FOLLOW THE FORMAT I JUST GAVE YOU
+
+
+CHATGPT
+I JUST ATTACHED THE SOLIDITY CODE, IS NAMED: "UpgradeableHYAXRewards.txt"
+
+
+GEMINI, CLAUDE & COPILOT
+I will share with you a solidity smart contract code during the following messages I will send you, don't do anything but wait until I tell you:
+
+"I just finished sharing you the code, and here is what I want you to do".
+
+Do you understand?
+
+
+

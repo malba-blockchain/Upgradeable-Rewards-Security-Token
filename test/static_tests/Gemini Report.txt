@@ -1,0 +1,121 @@
+24.4.1. Reentrancy Attacks
+
+    Line 1099: The withdrawRewardTokens function transfers ETH to the caller's address. This could potentially lead to a reentrancy attack if the recipient's contract is malicious and can call back into the withdrawRewardTokens function before the original call completes.
+
+24.4.2. Integer Overflow and Underflow Vulnerabilities
+
+    Line 1023: The updateRewardsSingle function adds _hyaxRewards to wallets[_walletAddress].currentRewardsAmount. While there's a check for sufficient tokens, a malicious actor could potentially manipulate the _hyaxRewards value to trigger an overflow.
+
+24.4.3. Unchecked Call Return Value Attacks
+
+    Line 1099: The hyaxToken.transfer call does not check the return value. A malicious token contract could revert the transfer, leading to a loss of funds.
+
+24.4.4. Denial of Service (DoS) Attacks
+
+    Line 1023: The updateRewardsSingle function has a MIN_INTERVAL_FOR_UPDATE_REWARDS check. A malicious actor could flood the contract with update requests for many wallets, potentially overwhelming the network and preventing legitimate users from interacting with the contract.
+
+24.4.5. Front-Running Attacks
+
+    Line 1099: The withdrawRewardTokens function is vulnerable to front-running attacks, where a malicious actor could intercept and modify transactions to prioritize their own withdrawals, potentially draining the contract of funds.
+
+24.4.6. Insecure Access Control
+
+    Line 1099: The withdrawRewardTokens function relies on the isWhitelisted modifier to restrict access. However, if the whitelisting logic is compromised, unauthorized users could potentially withdraw funds.
+
+24.4.7. Short Address Attack
+
+    Not applicable in this code.
+
+24.4.8. Uninitialized Storage Pointers (Uninitialized State Variables)
+
+    Not applicable in this code.
+
+24.4.9. Delegatecall Injection
+
+    Not applicable in this code.
+
+24.4.10. Timestamp Dependence
+
+    Line 1023: The updateRewardsSingle function relies on the MIN_INTERVAL_FOR_UPDATE_REWARDS check based on timestamps. This could be manipulated by malicious actors who can control the time on their nodes.
+
+
+24.4.11. Tx.origin Authentication
+
+    Not applicable in this code.
+
+24.4.12. Unrestricted Ether Withdrawal
+
+    Not applicable in this code.
+
+24.4.13. Race Conditions
+
+    Line 1023: The updateRewardsSingle function could be susceptible to race conditions if multiple transactions attempt to update the same wallet's rewards simultaneously. This could lead to incorrect reward calculations or potential loss of funds.
+
+24.4.14. Insufficient Gas Griefing
+
+    Line 1099: The withdrawRewardTokens function could be vulnerable to insufficient gas griefing attacks. If the transaction's gas limit is not sufficient, the transfer might fail, leaving the funds stuck in the contract.
+
+24.4.15. Gas Limit Vulnerabilities
+
+    Not directly applicable in this code. However, incorrect gas estimations could lead to unexpected behavior or failed transactions.
+
+24.4.16. Unchecked External Calls
+
+    Line 1099: The hyaxToken.transfer call does not check the return value, as mentioned earlier. This could lead to potential loss of funds if the token contract reverts the transfer.
+
+24.4.17. Unchecked Return Data
+
+    Not directly applicable in this code.
+
+24.4.18. Oracle Manipulation
+
+    Not applicable in this code.
+
+24.4.19. Logic Errors
+
+    Line 1023: The logic for updating rewards and checking the MIN_INTERVAL_FOR_UPDATE_REWARDS could potentially lead to unintended consequences if not carefully implemented.
+
+24.4.20. Flash Loan Attack Vectors
+
+    Not directly applicable in this code. However, it's worth noting that flash loan attacks can be used to manipulate token prices or market conditions, which could indirectly impact the contract's behavior if it relies on external price feeds or token valuations.
+
+
+24.4.21. Storage Collision
+
+    Not applicable in this code.
+
+24.4.22. Reentrancy Guard Bypass
+
+    Line 1099: While the nonReentrant modifier is used, it's essential to ensure that the withdrawRewardTokens function doesn't have any external calls that could trigger reentrancy before the state is updated.
+
+24.4.23. Improper Error Handling
+
+    Line 1099: The hyaxToken.transfer call does not check for errors, which could lead to unexpected behavior if the transfer fails.
+
+24.4.24. Ambiguous Evaluation Order
+
+    Not applicable in this code.
+
+24.4.25. ABI Hash Collisions
+
+    Not applicable in this code.
+
+24.4.26. Approval Vulnerabilities
+
+    Not directly applicable in this code. However, if the contract interacts with other contracts that use ERC20 tokens, it's important to be aware of approval vulnerabilities, such as the approve() function.
+
+24.4.27. Exposed Data
+
+    Not applicable in this code.
+
+24.4.28. Incorrect Parameter Order
+
+    Not applicable in this code.
+
+24.4.29. Unexpected Ether Transfers (Force Feeding)
+
+    Not applicable in this code.
+
+24.4.30. Unchecked Low-Level Calls
+
+    Not applicable in this code.

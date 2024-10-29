@@ -52,7 +52,6 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "owner"
       | "pause"
       | "paused"
-      | "recoverTeamTokens"
       | "renounceOwnership"
       | "rewardTokensDistributed"
       | "rewardTokensFunded"
@@ -74,6 +73,7 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "updateRewardsBatch"
       | "updateRewardsSingle"
       | "updateRewardsUpdaterAddress"
+      | "updateTeamMemberWallet"
       | "updateWhiteListerAddress"
       | "updateWhitelistStatus"
       | "wallets"
@@ -100,7 +100,7 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "RewardUpdateFailed"
       | "RewardUpdateSuccess"
       | "RewardsUpdaterAddressUpdated"
-      | "TeamMemberTokensRecovered"
+      | "TeamMemberWalletUpdated"
       | "TeamTokensWithdrawn"
       | "TokensToBurnWithdrawn"
       | "Unpaused"
@@ -202,10 +202,6 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "recoverTeamTokens",
-    values: [AddressLike, AddressLike]
-  ): string;
-  encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
@@ -285,6 +281,10 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
   encodeFunctionData(
     functionFragment: "updateRewardsUpdaterAddress",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateTeamMemberWallet",
+    values: [AddressLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "updateWhiteListerAddress",
@@ -409,10 +409,6 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "recoverTeamTokens",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
@@ -491,6 +487,10 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "updateRewardsUpdaterAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateTeamMemberWallet",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -737,7 +737,7 @@ export namespace RewardsUpdaterAddressUpdatedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace TeamMemberTokensRecoveredEvent {
+export namespace TeamMemberWalletUpdatedEvent {
   export type InputTuple = [
     _oldTeamMemberWalletAddress: AddressLike,
     _newTeamMemberWalletAddress: AddressLike,
@@ -967,15 +967,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
 
   paused: TypedContractMethod<[], [boolean], "view">;
 
-  recoverTeamTokens: TypedContractMethod<
-    [
-      _oldTeamMemberWalletAddress: AddressLike,
-      _newTeamMemberWalletAddress: AddressLike
-    ],
-    [void],
-    "nonpayable"
-  >;
-
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
 
   rewardTokensDistributed: TypedContractMethod<[], [bigint], "view">;
@@ -1042,6 +1033,15 @@ export interface UpgradeableHYAXRewards extends BaseContract {
 
   updateRewardsUpdaterAddress: TypedContractMethod<
     [_rewardsUpdaterAddress: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  updateTeamMemberWallet: TypedContractMethod<
+    [
+      _oldTeamMemberWalletAddress: AddressLike,
+      _newTeamMemberWalletAddress: AddressLike
+    ],
     [void],
     "nonpayable"
   >;
@@ -1205,16 +1205,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     nameOrSignature: "paused"
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
-    nameOrSignature: "recoverTeamTokens"
-  ): TypedContractMethod<
-    [
-      _oldTeamMemberWalletAddress: AddressLike,
-      _newTeamMemberWalletAddress: AddressLike
-    ],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
@@ -1298,6 +1288,16 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     nameOrSignature: "updateRewardsUpdaterAddress"
   ): TypedContractMethod<
     [_rewardsUpdaterAddress: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "updateTeamMemberWallet"
+  ): TypedContractMethod<
+    [
+      _oldTeamMemberWalletAddress: AddressLike,
+      _newTeamMemberWalletAddress: AddressLike
+    ],
     [void],
     "nonpayable"
   >;
@@ -1469,11 +1469,11 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     RewardsUpdaterAddressUpdatedEvent.OutputObject
   >;
   getEvent(
-    key: "TeamMemberTokensRecovered"
+    key: "TeamMemberWalletUpdated"
   ): TypedContractEvent<
-    TeamMemberTokensRecoveredEvent.InputTuple,
-    TeamMemberTokensRecoveredEvent.OutputTuple,
-    TeamMemberTokensRecoveredEvent.OutputObject
+    TeamMemberWalletUpdatedEvent.InputTuple,
+    TeamMemberWalletUpdatedEvent.OutputTuple,
+    TeamMemberWalletUpdatedEvent.OutputObject
   >;
   getEvent(
     key: "TeamTokensWithdrawn"
@@ -1673,15 +1673,15 @@ export interface UpgradeableHYAXRewards extends BaseContract {
       RewardsUpdaterAddressUpdatedEvent.OutputObject
     >;
 
-    "TeamMemberTokensRecovered(address,address,uint256)": TypedContractEvent<
-      TeamMemberTokensRecoveredEvent.InputTuple,
-      TeamMemberTokensRecoveredEvent.OutputTuple,
-      TeamMemberTokensRecoveredEvent.OutputObject
+    "TeamMemberWalletUpdated(address,address,uint256)": TypedContractEvent<
+      TeamMemberWalletUpdatedEvent.InputTuple,
+      TeamMemberWalletUpdatedEvent.OutputTuple,
+      TeamMemberWalletUpdatedEvent.OutputObject
     >;
-    TeamMemberTokensRecovered: TypedContractEvent<
-      TeamMemberTokensRecoveredEvent.InputTuple,
-      TeamMemberTokensRecoveredEvent.OutputTuple,
-      TeamMemberTokensRecoveredEvent.OutputObject
+    TeamMemberWalletUpdated: TypedContractEvent<
+      TeamMemberWalletUpdatedEvent.InputTuple,
+      TeamMemberWalletUpdatedEvent.OutputTuple,
+      TeamMemberWalletUpdatedEvent.OutputObject
     >;
 
     "TeamTokensWithdrawn(address,uint256)": TypedContractEvent<

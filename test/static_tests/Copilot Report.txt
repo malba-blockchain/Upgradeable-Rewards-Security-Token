@@ -1,0 +1,99 @@
+Line: 24 Impact: Critical Detail: Reentrancy Attack In the withdrawTeamTokens function, state changes occur after the external call hyaxToken.transfer. This can be exploited by calling the function multiple times before the first execution is complete.
+
+Line: 87 Impact: High Detail: Integer Overflow and Underflow In the updateRewardsSingle function, arithmetic operations related to rewardTokensDistributed and currentRewardsAmount do not use SafeMath, risking overflow or underflow.
+
+Line: 145 Impact: High Detail: Unchecked Call Return Value The hyaxToken.transfer call is made without checking the return value. If the transfer fails, it could lead to loss of tokens without proper handling.
+
+Line: 112 Impact: Medium Detail: Denial of Service (DoS) In the updateRewardsBatch function, processing a large batch of wallet addresses could consume excessive gas, potentially leading to denial-of-service attacks.
+
+Line: 62 Impact: Medium Detail: Front-Running Attack In the fundSmartContract function, an attacker could front-run the transaction, altering the state before the function executes.
+
+Line: 57 Impact: Medium Detail: Insecure Access Control The onlyOwner modifier is used extensively without additional layers of access control. It might be vulnerable if the owner’s account is compromised.
+
+Line: 29 Impact: Medium Detail: Uninitialized Storage Pointers In the function initialize, the storage variables related to funding start times and withdrawal times are not properly initialized.
+
+Line: 120 Impact: Medium Detail: Delegatecall Injection The function updateRewardsBatch calls this.updateRewardsSingle. If any external contract modifies the delegatecall behavior, it could lead to injection vulnerabilities.
+
+Line: 48 Impact: Medium Detail: Timestamp Dependence The use of block.timestamp in calculateYearForTeamTokens and other functions can be manipulated by miners, affecting the logic that relies on time calculations.
+
+Line: 3 Impact: High Detail: Tx.origin Authentication Using tx.origin in modifiers like onlyOwnerOrWhitelister for authentication can lead to phishing attacks. It’s safer to use msg.sender.
+
+Line: 76 Impact: High Detail: Unrestricted Ether Withdrawal In the function withdrawRewardTokens, the contract allows unrestricted withdrawal of tokens to whitelisted addresses, potentially leading to unauthorized withdrawals.
+
+Line: 29 Impact: Medium Detail: Race Conditions Multiple state updates in the function updateTeamMemberWallet might lead to race conditions, especially in a multi-transactional context.
+
+Line: 90 Impact: Medium Detail: Insufficient Gas Griefing Complex operations within updateRewardsBatch might consume excessive gas, potentially leading to denial-of-service attacks.
+
+Line: 110 Impact: Medium Detail: Gas Limit Vulnerabilities The function withdrawTokensToBurn could face issues with gas limits during high network usage, impacting execution.
+
+Line: 143 Impact: Medium Detail: Unchecked External Calls External calls to wallets in the function initialize are unchecked. Ensure these calls are validated to prevent failures.
+
+Line: 57 Impact: Medium Detail: Unchecked Return Data The hyaxToken.transfer call in various functions is made without checking the return value, risking undetected failed transfers.
+
+Line: 48 Impact: Medium Detail: Oracle Manipulation The functions dependent on token prices from oracles can be manipulated if the oracle data is compromised, affecting token distribution and calculations.
+
+Line: 104 Impact: Medium Detail: Logic Errors In updateRewardsSingle, logic inconsistencies might arise from updating rewards without proper checks, leading to incorrect state updates.
+
+Line: 150 Impact: Medium Detail: Flash Loan Attack Vectors The contract can be vulnerable to flash loan attacks if an attacker manipulates balances and exploits logic flaws during atomic transactions.
+
+Line: 140 Impact: High Detail: Storage Collision In an upgradeable contract, using __gap variable to reserve storage slots can prevent storage collisions in future upgrades. Ensure storage slots are properly managed to avoid collision issues.
+
+Line: 78 Impact: Critical Detail: Reentrancy Guard Bypass In the withdrawTeamTokens function, state changes occur before the external call hyaxToken.transfer. This can be exploited to reenter and manipulate the contract's state.
+
+Line: 112 Impact: Medium Detail: Improper Error Handling Errors in updateRewardsBatch are not handled comprehensively, potentially leaving the contract in an inconsistent state if some updates fail.
+
+Line: 145 Impact: High Detail: Unchecked Low-Level Calls The hyaxToken.transfer call is used without checking the return value. If the transfer fails, the contract will not correctly handle the failure.
+
+Line: 90 Impact: High Detail: Ambiguous Evaluation Order Multiple state updates and conditions in the calculateYearForTeamTokens function can lead to an ambiguous order of evaluation, causing unpredictable outcomes.
+
+Line: 162 Impact: Medium Detail: ABI Hash Collisions Ensure function names and parameter types are carefully chosen to avoid ABI hash collisions, which might lead to function calls being intercepted incorrectly.
+
+Line: 97 Impact: Medium Detail: Approval Vulnerabilities ERC20 tokens have known issues with the approve function. Consider using safeApprove to prevent race conditions.
+
+Line: 28 Impact: Medium Detail: Exposed Data Sensitive data such as investor status and balances are publicly accessible through mappings, risking data exposure.
+
+Line: 130 Impact: Medium Detail: Incorrect Parameter Order In functions like updateTeamMemberWallet, the parameters should be ordered logically to minimize mistakes, such as placing boolean parameters last.
+
+Line: 185 Impact: Medium Detail: Unexpected Ether Transfers (Force Feeding) The contract’s receive function allows the contract to receive MATIC, which might be force-fed unexpectedly, affecting the contract state.
+
+-------
+
+Line: 112 Impact: Critical Detail: Reentrancy Attack In the updateRewardsBatch function, external calls are made within a loop (this.updateRewardsSingle). If one of these calls is reentrant, it could manipulate contract state in unpredictable ways.
+
+Line: 145 Impact: High Detail: Unchecked Call Return Value The hyaxToken.transfer call in withdrawTeamTokens is not checked. If this transfer fails, it could lead to loss of tokens without proper handling.
+
+Line: 90 Impact: High Detail: Timestamp Dependence The use of block.timestamp in calculateYearForTeamTokens can be manipulated by miners, affecting the logic that relies on time calculations.
+
+Line: 117 Impact: High Detail: Logic Errors The logic within updateRewardsBatch for iterating through wallets and handling exceptions might result in incomplete updates if an error occurs mid-batch, leaving some wallets unprocessed.
+
+Line: 152 Impact: High Detail: Integer Overflow/Underflow Arithmetic operations in updateRewardsSingle do not use SafeMath, risking overflow or underflow, especially in the reward calculation updates.
+
+Line: 138 Impact: Medium Detail: Insufficient Gas Griefing Processing a large number of wallets within updateRewardsBatch might consume excessive gas, potentially leading to denial-of-service attacks.
+
+Line: 155 Impact: Medium Detail: Unchecked External Calls Calling this.updateRewardsSingle within updateRewardsBatch without verifying the success could result in missed updates or inconsistent state.
+
+Line: 122 Impact: Medium Detail: Insecure Access Control The function updateRewardsBatch and updateRewardsSingle use onlyOwnerOrRewardsUpdater which might be improperly handled if the whitelister or rewards updater is compromised.
+
+Line: 130 Impact: Medium Detail: Improper Error Handling Errors encountered while updating rewards within updateRewardsBatch are caught and logged, but the rest of the batch continues processing, possibly leaving the contract in an inconsistent state.
+
+Line: 78 Impact: Low Detail: Logic Errors The condition in calculateYearForTeamTokens returning fixed values based on elapsed time can be simplified and validated more efficiently, reducing potential logical flaws.
+
+Line: 97 Impact: Critical Detail: Reentrancy Attack The withdrawTeamTokens function makes state changes and then transfers tokens without a proper reentrancy guard. This can be exploited by calling the function multiple times before the first execution is complete.
+
+Line: 32 Impact: High Detail: Timestamp Dependence The use of block.timestamp can be manipulated by miners, affecting the conditions for token withdrawal.
+
+Line: 36 Impact: High Detail: Integer Overflow/Underflow The arithmetic operations related to wallets[msg.sender].hyaxHoldingAmountAtWhitelistTime and teamTokenWithdrawalTimes do not use SafeMath, risking overflow/underflow vulnerabilities.
+
+Line: 57 Impact: High Detail: Unchecked Call Return Value The function hyaxToken.transfer is used without checking the return value, which could result in failed transfers.
+
+Line: 80 Impact: Medium Detail: Insecure Access Control The modifier isWhitelisted and isNotBlacklisted are used in combination, but their logic might lead to insecure access control if not implemented correctly in other parts of the code.
+
+Line: 23 Impact: Medium Detail: Improper Error Handling Errors related to the timing and conditions for withdrawals are not handled comprehensively, potentially leading to unexpected behavior.
+
+Line: 99 Impact: Medium Detail: Race Conditions Multiple state updates in the function could lead to race conditions, especially in a multi-transactional context.
+
+Line: 112 Impact: Medium Detail: Insufficient Gas Griefing The operations in withdrawTeamTokens can be exploited to consume more gas than allocated, leading to denial-of-service attacks.
+
+Line: 62 Impact: Low Detail: Logic Errors The condition wallets[msg.sender].hyaxHoldingAmount > 0 does not ensure that the wallet has a positive balance, leading to logical flaws.
+
+Line: 104 Impact: Low Detail: Unchecked Return Data Return data from the transfer function is not checked, which can result in logical failures if the transfer fails.

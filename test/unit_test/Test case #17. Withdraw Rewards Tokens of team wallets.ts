@@ -357,7 +357,7 @@ describe("Test case #17. Withdraw Rewards Tokens of team wallets", function () {
         await upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(addr1.address, rewardAmount);
 
         // Recover the wallet
-        await upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        await upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         // Get the initial balance of the smart contract
         const prevSmartContractBalance = await hyaxToken.balanceOf(upgradeableHYAXRewards.target);
@@ -420,7 +420,7 @@ describe("Test case #17. Withdraw Rewards Tokens of team wallets", function () {
         await upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens();
 
         // Recover the wallet
-        await upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        await upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         // Try to withdraw reward tokens
         await expect(

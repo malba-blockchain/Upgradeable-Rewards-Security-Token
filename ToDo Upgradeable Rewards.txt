@@ -465,6 +465,18 @@ npx hardhat run scripts/updateWeeklyRewards.ts
 
 24.4. Perform initial testing for static analysis using LLMs
 
+-Token Contract
+ChatGPT DONE
+Gemini DONE
+Claude
+Copilot DONE
+
+-Rewards Contract
+ChatGPT DONE 
+Gemini DONE
+Claude
+Copilot
+
 24.4.1. Reentrancy attacks 
 24.4.2. Integer Overflow and Underflow vulnerabilities
 24.4.3. Unchecked Call Return Value attacks

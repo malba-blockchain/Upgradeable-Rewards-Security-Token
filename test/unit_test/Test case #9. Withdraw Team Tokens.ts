@@ -720,7 +720,7 @@ describe("Test case #9. Withdraw Team Tokens", function () {
         console.log("   [Log]: Current year:", await upgradeableHYAXRewards.calculateYearForTeamTokens());
 
         // Recover the wallet
-        await upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        await upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         // Withdraw team tokens for the wallet the first time
         await upgradeableHYAXRewards.connect(addr2).withdrawTeamTokens();
@@ -792,7 +792,7 @@ describe("Test case #9. Withdraw Team Tokens", function () {
         await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
 
         // Recover the wallet
-        await upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        await upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         const lessThanOneYear = 364 * 24 * 60 * 60; // Less than one year in seconds
 
@@ -861,7 +861,7 @@ describe("Test case #9. Withdraw Team Tokens", function () {
         await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
 
         // Recover the wallet
-        await upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        await upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         // Try to withdraw team tokens for the wallet the sixth time
         await expect(

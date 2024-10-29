@@ -88,6 +88,11 @@ Add 3 team wallets with tokens DONE
 
 23. Adjust for reward token non recovery DONE
 
+ToDo
+1. Change function name in smart contract and tests. recoverTeamTokens => updateTeamMemberWallet DONE
+2. Start new wallet with new values. DONE
+3. Don't delete past values of wallet. DONE
+
 
 
 D:&cd D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Rewards
@@ -95,16 +100,6 @@ D:&cd D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Rewards
 npx hardhat run --network localhost scripts\update_local_weekly_rewards.ts
 
 npx hardhat run --network localhost scripts\transaction_local_rewards_contract.ts
-
-
-
-
-QUESTIONS
-Qué hacer con el registro de la wallet perdida?
-Se deja en fuera de whitelist, en blacklist y fuera del listado de wallets de equipo?
-Se heredan los datos de fechas de retiro de tokens de equipo?
-Los saldos de rewards antiguos se ponen en cero?
-Dia y hora para ejecutar la actualización de recompensas?
 
 
 

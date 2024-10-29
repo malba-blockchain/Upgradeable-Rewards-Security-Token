@@ -261,7 +261,7 @@ async function updateRewardsBatch(): Promise<string> {
     // Log the updater wallet's address and balance
     const { address } = rewardsUpdaterAddress;
     const balance = await ethers.provider.getBalance(address);
-
+    
     console.log("\n   [LOG]: EXECUTION OF BATCH UPDATE");
 
     console.log("\n   Updater wallet address:", address, "\n   Updater wallet balance:", balance.toString());

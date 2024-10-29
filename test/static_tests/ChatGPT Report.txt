@@ -1,0 +1,150 @@
+Line: 433
+
+    Impact: Critical
+    Detail: Potential Reentrancy Attack in the withdrawRewardTokens function due to external call hyaxToken.transfer(msg.sender, withdrawableAmount). Despite the nonReentrant modifier, this could allow re-entrancy if transfer is overridden or called indirectly via fallback in the hyaxToken contract.
+
+Line: 336
+
+    Impact: High
+    Detail: Possible Integer Overflow/Underflow in growthTokensWithdrawn += withdrawableAmount; and other addition/subtraction operations. Though Solidity 0.8.0 and above has built-in overflow protection, any external interactions or updates to older versions might make this vulnerable. Ensure sufficient audits, especially for backward compatibility.
+
+Line: 310
+
+    Impact: Medium
+    Detail: Unchecked Call Return Value: The hyaxToken.transferFrom(msg.sender, address(this), _amount) call does not verify if the transfer was successful, potentially allowing the function to proceed with a failed transfer. This could lead to misreporting of balances.
+
+Line: 380
+
+    Impact: High
+    Detail: Denial of Service (DoS) in updateRewardsBatch due to a lack of control over the _walletAddresses array size. A high volume of updates could exhaust gas limits and cause DoS for legitimate users.
+
+Line: 527
+
+    Impact: Medium
+    Detail: Front-Running Attack: The withdrawTokensToBurn function, which allows withdrawal by the owner, could be manipulated if transaction ordering is influenced, enabling others to observe and react based on intended burns. Protect by adding multi-sig or timelock mechanisms.
+
+Line: 473
+
+    Impact: Critical
+    Detail: Insecure Access Control: The updateRewardsSingle function relies on the onlyOwnerOrRewardsUpdater modifier but doesn’t restrict updates based on user roles. If rewardsUpdaterAddress is compromised, rewards can be updated arbitrarily for any wallet, leading to fraud risks.
+
+Line: 316
+
+    Impact: Low
+    Detail: Short Address Attack: No explicit check on the length of the _walletAddress parameter in addWalletToWhitelist. Consider adding an address length check, though Solidity’s built-in checks mitigate this risk somewhat.
+
+Line: 253
+
+    Impact: High
+    Detail: Uninitialized State Variable: The contract constructor is not explicitly defined, which risks inadvertently calling the initialize function without setting values correctly. Consider adding initializer checks or setting default values.
+
+Line: 617
+
+    Impact: Critical
+    Detail: Delegatecall Injection: If any external calls indirectly invoke delegatecall (not observed directly), it would allow executing code within the context of this contract. Double-check dependencies and imports for delegatecall use.
+
+Line: 411
+
+    Impact: Medium
+    Detail: Timestamp Dependence: The block.timestamp dependency in functions like withdrawGrowthTokens introduces susceptibility to miner manipulation.
+
+
+Line: 168
+
+    Impact: Critical
+    Detail: Tx.origin Authentication: The onlyOwnerOrWhitelister modifier emits tx.origin without a specific need. If any logic relies on tx.origin for authentication elsewhere, this could open a path for phishing-style attacks where a trusted contract could be tricked into using the user’s tx.origin for authorization.
+
+Line: 580
+
+    Impact: Critical
+    Detail: Unrestricted Ether Withdrawal: The withdrawTokensToBurn function does not limit who can withdraw tokens or if they are sent only to the owner. If ownership is transferred maliciously, any funding can be withdrawn unrestrictedly. Consider restricting the withdraw functionality to specific conditions.
+
+Line: 304
+
+    Impact: High
+    Detail: Race Condition: In the fundSmartContract function, growthTokensInSmartContract is updated after growthTokensFunded, creating a potential for race conditions if called simultaneously by multiple users. Consider synchronizing updates or limiting external calls within the function to avoid discrepancies in the balances.
+
+Line: 336
+
+    Impact: Medium
+    Detail: Insufficient Gas Griefing: During the withdrawGrowthTokens function, there is no gas stipend check for the transfer function to the owner. If the recipient reverts due to insufficient gas, it could prevent legitimate withdrawals, creating a griefing vector.
+
+Line: 380
+
+    Impact: High
+    Detail: Gas Limit Vulnerabilities: In the updateRewardsBatch function, processing too many wallets at once may exceed gas limits, causing batch transactions to fail. Implementing a gas threshold or restricting array size can improve resilience to this vulnerability.
+
+Line: 310
+
+    Impact: High
+    Detail: Unchecked External Calls: The external hyaxToken.transferFrom call lacks a check on the return value, potentially allowing the function to proceed with a failed transfer. This could lead to inaccurate tracking of token balances if the transfer fails silently.
+
+Line: 264
+
+    Impact: Medium
+    Detail: Unchecked Return Data: In the addWalletToWhitelist function, there is no explicit validation on whether address attributes or the whitelisting logic are processed correctly. Address whitelisting without a successful confirmation could impact reward distributions or lead to discrepancies.
+
+Line: 617
+
+    Impact: High
+    Detail: Oracle Manipulation: If any price or external data is required (e.g., for token distributions), this contract lacks protections against manipulated values, especially when relying on external contract interactions. Ensure any oracle data is verified and reliable to prevent abuse.
+
+Line: 633
+
+    Impact: Critical
+    Detail: Logic Errors: The updateTeamMemberWallet function incorrectly resets the old team member wallet and transfers all attributes to the new wallet address without confirming the new member’s role or account status. Malicious actors could abuse this transfer to obtain team tokens illegitimately.
+
+Line: 344
+
+    Impact: High
+    Detail: Flash Loan Attack Vectors: In the fundSmartContract function, a malicious actor could exploit flash loans to fund, withdraw, and burn tokens within the same transaction. Adding time delays or requiring non-instantaneous funding helps mitigate this attack vector.
+
+Line: 211
+
+    Impact: High
+    Detail: Storage Collision: Multiple mappings, enums, and flags are set in the storage layout, which could lead to storage collision if future contracts are added or if data is manipulated within upgradeable functions. Explicitly specify storage slots to avoid collisions, particularly in upgradeable contracts.
+
+Line: 171
+
+    Impact: Critical
+    Detail: Reentrancy Guard Bypass: Although the contract uses ReentrancyGuardUpgradeable, the onlyOwnerOrWhitelister modifier emits an event before checking reentrancy. This event could expose data or provide a way to bypass reentrancy control in other calls. Place reentrancy checks earlier to prevent potential bypasses.
+
+Line: 300
+
+    Impact: Medium
+    Detail: Improper Error Handling: The require statement in fundSmartContract fails silently if an invalid _fundingType is passed. While this halts execution, it lacks context for debugging and would benefit from a custom error or detailed revert message to aid developers and users.
+
+Line: 411
+
+    Impact: Medium
+    Detail: Ambiguous Evaluation Order: In withdrawGrowthTokens, there are chained require statements and complex conditional logic. If order changes inadvertently in future versions, it could lead to different evaluations or unexpected outcomes. Refactor conditions to avoid ambiguity in execution.
+
+Line: 112
+
+    Impact: High
+    Detail: ABI Hash Collisions: Events in the contract could generate ABI selector collisions if similar function names with identical parameters are added. For instance, FundingAdded and TokensToBurnWithdrawn have similar parameters, increasing collision risk. Adding unique identifiers to events will reduce the likelihood of collisions.
+
+Line: 580
+
+    Impact: Critical
+    Detail: Approval Vulnerabilities: The updateHyaxTokenAddress function resets the token address without clearing existing approvals from previous tokens, potentially allowing an old token contract to retain control over approvals. Ensure approvals are reset on token address updates to prevent this attack.
+
+Line: 242
+
+    Impact: Medium
+    Detail: Exposed Data: Wallet information in the wallets mapping, including reward status and whitelisting times, is publicly accessible. This could be exploited by malicious actors to target specific wallet addresses. Consider reducing data exposure by using internal visibility where feasible.
+
+Line: 307
+
+    Impact: Low
+    Detail: Incorrect Parameter Order: In fundSmartContract, _fundingType appears before _amount. Incorrect parameter order may cause human error or call mismatches. Reorder parameters for clarity or document parameters to improve accuracy.
+
+Line: 417
+
+    Impact: High
+    Detail: Unexpected Ether Transfers (Force Feeding): The withdrawGrowthTokens and other withdrawal functions could be force-fed Ether, leading to confusion in balance tracking. Consider adding logic to reject unexpected Ether sent to the contract to avoid misleading balance interpretations.
+
+Line: 310
+
+    Impact: High
+    Detail: Unchecked Low-Level Calls: The call to hyaxToken.transferFrom lacks a check on return values, creating risk if the call fails silently. This can lead to discrepancies between contract state and actual token balances. Implement explicit return checks for all external token transfers to maintain accuracy.

@@ -2,7 +2,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { ethers, network, upgrades } from "hardhat"
 import { expect } from "chai"
 
-describe("Test case #26. Recover Team Tokens", function () {
+describe("Test case #26. Update team member wallet", function () {
     async function deployUpgradeableHYAXRewardsFixture() {
         const [owner, addr1, addr2, addr3, whitelisterAddress] = await ethers.getSigners();
 
@@ -28,7 +28,7 @@ describe("Test case #26. Recover Team Tokens", function () {
         const { upgradeableHYAXRewards, owner, addr1, addr2 } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         await expect(
-            upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address)
+            upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address)
         ).to.be.revertedWith("Team tokens funding has not started yet, no tokens to recover");
     });
 
@@ -45,7 +45,7 @@ describe("Test case #26. Recover Team Tokens", function () {
         await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount);
 
         await expect(
-            upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address)
+            upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address)
         ).to.be.revertedWith("Old wallet address is not a team wallet");
     });
 
@@ -68,7 +68,7 @@ describe("Test case #26. Recover Team Tokens", function () {
         await upgradeableHYAXRewards.connect(whitelisterAddress).updateWhitelistStatus(addr1.address, false);
 
         await expect(
-            upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address)
+            upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address)
         ).to.be.revertedWith("Old team member wallet address is not whitelisted");
     });
 
@@ -91,7 +91,7 @@ describe("Test case #26. Recover Team Tokens", function () {
         await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr1.address, true);
 
         await expect(
-            upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address)
+            upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address)
         ).to.be.revertedWith("Old team member wallet address is blacklisted");
     });
 
@@ -111,7 +111,7 @@ describe("Test case #26. Recover Team Tokens", function () {
         await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
         await expect(
-            upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, ethers.ZeroAddress)
+            upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, ethers.ZeroAddress)
         ).to.be.revertedWith("New team member wallet address cannot be the zero address");
     });
 
@@ -131,7 +131,7 @@ describe("Test case #26. Recover Team Tokens", function () {
         await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
         await expect(
-            upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr1.address)
+            upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr1.address)
         ).to.be.revertedWith("New team member wallet address cannot be the same as the old team member wallet address");
     });
 
@@ -154,7 +154,7 @@ describe("Test case #26. Recover Team Tokens", function () {
         await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, false, 0);
 
         await expect(
-            upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address)
+            upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address)
         ).to.be.revertedWith("New team member wallet address is already whitelisted");
     });
 
@@ -180,7 +180,7 @@ describe("Test case #26. Recover Team Tokens", function () {
         await upgradeableHYAXRewards.connect(whitelisterAddress).updateWhitelistStatus(addr2.address, false);
 
         await expect(
-            upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address)
+            upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address)
         ).to.be.revertedWith("New team member wallet address is already a team wallet");
     });
 
@@ -203,7 +203,7 @@ describe("Test case #26. Recover Team Tokens", function () {
         await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr2.address, true);
 
         await expect(
-            upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address)
+            upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address)
         ).to.be.revertedWith("New team member wallet address is blacklisted");
     });
 
@@ -223,10 +223,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, ethers.parseUnits("1000000", 18));
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("1000000", 18));
 
         // Check that the new wallet has inherited the properties of the old wallet
@@ -296,10 +296,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         await network.provider.send("evm_mine");
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("1000000", 18));
 
         // Get the timestamp of the block before
@@ -374,10 +374,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         await network.provider.send("evm_mine");
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("1000000", 18));
 
         // Get the timestamp of the block before
@@ -452,10 +452,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         await network.provider.send("evm_mine");
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("1000000", 18));
 
         // Get the timestamp of the block before
@@ -530,10 +530,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         await network.provider.send("evm_mine");
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("1000000", 18));
 
         // Get the timestamp of the block before
@@ -608,10 +608,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         await network.provider.send("evm_mine");
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("1000000", 18));
 
         // Get the timestamp of the block before
@@ -691,10 +691,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         const timestampOfBlockBefore = blockBefore?.timestamp;
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("1000000", 18));
 
         // Check that the new wallet has inherited the properties of the old wallet
@@ -718,12 +718,11 @@ describe("Test case #26. Recover Team Tokens", function () {
         expect(oldWallet.isBlacklisted).to.be.true;
         expect(oldWallet.hyaxHoldingAmount).to.equal(0);
         expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
-        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
-        expect(oldWallet.currentRewardsAmount).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("100000", 18));
+        expect(oldWallet.currentRewardsAmount).to.equal(ethers.parseUnits("100000", 18));
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
         expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
-        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
         // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
         expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
@@ -774,10 +773,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         await network.provider.send("evm_mine");
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("1000000", 18));
 
         // Check that the new wallet has inherited the properties of the old wallet
@@ -801,12 +800,11 @@ describe("Test case #26. Recover Team Tokens", function () {
         expect(oldWallet.isBlacklisted).to.be.true;
         expect(oldWallet.hyaxHoldingAmount).to.equal(0);
         expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
-        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
-        expect(oldWallet.currentRewardsAmount).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("200000", 18));
+        expect(oldWallet.currentRewardsAmount).to.equal(ethers.parseUnits("200000", 18));
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
         expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
-        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
         // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
         expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
@@ -858,10 +856,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         await network.provider.send("evm_mine");
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("1000000", 18));
 
         // Check that the new wallet has inherited the properties of the old wallet
@@ -885,12 +883,11 @@ describe("Test case #26. Recover Team Tokens", function () {
         expect(oldWallet.isBlacklisted).to.be.true;
         expect(oldWallet.hyaxHoldingAmount).to.equal(0);
         expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
-        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
-        expect(oldWallet.currentRewardsAmount).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("300000", 18));
+        expect(oldWallet.currentRewardsAmount).to.equal(ethers.parseUnits("300000", 18));
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
         expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
-        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
         // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
         expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
@@ -942,10 +939,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         await network.provider.send("evm_mine");
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("1000000", 18));
 
         // Check that the new wallet has inherited the properties of the old wallet
@@ -969,13 +966,12 @@ describe("Test case #26. Recover Team Tokens", function () {
         expect(oldWallet.isBlacklisted).to.be.true;
         expect(oldWallet.hyaxHoldingAmount).to.equal(0);
         expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
-        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
-        expect(oldWallet.currentRewardsAmount).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("400000", 18));
+        expect(oldWallet.currentRewardsAmount).to.equal(ethers.parseUnits("400000", 18));
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
         expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
-        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
-
+ 
         // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
         expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
 
@@ -1026,10 +1022,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         await network.provider.send("evm_mine");
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("1000000", 18));
 
         // Check that the new wallet has inherited the properties of the old wallet
@@ -1053,12 +1049,11 @@ describe("Test case #26. Recover Team Tokens", function () {
         expect(oldWallet.isBlacklisted).to.be.true;
         expect(oldWallet.hyaxHoldingAmount).to.equal(0);
         expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
-        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
-        expect(oldWallet.currentRewardsAmount).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("500000", 18));
+        expect(oldWallet.currentRewardsAmount).to.equal(ethers.parseUnits("500000", 18));
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
         expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
-        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
         // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
         expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
@@ -1110,10 +1105,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         await network.provider.send("evm_mine");
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("1000000", 18));
 
         // Check that the new wallet has inherited the properties of the old wallet
@@ -1137,12 +1132,11 @@ describe("Test case #26. Recover Team Tokens", function () {
         expect(oldWallet.isBlacklisted).to.be.true;
         expect(oldWallet.hyaxHoldingAmount).to.equal(0);
         expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
-        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
-        expect(oldWallet.currentRewardsAmount).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("600000", 18));
+        expect(oldWallet.currentRewardsAmount).to.equal(ethers.parseUnits("600000", 18));
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
         expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
-        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
         // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
         expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
@@ -1197,10 +1191,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("800000", 18));
 
         // Check that the new wallet has inherited the properties of the old wallet
@@ -1224,13 +1218,11 @@ describe("Test case #26. Recover Team Tokens", function () {
         expect(oldWallet.isBlacklisted).to.be.true;
         expect(oldWallet.hyaxHoldingAmount).to.equal(0);
         expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
-        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
-        expect(oldWallet.currentRewardsAmount).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("500000", 18));
+        expect(oldWallet.currentRewardsAmount).to.equal(ethers.parseUnits("500000", 18));
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
         expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
-        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
-
         // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
         expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
 
@@ -1286,10 +1278,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("600000", 18));
 
         // Check that the new wallet has inherited the properties of the old wallet
@@ -1313,12 +1305,11 @@ describe("Test case #26. Recover Team Tokens", function () {
         expect(oldWallet.isBlacklisted).to.be.true;
         expect(oldWallet.hyaxHoldingAmount).to.equal(0);
         expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
-        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
-        expect(oldWallet.currentRewardsAmount).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("600000", 18));
+        expect(oldWallet.currentRewardsAmount).to.equal(ethers.parseUnits("600000", 18));
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
         expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
-        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
         // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
         expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
@@ -1378,10 +1369,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("400000", 18));
 
         // Check that the new wallet has inherited the properties of the old wallet
@@ -1405,13 +1396,12 @@ describe("Test case #26. Recover Team Tokens", function () {
         expect(oldWallet.isBlacklisted).to.be.true;
         expect(oldWallet.hyaxHoldingAmount).to.equal(0);
         expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
-        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
-        expect(oldWallet.currentRewardsAmount).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("700000", 18));
+        expect(oldWallet.currentRewardsAmount).to.equal(ethers.parseUnits("700000", 18));
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
         expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
-        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
-
+    
         // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
         expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
 
@@ -1473,10 +1463,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("200000", 18));
 
         // Check that the new wallet has inherited the properties of the old wallet
@@ -1500,13 +1490,12 @@ describe("Test case #26. Recover Team Tokens", function () {
         expect(oldWallet.isBlacklisted).to.be.true;
         expect(oldWallet.hyaxHoldingAmount).to.equal(0);
         expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
-        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
-        expect(oldWallet.currentRewardsAmount).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("800000", 18));
+        expect(oldWallet.currentRewardsAmount).to.equal(ethers.parseUnits("800000", 18));
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
         expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
-        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
-
+        
         // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
         expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
 
@@ -1572,10 +1561,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("0", 18));
 
         // Check that the new wallet has inherited the properties of the old wallet
@@ -1599,12 +1588,11 @@ describe("Test case #26. Recover Team Tokens", function () {
         expect(oldWallet.isBlacklisted).to.be.true;
         expect(oldWallet.hyaxHoldingAmount).to.equal(0);
         expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
-        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
-        expect(oldWallet.currentRewardsAmount).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("900000", 18));
+        expect(oldWallet.currentRewardsAmount).to.equal(ethers.parseUnits("900000", 18));
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
         expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
         expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
-        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
         // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
         expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
@@ -1666,10 +1654,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("800000", 18));
 
         // Check that the new wallet has inherited the properties of the old wallet
@@ -1693,12 +1681,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         expect(oldWallet.isBlacklisted).to.be.true;
         expect(oldWallet.hyaxHoldingAmount).to.equal(0);
         expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
-        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("500000", 18));
         expect(oldWallet.currentRewardsAmount).to.equal(0);
-        expect(oldWallet.rewardsWithdrawn).to.equal(0);
+        expect(oldWallet.rewardsWithdrawn).to.equal(ethers.parseUnits("500000", 18));
         expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
-        expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
-        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
         // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
         expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
@@ -1764,10 +1750,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("600000", 18));
 
         // Check that the new wallet has inherited the properties of the old wallet
@@ -1791,13 +1777,11 @@ describe("Test case #26. Recover Team Tokens", function () {
         expect(oldWallet.isBlacklisted).to.be.true;
         expect(oldWallet.hyaxHoldingAmount).to.equal(0);
         expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
-        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("600000", 18));
         expect(oldWallet.currentRewardsAmount).to.equal(0);
-        expect(oldWallet.rewardsWithdrawn).to.equal(0);
+        expect(oldWallet.rewardsWithdrawn).to.equal(ethers.parseUnits("600000", 18));
         expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
-        expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
-        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
-
+        
         // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
         expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
 
@@ -1864,10 +1848,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("400000", 18));
 
         // Check that the new wallet has inherited the properties of the old wallet
@@ -1891,12 +1875,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         expect(oldWallet.isBlacklisted).to.be.true;
         expect(oldWallet.hyaxHoldingAmount).to.equal(0);
         expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
-        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("700000", 18));
         expect(oldWallet.currentRewardsAmount).to.equal(0);
-        expect(oldWallet.rewardsWithdrawn).to.equal(0);
+        expect(oldWallet.rewardsWithdrawn).to.equal(ethers.parseUnits("700000", 18));
         expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
-        expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
-        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
         // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
         expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
@@ -1968,10 +1950,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         await upgradeableHYAXRewards.connect(addr1).withdrawTeamTokens();
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("200000", 18));
 
         // Check that the new wallet has inherited the properties of the old wallet
@@ -1995,12 +1977,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         expect(oldWallet.isBlacklisted).to.be.true;
         expect(oldWallet.hyaxHoldingAmount).to.equal(0);
         expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
-        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("800000", 18));
         expect(oldWallet.currentRewardsAmount).to.equal(0);
-        expect(oldWallet.rewardsWithdrawn).to.equal(0);
+        expect(oldWallet.rewardsWithdrawn).to.equal(ethers.parseUnits("800000", 18));
         expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
-        expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
-        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
         // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
         expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
@@ -2076,10 +2056,10 @@ describe("Test case #26. Recover Team Tokens", function () {
 
 
         //Recover team tokens from addr1 to addr2
-        const tx = upgradeableHYAXRewards.connect(owner).recoverTeamTokens(addr1.address, addr2.address);
+        const tx = upgradeableHYAXRewards.connect(owner).updateTeamMemberWallet(addr1.address, addr2.address);
 
         await expect(tx)
-            .to.emit(upgradeableHYAXRewards, "TeamMemberTokensRecovered")
+            .to.emit(upgradeableHYAXRewards, "TeamMemberWalletUpdated")
             .withArgs(addr1.address, addr2.address, ethers.parseUnits("0", 18));
 
         // Check that the new wallet has inherited the properties of the old wallet
@@ -2103,12 +2083,10 @@ describe("Test case #26. Recover Team Tokens", function () {
         expect(oldWallet.isBlacklisted).to.be.true;
         expect(oldWallet.hyaxHoldingAmount).to.equal(0);
         expect(oldWallet.hyaxHoldingAmountAtWhitelistTime).to.equal(0);
-        expect(oldWallet.totalHyaxRewardsAmount).to.equal(0);
+        expect(oldWallet.totalHyaxRewardsAmount).to.equal(ethers.parseUnits("900000", 18));
         expect(oldWallet.currentRewardsAmount).to.equal(0);
-        expect(oldWallet.rewardsWithdrawn).to.equal(0);
+        expect(oldWallet.rewardsWithdrawn).to.equal(ethers.parseUnits("900000", 18));
         expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
-        expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
-        expect(oldWallet.lastRewardsUpdateTime).to.equal(0);
 
         // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
         expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
