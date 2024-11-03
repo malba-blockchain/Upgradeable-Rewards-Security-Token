@@ -1,8 +1,48 @@
+TALKING POINTS
+
+1. Upgradeable smart contract version (changes to code)
+
+-Sepolia (Alternativa)
+-Mumbai (La tumbaron)
+-Amoy (Nueva)
+
+-Turn to false whitelist status if black list status is changed to true. ToDo!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+
+
+2. Gitlab repo
+
+Yes, use New tag to add the new changes. ToDo!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+Isaac crea repo nuevo. HYAXRewards. Isaac ToDo!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+3. Rewards upgrades script in AWS. Isaac & Luis ToDo!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+4. How to deal with server logs? Store them and give the team access to them? 
+
+Return a boolean and find out how to check the events.
+
+Devolver los logs a la plataforma y que conserve una copia interna, dónde se ejecuta el script por si no logra enviar los datos.
+
+Modulo para visualizar la info. Isaac & Luis & Carlos. ToDo!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+Meet con Alejo & Jesus para decidir qué hacer con esa info. ToDo!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+5. How to deal with exceptions and results of updates script?
+
+Mostrarlos al equipo admin de hydraxis.
+
+
+
+
 Schedule Weekly Execution: EventBridge /EC2 (AWS) 
 
 Secure and Reliable Environment: AWS Lambda. Secure environments that are also designed for scheduled functions
 
-Secrets Management: AWS Secrets Manager
+Secrets Management: AWS Secrets Manager.
 
 Immutable Codebase: Use containerization (Docker) to package your script and deploy it as a container on AWS Fargate
 
@@ -10,15 +50,7 @@ Deploying on managed cloud platforms with serverless functions or containerized 
 
 Day and time to execute rewards update.
 
-Jueves 1 pm. UTC-4. 
-
-EXTRA QUESTIONS
-
-Updated smart contract version
-
-How to deal with logs? Store them and give the team access to them?
-
-How to deal with exceptions and results of updates script?
+Update dates: Jueves 1 pm. UTC-4. 
 
 
 

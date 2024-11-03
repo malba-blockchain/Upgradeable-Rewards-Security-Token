@@ -28,7 +28,7 @@ describe("Test case #21. Update rewardsUpdater address", function () {
         // Update the rewardsUpdater address without being the owner
         await expect(
             upgradeableHYAXRewards.connect(addr1).updateRewardsUpdaterAddress(rewardsUpdater.address)
-        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'OwnableUnauthorizedAccount');
+        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'AccessControlUnauthorizedAccount');
     });
 
     it("21.2. Revert update of rewardsUpdater address because it's the zero address", async function () {

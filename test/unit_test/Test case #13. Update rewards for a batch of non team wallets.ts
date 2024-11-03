@@ -46,6 +46,12 @@ describe("Test case #13. Update rewards for a batch of non team wallets", functi
 
         const walletAddresses = [addr1.address, addr2.address, addr3.address];
 
+        console.log("Rewards updater address expected: ", rewardsUpdaterAddress.address);
+        console.log("Rewards updater address real: ", await upgradeableHYAXRewards.rewardsUpdaterAddress());
+        
+        console.log("Whitelister address expected: ", whitelisterAddress.address);
+        console.log("Whitelister address real: ", await upgradeableHYAXRewards.whiteListerAddress());
+        
         let totalRewards = 2884615384615384615384615;
         const divisor = BigInt(10 ** 18); // 18 digits
 

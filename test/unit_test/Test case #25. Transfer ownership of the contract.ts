@@ -28,7 +28,7 @@ describe("Test case #25. Transfer ownership of the contract", function () {
         // Attempt to transfer ownership without being the owner
         await expect(
             upgradeableHYAXRewards.connect(addr1).transferOwnership(addr1.address)
-        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'OwnableUnauthorizedAccount');
+        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'AccessControlUnauthorizedAccount');
     });
 
     it("25.2. Revert transfer of ownership if it's to the zero address", async function () {

@@ -28,7 +28,7 @@ describe("Test case #23. Update maximum batch size for update rewards", function
         // Attempt to update the maximum batch size without being the owner
         await expect(
             upgradeableHYAXRewards.connect(addr1).updateMaximumBatchSizeForUpdateRewards(50)
-        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'OwnableUnauthorizedAccount');
+        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'AccessControlUnauthorizedAccount');
     });
 
     it("23.2. Revert update of maximum batch size for update rewards because it's zero", async function () {

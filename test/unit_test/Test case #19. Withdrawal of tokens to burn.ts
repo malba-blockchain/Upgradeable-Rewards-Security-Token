@@ -34,7 +34,7 @@ describe("Test case #19. Withdrawal of tokens to burn", function () {
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}  
         await expect(
             upgradeableHYAXRewards.connect(addr1).withdrawTokensToBurn(2, fundingAmount)
-        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'OwnableUnauthorizedAccount');
+        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'AccessControlUnauthorizedAccount');
     });
 
     it("19.2. Should revert the withdraw of tokens because its using an invalid type", async function () {

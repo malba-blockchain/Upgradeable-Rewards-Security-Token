@@ -231,7 +231,7 @@ async function updateRewardsBatch(): Promise<string> {
 
     console.log("\n   Updater wallet address:", rewardsUpdaterWallet.address, 
                 "\n   Updater wallet balance:", await alchemyProvider.getBalance(rewardsUpdaterWallet.address));
-
+    
     // Get rewards data from the calculateRewardsForAllWallets function
     const { totalRewards, balances: rewardsForWallets } = await calculateRewardsForAllWallets();
 
@@ -253,7 +253,7 @@ async function updateRewardsBatch(): Promise<string> {
                 const events = updateRewardsBatchReceipt?.logs || [];
                 
                 let numberOfFailedUpdates = 0;
-
+                
                 for (const event of events) {
                     if (event.fragment.name === "RewardUpdateFailed") {
                         numberOfFailedUpdates++;
@@ -314,7 +314,7 @@ async function showRewardsSmartContractState() {
 //Simulate the weekly reward distribution
 async function automateWeeklyRewardsDistribution() {
     // Calculate the total number of weeks to simulate, assuming 8 years with 52 weeks per year, plus 14 weeks for rounding errors.
-    const totalWeeks = 430; // 8 years * 52 weeks = 416 weeks + 14 weeks for rounding errors = 430 weeks
+    const totalWeeks = 416; // 8 years * 52 weeks = 416 weeks + 14 weeks for rounding errors = 430 weeks
     
     // Loop through each week to simulate the reward distribution process.
     for (let i = 0; i < totalWeeks; i++) {

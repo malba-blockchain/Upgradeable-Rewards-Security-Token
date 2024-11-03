@@ -26,9 +26,11 @@ import type {
 export interface UpgradeableHYAXRewardsV2Interface extends Interface {
   getFunction(
     nameOrSignature:
+      | "DEFAULT_ADMIN_ROLE"
       | "GROWTH_TOKENS_TOTAL"
       | "GROWTH_TOKENS_WITHDRAWAL_PER_YEAR"
       | "MIN_INTERVAL_FOR_UPDATE_REWARDS"
+      | "REWARDS_UPDATER_ROLE"
       | "REWARD_TOKENS_PER_WEEK"
       | "REWARD_TOKENS_PER_YEAR"
       | "REWARD_TOKENS_TOTAL"
@@ -36,15 +38,22 @@ export interface UpgradeableHYAXRewardsV2Interface extends Interface {
       | "TEAM_TOKENS_TOTAL"
       | "TEAM_TOKENS_WITHDRAWAL_PER_YEAR"
       | "TOKENS_WITHDRAWAL_PERIOD"
+      | "WHITELISTER_ROLE"
       | "addWalletToWhitelist"
       | "calculateYearForTeamTokens"
       | "fundSmartContract"
+      | "getRoleAdmin"
+      | "getRoleMember"
+      | "getRoleMemberCount"
+      | "getRoleMembers"
+      | "grantRole"
       | "growthTokensFunded"
       | "growthTokensFundingStarted"
       | "growthTokensInSmartContract"
       | "growthTokensLastWithdrawalTime"
       | "growthTokensStartFundingTime"
       | "growthTokensWithdrawn"
+      | "hasRole"
       | "hyaxToken"
       | "hyaxTokenAddress"
       | "initialize"
@@ -53,8 +62,8 @@ export interface UpgradeableHYAXRewardsV2Interface extends Interface {
       | "owner"
       | "pause"
       | "paused"
-      | "recoverTeamTokens"
-      | "renounceOwnership"
+      | "renounceRole"
+      | "revokeRole"
       | "rewardTokensDistributed"
       | "rewardTokensFunded"
       | "rewardTokensFundingStarted"
@@ -62,6 +71,7 @@ export interface UpgradeableHYAXRewardsV2Interface extends Interface {
       | "rewardTokensStartFundingTime"
       | "rewardTokensWithdrawn"
       | "rewardsUpdaterAddress"
+      | "supportsInterface"
       | "teamTokensFunded"
       | "teamTokensFundingStarted"
       | "teamTokensInSmartContract"
@@ -75,6 +85,7 @@ export interface UpgradeableHYAXRewardsV2Interface extends Interface {
       | "updateRewardsBatch"
       | "updateRewardsSingle"
       | "updateRewardsUpdaterAddress"
+      | "updateTeamMemberWallet"
       | "updateWhiteListerAddress"
       | "updateWhitelistStatus"
       | "wallets"
@@ -94,14 +105,16 @@ export interface UpgradeableHYAXRewardsV2Interface extends Interface {
       | "Initialized"
       | "LogSenderAndOrigin"
       | "MaximumBatchSizeForUpdateRewardsUpdated"
-      | "OwnershipTransferred"
       | "Paused"
       | "RewardTokensWithdrawn"
       | "RewardUpdateBatchSent"
       | "RewardUpdateFailed"
       | "RewardUpdateSuccess"
       | "RewardsUpdaterAddressUpdated"
-      | "TeamMemberTokensRecovered"
+      | "RoleAdminChanged"
+      | "RoleGranted"
+      | "RoleRevoked"
+      | "TeamMemberWalletUpdated"
       | "TeamTokensWithdrawn"
       | "TokensToBurnWithdrawn"
       | "Unpaused"
@@ -110,6 +123,10 @@ export interface UpgradeableHYAXRewardsV2Interface extends Interface {
       | "WhitelistStatusUpdated"
   ): EventFragment;
 
+  encodeFunctionData(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "GROWTH_TOKENS_TOTAL",
     values?: undefined
@@ -120,6 +137,10 @@ export interface UpgradeableHYAXRewardsV2Interface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "MIN_INTERVAL_FOR_UPDATE_REWARDS",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "REWARDS_UPDATER_ROLE",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -151,6 +172,10 @@ export interface UpgradeableHYAXRewardsV2Interface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "WHITELISTER_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "addWalletToWhitelist",
     values: [AddressLike, boolean, BigNumberish]
   ): string;
@@ -161,6 +186,26 @@ export interface UpgradeableHYAXRewardsV2Interface extends Interface {
   encodeFunctionData(
     functionFragment: "fundSmartContract",
     values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleAdmin",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMember",
+    values: [BytesLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMemberCount",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMembers",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "grantRole",
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "growthTokensFunded",
@@ -186,6 +231,10 @@ export interface UpgradeableHYAXRewardsV2Interface extends Interface {
     functionFragment: "growthTokensWithdrawn",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [BytesLike, AddressLike]
+  ): string;
   encodeFunctionData(functionFragment: "hyaxToken", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "hyaxTokenAddress",
@@ -207,12 +256,12 @@ export interface UpgradeableHYAXRewardsV2Interface extends Interface {
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "recoverTeamTokens",
-    values: [AddressLike, AddressLike]
+    functionFragment: "renounceRole",
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
+    functionFragment: "revokeRole",
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "rewardTokensDistributed",
@@ -241,6 +290,10 @@ export interface UpgradeableHYAXRewardsV2Interface extends Interface {
   encodeFunctionData(
     functionFragment: "rewardsUpdaterAddress",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "supportsInterface",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "teamTokensFunded",
@@ -292,6 +345,10 @@ export interface UpgradeableHYAXRewardsV2Interface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "updateTeamMemberWallet",
+    values: [AddressLike, AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "updateWhiteListerAddress",
     values: [AddressLike]
   ): string;
@@ -325,6 +382,10 @@ export interface UpgradeableHYAXRewardsV2Interface extends Interface {
   ): string;
 
   decodeFunctionResult(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "GROWTH_TOKENS_TOTAL",
     data: BytesLike
   ): Result;
@@ -334,6 +395,10 @@ export interface UpgradeableHYAXRewardsV2Interface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "MIN_INTERVAL_FOR_UPDATE_REWARDS",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "REWARDS_UPDATER_ROLE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -365,6 +430,10 @@ export interface UpgradeableHYAXRewardsV2Interface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "WHITELISTER_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "addWalletToWhitelist",
     data: BytesLike
   ): Result;
@@ -376,6 +445,23 @@ export interface UpgradeableHYAXRewardsV2Interface extends Interface {
     functionFragment: "fundSmartContract",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMember",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMemberCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMembers",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "growthTokensFunded",
     data: BytesLike
@@ -400,6 +486,7 @@ export interface UpgradeableHYAXRewardsV2Interface extends Interface {
     functionFragment: "growthTokensWithdrawn",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hyaxToken", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "hyaxTokenAddress",
@@ -418,13 +505,10 @@ export interface UpgradeableHYAXRewardsV2Interface extends Interface {
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "recoverTeamTokens",
+    functionFragment: "renounceRole",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "rewardTokensDistributed",
     data: BytesLike
@@ -451,6 +535,10 @@ export interface UpgradeableHYAXRewardsV2Interface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "rewardsUpdaterAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -500,6 +588,10 @@ export interface UpgradeableHYAXRewardsV2Interface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "updateRewardsUpdaterAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateTeamMemberWallet",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -630,19 +722,6 @@ export namespace MaximumBatchSizeForUpdateRewardsUpdatedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace OwnershipTransferredEvent {
-  export type InputTuple = [previousOwner: AddressLike, newOwner: AddressLike];
-  export type OutputTuple = [previousOwner: string, newOwner: string];
-  export interface OutputObject {
-    previousOwner: string;
-    newOwner: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
 export namespace PausedEvent {
   export type InputTuple = [account: AddressLike];
   export type OutputTuple = [account: string];
@@ -746,24 +825,79 @@ export namespace RewardsUpdaterAddressUpdatedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace TeamMemberTokensRecoveredEvent {
+export namespace RoleAdminChangedEvent {
+  export type InputTuple = [
+    role: BytesLike,
+    previousAdminRole: BytesLike,
+    newAdminRole: BytesLike
+  ];
+  export type OutputTuple = [
+    role: string,
+    previousAdminRole: string,
+    newAdminRole: string
+  ];
+  export interface OutputObject {
+    role: string;
+    previousAdminRole: string;
+    newAdminRole: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace RoleGrantedEvent {
+  export type InputTuple = [
+    role: BytesLike,
+    account: AddressLike,
+    sender: AddressLike
+  ];
+  export type OutputTuple = [role: string, account: string, sender: string];
+  export interface OutputObject {
+    role: string;
+    account: string;
+    sender: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace RoleRevokedEvent {
+  export type InputTuple = [
+    role: BytesLike,
+    account: AddressLike,
+    sender: AddressLike
+  ];
+  export type OutputTuple = [role: string, account: string, sender: string];
+  export interface OutputObject {
+    role: string;
+    account: string;
+    sender: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace TeamMemberWalletUpdatedEvent {
   export type InputTuple = [
     _oldTeamMemberWalletAddress: AddressLike,
     _newTeamMemberWalletAddress: AddressLike,
-    _hyaxHoldingAmount: BigNumberish,
-    _currentRewardsAmount: BigNumberish
+    _hyaxHoldingAmount: BigNumberish
   ];
   export type OutputTuple = [
     _oldTeamMemberWalletAddress: string,
     _newTeamMemberWalletAddress: string,
-    _hyaxHoldingAmount: bigint,
-    _currentRewardsAmount: bigint
+    _hyaxHoldingAmount: bigint
   ];
   export interface OutputObject {
     _oldTeamMemberWalletAddress: string;
     _newTeamMemberWalletAddress: string;
     _hyaxHoldingAmount: bigint;
-    _currentRewardsAmount: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -911,11 +1045,15 @@ export interface UpgradeableHYAXRewardsV2 extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  DEFAULT_ADMIN_ROLE: TypedContractMethod<[], [string], "view">;
+
   GROWTH_TOKENS_TOTAL: TypedContractMethod<[], [bigint], "view">;
 
   GROWTH_TOKENS_WITHDRAWAL_PER_YEAR: TypedContractMethod<[], [bigint], "view">;
 
   MIN_INTERVAL_FOR_UPDATE_REWARDS: TypedContractMethod<[], [bigint], "view">;
+
+  REWARDS_UPDATER_ROLE: TypedContractMethod<[], [string], "view">;
 
   REWARD_TOKENS_PER_WEEK: TypedContractMethod<[], [bigint], "view">;
 
@@ -930,6 +1068,8 @@ export interface UpgradeableHYAXRewardsV2 extends BaseContract {
   TEAM_TOKENS_WITHDRAWAL_PER_YEAR: TypedContractMethod<[], [bigint], "view">;
 
   TOKENS_WITHDRAWAL_PERIOD: TypedContractMethod<[], [bigint], "view">;
+
+  WHITELISTER_ROLE: TypedContractMethod<[], [string], "view">;
 
   addWalletToWhitelist: TypedContractMethod<
     [
@@ -949,6 +1089,24 @@ export interface UpgradeableHYAXRewardsV2 extends BaseContract {
     "nonpayable"
   >;
 
+  getRoleAdmin: TypedContractMethod<[role: BytesLike], [string], "view">;
+
+  getRoleMember: TypedContractMethod<
+    [role: BytesLike, index: BigNumberish],
+    [string],
+    "view"
+  >;
+
+  getRoleMemberCount: TypedContractMethod<[role: BytesLike], [bigint], "view">;
+
+  getRoleMembers: TypedContractMethod<[role: BytesLike], [string[]], "view">;
+
+  grantRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
   growthTokensFunded: TypedContractMethod<[], [bigint], "view">;
 
   growthTokensFundingStarted: TypedContractMethod<[], [boolean], "view">;
@@ -960,6 +1118,12 @@ export interface UpgradeableHYAXRewardsV2 extends BaseContract {
   growthTokensStartFundingTime: TypedContractMethod<[], [bigint], "view">;
 
   growthTokensWithdrawn: TypedContractMethod<[], [bigint], "view">;
+
+  hasRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [boolean],
+    "view"
+  >;
 
   hyaxToken: TypedContractMethod<[], [string], "view">;
 
@@ -981,16 +1145,17 @@ export interface UpgradeableHYAXRewardsV2 extends BaseContract {
 
   paused: TypedContractMethod<[], [boolean], "view">;
 
-  recoverTeamTokens: TypedContractMethod<
-    [
-      _oldTeamMemberWalletAddress: AddressLike,
-      _newTeamMemberWalletAddress: AddressLike
-    ],
+  renounceRole: TypedContractMethod<
+    [role: BytesLike, callerConfirmation: AddressLike],
     [void],
     "nonpayable"
   >;
 
-  renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
+  revokeRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
   rewardTokensDistributed: TypedContractMethod<[], [bigint], "view">;
 
@@ -1005,6 +1170,12 @@ export interface UpgradeableHYAXRewardsV2 extends BaseContract {
   rewardTokensWithdrawn: TypedContractMethod<[], [bigint], "view">;
 
   rewardsUpdaterAddress: TypedContractMethod<[], [string], "view">;
+
+  supportsInterface: TypedContractMethod<
+    [interfaceId: BytesLike],
+    [boolean],
+    "view"
+  >;
 
   teamTokensFunded: TypedContractMethod<[], [bigint], "view">;
 
@@ -1056,6 +1227,15 @@ export interface UpgradeableHYAXRewardsV2 extends BaseContract {
 
   updateRewardsUpdaterAddress: TypedContractMethod<
     [_rewardsUpdaterAddress: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  updateTeamMemberWallet: TypedContractMethod<
+    [
+      _oldTeamMemberWalletAddress: AddressLike,
+      _newTeamMemberWalletAddress: AddressLike
+    ],
     [void],
     "nonpayable"
   >;
@@ -1125,6 +1305,9 @@ export interface UpgradeableHYAXRewardsV2 extends BaseContract {
   ): T;
 
   getFunction(
+    nameOrSignature: "DEFAULT_ADMIN_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "GROWTH_TOKENS_TOTAL"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
@@ -1133,6 +1316,9 @@ export interface UpgradeableHYAXRewardsV2 extends BaseContract {
   getFunction(
     nameOrSignature: "MIN_INTERVAL_FOR_UPDATE_REWARDS"
   ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "REWARDS_UPDATER_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "REWARD_TOKENS_PER_WEEK"
   ): TypedContractMethod<[], [bigint], "view">;
@@ -1155,6 +1341,9 @@ export interface UpgradeableHYAXRewardsV2 extends BaseContract {
     nameOrSignature: "TOKENS_WITHDRAWAL_PERIOD"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
+    nameOrSignature: "WHITELISTER_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "addWalletToWhitelist"
   ): TypedContractMethod<
     [
@@ -1176,6 +1365,29 @@ export interface UpgradeableHYAXRewardsV2 extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "getRoleAdmin"
+  ): TypedContractMethod<[role: BytesLike], [string], "view">;
+  getFunction(
+    nameOrSignature: "getRoleMember"
+  ): TypedContractMethod<
+    [role: BytesLike, index: BigNumberish],
+    [string],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getRoleMemberCount"
+  ): TypedContractMethod<[role: BytesLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getRoleMembers"
+  ): TypedContractMethod<[role: BytesLike], [string[]], "view">;
+  getFunction(
+    nameOrSignature: "grantRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "growthTokensFunded"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
@@ -1193,6 +1405,13 @@ export interface UpgradeableHYAXRewardsV2 extends BaseContract {
   getFunction(
     nameOrSignature: "growthTokensWithdrawn"
   ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "hasRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [boolean],
+    "view"
+  >;
   getFunction(
     nameOrSignature: "hyaxToken"
   ): TypedContractMethod<[], [string], "view">;
@@ -1222,18 +1441,19 @@ export interface UpgradeableHYAXRewardsV2 extends BaseContract {
     nameOrSignature: "paused"
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
-    nameOrSignature: "recoverTeamTokens"
+    nameOrSignature: "renounceRole"
   ): TypedContractMethod<
-    [
-      _oldTeamMemberWalletAddress: AddressLike,
-      _newTeamMemberWalletAddress: AddressLike
-    ],
+    [role: BytesLike, callerConfirmation: AddressLike],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "renounceOwnership"
-  ): TypedContractMethod<[], [void], "nonpayable">;
+    nameOrSignature: "revokeRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "rewardTokensDistributed"
   ): TypedContractMethod<[], [bigint], "view">;
@@ -1255,6 +1475,9 @@ export interface UpgradeableHYAXRewardsV2 extends BaseContract {
   getFunction(
     nameOrSignature: "rewardsUpdaterAddress"
   ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "supportsInterface"
+  ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
   getFunction(
     nameOrSignature: "teamTokensFunded"
   ): TypedContractMethod<[], [bigint], "view">;
@@ -1315,6 +1538,16 @@ export interface UpgradeableHYAXRewardsV2 extends BaseContract {
     nameOrSignature: "updateRewardsUpdaterAddress"
   ): TypedContractMethod<
     [_rewardsUpdaterAddress: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "updateTeamMemberWallet"
+  ): TypedContractMethod<
+    [
+      _oldTeamMemberWalletAddress: AddressLike,
+      _newTeamMemberWalletAddress: AddressLike
+    ],
     [void],
     "nonpayable"
   >;
@@ -1437,13 +1670,6 @@ export interface UpgradeableHYAXRewardsV2 extends BaseContract {
     MaximumBatchSizeForUpdateRewardsUpdatedEvent.OutputObject
   >;
   getEvent(
-    key: "OwnershipTransferred"
-  ): TypedContractEvent<
-    OwnershipTransferredEvent.InputTuple,
-    OwnershipTransferredEvent.OutputTuple,
-    OwnershipTransferredEvent.OutputObject
-  >;
-  getEvent(
     key: "Paused"
   ): TypedContractEvent<
     PausedEvent.InputTuple,
@@ -1486,11 +1712,32 @@ export interface UpgradeableHYAXRewardsV2 extends BaseContract {
     RewardsUpdaterAddressUpdatedEvent.OutputObject
   >;
   getEvent(
-    key: "TeamMemberTokensRecovered"
+    key: "RoleAdminChanged"
   ): TypedContractEvent<
-    TeamMemberTokensRecoveredEvent.InputTuple,
-    TeamMemberTokensRecoveredEvent.OutputTuple,
-    TeamMemberTokensRecoveredEvent.OutputObject
+    RoleAdminChangedEvent.InputTuple,
+    RoleAdminChangedEvent.OutputTuple,
+    RoleAdminChangedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoleGranted"
+  ): TypedContractEvent<
+    RoleGrantedEvent.InputTuple,
+    RoleGrantedEvent.OutputTuple,
+    RoleGrantedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoleRevoked"
+  ): TypedContractEvent<
+    RoleRevokedEvent.InputTuple,
+    RoleRevokedEvent.OutputTuple,
+    RoleRevokedEvent.OutputObject
+  >;
+  getEvent(
+    key: "TeamMemberWalletUpdated"
+  ): TypedContractEvent<
+    TeamMemberWalletUpdatedEvent.InputTuple,
+    TeamMemberWalletUpdatedEvent.OutputTuple,
+    TeamMemberWalletUpdatedEvent.OutputObject
   >;
   getEvent(
     key: "TeamTokensWithdrawn"
@@ -1613,17 +1860,6 @@ export interface UpgradeableHYAXRewardsV2 extends BaseContract {
       MaximumBatchSizeForUpdateRewardsUpdatedEvent.OutputObject
     >;
 
-    "OwnershipTransferred(address,address)": TypedContractEvent<
-      OwnershipTransferredEvent.InputTuple,
-      OwnershipTransferredEvent.OutputTuple,
-      OwnershipTransferredEvent.OutputObject
-    >;
-    OwnershipTransferred: TypedContractEvent<
-      OwnershipTransferredEvent.InputTuple,
-      OwnershipTransferredEvent.OutputTuple,
-      OwnershipTransferredEvent.OutputObject
-    >;
-
     "Paused(address)": TypedContractEvent<
       PausedEvent.InputTuple,
       PausedEvent.OutputTuple,
@@ -1690,15 +1926,48 @@ export interface UpgradeableHYAXRewardsV2 extends BaseContract {
       RewardsUpdaterAddressUpdatedEvent.OutputObject
     >;
 
-    "TeamMemberTokensRecovered(address,address,uint256,uint256)": TypedContractEvent<
-      TeamMemberTokensRecoveredEvent.InputTuple,
-      TeamMemberTokensRecoveredEvent.OutputTuple,
-      TeamMemberTokensRecoveredEvent.OutputObject
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": TypedContractEvent<
+      RoleAdminChangedEvent.InputTuple,
+      RoleAdminChangedEvent.OutputTuple,
+      RoleAdminChangedEvent.OutputObject
     >;
-    TeamMemberTokensRecovered: TypedContractEvent<
-      TeamMemberTokensRecoveredEvent.InputTuple,
-      TeamMemberTokensRecoveredEvent.OutputTuple,
-      TeamMemberTokensRecoveredEvent.OutputObject
+    RoleAdminChanged: TypedContractEvent<
+      RoleAdminChangedEvent.InputTuple,
+      RoleAdminChangedEvent.OutputTuple,
+      RoleAdminChangedEvent.OutputObject
+    >;
+
+    "RoleGranted(bytes32,address,address)": TypedContractEvent<
+      RoleGrantedEvent.InputTuple,
+      RoleGrantedEvent.OutputTuple,
+      RoleGrantedEvent.OutputObject
+    >;
+    RoleGranted: TypedContractEvent<
+      RoleGrantedEvent.InputTuple,
+      RoleGrantedEvent.OutputTuple,
+      RoleGrantedEvent.OutputObject
+    >;
+
+    "RoleRevoked(bytes32,address,address)": TypedContractEvent<
+      RoleRevokedEvent.InputTuple,
+      RoleRevokedEvent.OutputTuple,
+      RoleRevokedEvent.OutputObject
+    >;
+    RoleRevoked: TypedContractEvent<
+      RoleRevokedEvent.InputTuple,
+      RoleRevokedEvent.OutputTuple,
+      RoleRevokedEvent.OutputObject
+    >;
+
+    "TeamMemberWalletUpdated(address,address,uint256)": TypedContractEvent<
+      TeamMemberWalletUpdatedEvent.InputTuple,
+      TeamMemberWalletUpdatedEvent.OutputTuple,
+      TeamMemberWalletUpdatedEvent.OutputObject
+    >;
+    TeamMemberWalletUpdated: TypedContractEvent<
+      TeamMemberWalletUpdatedEvent.InputTuple,
+      TeamMemberWalletUpdatedEvent.OutputTuple,
+      TeamMemberWalletUpdatedEvent.OutputObject
     >;
 
     "TeamTokensWithdrawn(address,uint256)": TypedContractEvent<

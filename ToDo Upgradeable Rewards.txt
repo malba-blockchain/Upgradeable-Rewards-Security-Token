@@ -1,5 +1,6 @@
 Goal: Deploy Upgradeable HYAX Rewards Token
 
+D:&cd D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Token
 D:&cd D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Rewards
 
 ---------------DONE---------------
@@ -468,14 +469,12 @@ npx hardhat run scripts/updateWeeklyRewards.ts
 -Token Contract
 ChatGPT DONE
 Gemini DONE
-Claude
 Copilot DONE
 
 -Rewards Contract
 ChatGPT DONE 
 Gemini DONE
-Claude
-Copilot
+Copilot DONE
 
 24.4.1. Reentrancy attacks 
 24.4.2. Integer Overflow and Underflow vulnerabilities
@@ -510,11 +509,8 @@ Copilot
 24.4.29. Unexpected Ether Transfers (Force Feeding)
 24.4.30. Unchecked Low-Level Calls
 
-
-
-
--Gas optimization
--Suggestions for best practices
+24.4.31. Gas optimization
+24.4.32. Suggestions for best practices
 
 -Linters and Formatters
 -Fuzzy testing
@@ -527,9 +523,12 @@ Copilot
 
 
 
+23. Add gitlab updates
 
+To check: 
 
-23. Add gitlab updates 
+getCurrentTokenPrice() function. Price freshness validation.
+getCurrentTokenPrice() function. Oracle price manipulation validation.
 
 26. Deploy in testnet (3 days) 
 
@@ -547,6 +546,8 @@ Copilot
 
 29. Do realistic tests with team . I.e. 1 Day = week of rewards (1 week)
 
+QUESTION
+Function name: withdrawTokensToBurn() or withdrawTokensOnlyOwner()
 
 ---------INITIAL LOCAL DEPLOYMENT---------
 

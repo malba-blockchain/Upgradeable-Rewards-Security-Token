@@ -28,7 +28,7 @@ describe("Test case #20. Update whiteLister address", function () {
         // Update the whiteLister address without being the owner
         await expect(
             upgradeableHYAXRewards.connect(addr1).updateWhiteListerAddress(whitelisterAddress.address)
-        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'OwnableUnauthorizedAccount');
+        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'AccessControlUnauthorizedAccount');
     });
 
     it("20.2. Revert update of whitelister address because it's the zero address", async function () {

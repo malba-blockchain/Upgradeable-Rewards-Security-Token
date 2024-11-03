@@ -1,27 +1,35 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-//import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-//import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
-//import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
-import "hardhat/console.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
 
 /**
- * @title ERC20TokenInterface
- * @dev Interface for interacting with the different tokens: USDC, USDT, WBTC and WETH
+ * @dev Implementation based on the whitepaper requirements for rewards distribution
+ * Developer: Carlos Alba
  */
-interface ERC20TokenInterface {
-    function transfer(address dst, uint wad) external returns (bool);
-    function transferFrom(address src, address dst, uint wad) external returns (bool);
-    function balanceOf(address guy) external view returns (uint);
+
+ /**
+ * @title IHyaxToken based on the SafeERC20 interface
+ * @dev Interface for interacting with the HYAX token
+ */
+interface IHyaxToken is IERC20 {
     function symbol() external view returns (string memory);
 }
 
-contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable {
+contract UpgradeableHYAXRewardsV2 is AccessControlEnumerableUpgradeable,  PausableUpgradeable, ReentrancyGuardUpgradeable {
+    
+    // Placeholder to maintain storage compatibility with AccessControlEnumerableUpgradeable
+    struct Placeholder {
+        uint256 _unused;
+    }
 
+    // Required annotation to maintain storage location compatibility
+    /// @custom:storage-location erc7201:openzeppelin.storage.AccessControlEnumerable
+    Placeholder private _placeholder;
+    
     ////////////////// SMART CONTRACT EVENTS //////////////////
     /**
      * @dev Emitted when funding is added to the contract
@@ -115,12 +123,12 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
     event LogSenderAndOrigin(address _sender, address _origin);
 
     /**
-     * @dev Emitted when a team member tokens are recovered
+     * @dev Emitted when a team member wallet is updated
      * @param _oldTeamMemberWalletAddress The address of the old team member wallet
      * @param _newTeamMemberWalletAddress The address of the new team member wallet
      */
-    event TeamMemberTokensRecovered(address _oldTeamMemberWalletAddress, address _newTeamMemberWalletAddress, 
-        uint256 _hyaxHoldingAmount, uint256 _currentRewardsAmount);
+    event TeamMemberWalletUpdated(address _oldTeamMemberWalletAddress, address _newTeamMemberWalletAddress, 
+        uint256 _hyaxHoldingAmount);
 
     /**
      * @dev Emitted when the white lister address is updated
@@ -146,17 +154,23 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
      */
     event MaximumBatchSizeForUpdateRewardsUpdated(uint8 _maximumBatchSizeForUpdateRewards);
 
-    ////////////////// SMART CONTRACT VARIABLES //////////////////
+    ////////////////// SMART CONTRACT VARIABLES & CONSTANTS //////////////////
 
     address public hyaxTokenAddress;
 
-    ERC20TokenInterface public hyaxToken;
+    IHyaxToken public hyaxToken;
 
     enum FundingType {GrowthTokens, TeamTokens, RewardTokens}
 
+    uint256 public constant MIN_INTERVAL_FOR_UPDATE_REWARDS = 6 days;
+
+    bytes32 public constant REWARDS_UPDATER_ROLE = keccak256("REWARDS_UPDATER_ROLE");
+
+    bytes32 public constant WHITELISTER_ROLE = keccak256("WHITELISTER_ROLE");
+
     ////////////////// GROWTH TOKENS VARIABLES //////////////////
 
-    uint256 public constant GROWTH_TOKENS_TOTAL = 2400000000 * 10**18; // Total of 2.4 Billion growth tokens
+    uint256 public constant GROWTH_TOKENS_TOTAL = 2400000000 * 10**18; // Total of 2.4 Billion growth tokens. 60% of 4B.
     
     uint256 public constant GROWTH_TOKENS_WITHDRAWAL_PER_YEAR = 120000000 * 10**18; // 120 Million tokens per year
 
@@ -193,7 +207,7 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
 
     bool public teamTokensFundingStarted; // Flag to indicate if team tokens funding has begun
 
-
+    
     ////////////////// REWARD TOKENS VARIABLES //////////////////
 
     uint256 public constant REWARD_TOKENS_TOTAL = 1200000000 * 10**18; // Total of 1.2 Billion as reward tokens
@@ -239,14 +253,11 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
         bool isBlacklisted;                         // Flag indicating if the wallet is blacklisted
     }
     
-    uint256 public constant MIN_INTERVAL_FOR_UPDATE_REWARDS = 6 days;
-
     uint8 public maximumBatchSizeForUpdateRewards;
     
     mapping(address => WalletData) public wallets;
 
     ////////////////// SMART CONTRACT CONSTRUCTOR /////////////////
-    //constructor(address _hyaxTokenAddress) Ownable(msg.sender)  {
 
     /**
      * @dev Initializer function instead of constructor.
@@ -255,20 +266,37 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
     function initialize(address _hyaxTokenAddress) public initializer {
 
         // Initialize inherited contracts
-        __Ownable_init(msg.sender);
+        __AccessControlEnumerable_init(); 
         __ReentrancyGuard_init();
         __Pausable_init();
 
-        // Make the deployer of the contract the administrator
+        //Grant the default admin role to the admin
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        
+        // Set up the whitelister address
+        whiteListerAddress = 0x01c2f012de19e6436744c3F81f56E9e70C93a8C3;
+
+        // Add whitelister role to the whitelister address
+        _grantRole(WHITELISTER_ROLE, whiteListerAddress);
+
+        // Set up the rewards updater address
+        rewardsUpdaterAddress = 0x01c2f012de19e6436744c3F81f56E9e70C93a8C3;
+
+        // Add rewards updater role to the rewards updater address
+        _grantRole(REWARDS_UPDATER_ROLE, rewardsUpdaterAddress);
+
+        // Set the HYAX token address
         hyaxTokenAddress = _hyaxTokenAddress;
-        hyaxToken = ERC20TokenInterface(hyaxTokenAddress);
+
+        // Create an instance of the HYAX token
+        hyaxToken = IHyaxToken(hyaxTokenAddress);
 
         // Set the initial maximum batch size for update rewards
         maximumBatchSizeForUpdateRewards = 100;
 
         //Validate that the hyax token is valid based on the symbol
         require(keccak256(abi.encodePacked(hyaxToken.symbol())) == keccak256(abi.encodePacked("HYAX"))  , "Hyax token address is not valid");
-
+        
         // Set the initial rewards amounts to 0
         growthTokensFunded = 0;
         teamTokensFunded = 0;
@@ -282,7 +310,7 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
      * @param _walletAddress The address of the wallet to be added to the whitelist
      * @param _isTeamWallet A boolean indicating if the wallet is a team wallet
      */
-    function addWalletToWhitelist(address _walletAddress, bool _isTeamWallet, uint256 _hyaxHoldingAmountAtWhitelistTime) onlyOwnerOrWhitelister public {
+    function addWalletToWhitelist(address _walletAddress, bool _isTeamWallet, uint256 _hyaxHoldingAmountAtWhitelistTime) onlyAdminOrWhitelister public {
 
         //Verify that the wallet is not already in the whitelist
         require(wallets[_walletAddress].isWhitelisted == false, "Wallet is already whitelisted");
@@ -328,7 +356,7 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
      * @dev This function allows the owner or the whitelister address to update the status of a wallet in the whitelist
      * @param _walletAddress The address of the wallet to be updated
      */ 
-    function updateWhitelistStatus(address _walletAddress, bool _newStatus) onlyOwnerOrWhitelister public {
+    function updateWhitelistStatus(address _walletAddress, bool _newStatus) onlyAdminOrWhitelister public {
         
         //Verify that the wallet is currently in a different status
         require(wallets[_walletAddress].isWhitelisted != _newStatus, "Wallet has already been updated to that status");
@@ -348,7 +376,7 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
      * @dev This function allows the owner or the whitelister address to update the status of a wallet in the blacklist
      * @param _walletAddress The address of the wallet to be updated
      */ 
-    function updateBlacklistStatus(address _walletAddress, bool _newStatus) onlyOwnerOrWhitelister public {
+    function updateBlacklistStatus(address _walletAddress, bool _newStatus) onlyAdminOrWhitelister public {
         
         //Verify that the wallet is currently in a different status
         require(wallets[_walletAddress].isBlacklisted != _newStatus, "Wallet has already been updated to that status");
@@ -367,14 +395,14 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
      * @param _amount The amount of tokens to fund
      * @custom:events Emits a FundingAdded event upon successful funding
      */
-    function fundSmartContract(FundingType _fundingType, uint256 _amount) onlyOwner() nonReentrant() isNotPaused() public {
+    function fundSmartContract(FundingType _fundingType, uint256 _amount) onlyRole(DEFAULT_ADMIN_ROLE) nonReentrant() isNotPaused() public {
 
         // Check if the funding type is valid
         require(_fundingType == FundingType.GrowthTokens || _fundingType == FundingType.TeamTokens || _fundingType == FundingType.RewardTokens, "Invalid funding type");
 
         // Verify that the amount is greater than 0
         require(_amount > 0, "Amount must be greater than 0");
-
+        
         // Transfer the specified token to this contract
         require(hyaxToken.transferFrom(msg.sender, address(this), _amount), "There was an error on receiving the token funding");
 
@@ -432,22 +460,19 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
         emit FundingAdded(_fundingType, _amount);
     }
 
-    modifier onlyOwnerOrWhitelister {
+    modifier onlyAdminOrWhitelister {
         // Ensure that the sender is the owner or the whitelister address
-        require(msg.sender == owner() || msg.sender == whiteListerAddress, "Function reserved only for the whitelister or the owner");
+        require(hasRole(WHITELISTER_ROLE, msg.sender) || hasRole(DEFAULT_ADMIN_ROLE, msg.sender)  , "Function reserved only for the whitelister or the owner");
+        
         // Emit an event to log the sender and origin of the transaction
         emit LogSenderAndOrigin(msg.sender, tx.origin);
         _;
     }
 
-    modifier onlyOwnerOrRewardsUpdater {
+    modifier onlyAdminOrRewardsUpdater {
         // Ensure that the sender is the owner, the rewards updater address or the contract itself
-        require(
-            msg.sender == owner() || 
-            msg.sender == rewardsUpdaterAddress || 
-            msg.sender == address(this),
-            "Function reserved only for the rewards updater, the owner, or the contract itself"
-        );
+        require(hasRole(REWARDS_UPDATER_ROLE, msg.sender) || hasRole(DEFAULT_ADMIN_ROLE, msg.sender) || msg.sender == address(this), "Function reserved only for the rewards updater, the owner, or the contract itself");
+        
         // Emit an event to log the sender and origin of the transaction
         emit LogSenderAndOrigin(msg.sender, tx.origin);
         _;
@@ -483,7 +508,7 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
      * @custom:requirements At least one year has passed since the last withdrawal
      * @custom:events Emits a GrowthTokensWithdrawn event upon successful withdrawal
      */
-    function withdrawGrowthTokens() onlyOwner() nonReentrant() isNotPaused() public {
+    function withdrawGrowthTokens() onlyRole(DEFAULT_ADMIN_ROLE) nonReentrant() isNotPaused() public {
 
         // Check if growth tokens funding has started
         require(growthTokensFundingStarted, "Growth tokens funding has not started yet, no tokens to withdraw");
@@ -619,26 +644,26 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
      * @param _walletAddresses The list of wallet addresses to update rewards for.
      * @param _hyaxRewards The list of HYAX rewards to be updated for each wallet.
      */
-    function updateRewardsBatch(address[] calldata _walletAddresses, uint256[] calldata _hyaxRewards) public onlyOwnerOrRewardsUpdater nonReentrant {
+    function updateRewardsBatch(address[] calldata _walletAddresses, uint256[] calldata _hyaxRewards) public onlyAdminOrRewardsUpdater nonReentrant {
         
         // Check if rewards funding has started
         require(rewardTokensFundingStarted, "Reward tokens funding has not started yet, no tokens to update");
 
-        // Validate the batch size limit
+        // Validate the batch size limit in the lower limit
+        require(_walletAddresses.length > 0, "Batch size cannot be 0");
+    
+        // Validate the batch size limit in the upper limit
         require(_walletAddresses.length <= maximumBatchSizeForUpdateRewards, "Batch size exceeds the defined limit");
-        //console.log("Enters 1.1");
-
+        
         // Validate the length of the arrays
         require(_walletAddresses.length == _hyaxRewards.length, "Array lengths must match");
-        //console.log("Enters 1.2");
 
         // Iterate through the list of wallets
         for (uint256 i = 0; i < _walletAddresses.length; i++) {
-            //console.log("Enters 1.3");
 
             //Try to update the rewards for the current wallet address
             try this.updateRewardsSingle(_walletAddresses[i], _hyaxRewards[i]) {
-                //console.log("Enters 1.4");
+
             } catch Error(string memory _errorMessage) {
                 emit RewardUpdateFailed(msg.sender, _walletAddresses[i], _errorMessage);
             }
@@ -653,50 +678,40 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
      * @param _walletAddress The address of the wallet to update rewards for.
      * @param _hyaxRewards The amount of HYAX rewards to update for the wallet.
      */
-     function updateRewardsSingle(address _walletAddress, uint256 _hyaxRewards) public onlyOwnerOrRewardsUpdater {
+     function updateRewardsSingle(address _walletAddress, uint256 _hyaxRewards) public onlyAdminOrRewardsUpdater {
         
-        //console.log("Enters 2.2");
         // Check if rewards funding has started
         require(rewardTokensFundingStarted, "Reward tokens funding has not started yet, no tokens to update");
 
         // Validate that the wallet is whitelisted
         require(wallets[_walletAddress].isWhitelisted == true, "Wallet is not whitelisted");
-        //console.log("Enters 2.3");
 
         // Validate that the wallet is not blacklisted
         require(wallets[_walletAddress].isBlacklisted == false, "Wallet has been blacklisted");
-        //console.log("Enters 2.4");
     
         //Timestamp validation
         require(block.timestamp >= wallets[_walletAddress].lastRewardsUpdateTime + MIN_INTERVAL_FOR_UPDATE_REWARDS, "Too soon to update rewards for this wallet");
-        //console.log("Enters 2.5");
 
         // Ensure rewards don't exceed the weekly withdrawal limit
         require(_hyaxRewards <= REWARD_TOKENS_PER_WEEK, "A single wallet cannot have rewards higher than the weekly limit");
-        //console.log("Enters 2.6"); 
 
         // Check if there are sufficient tokens in the contract to distribute as rewards
         require(_hyaxRewards <= rewardTokensInSmartContract, "Insufficient reward tokens to distribute as rewards");
-        //console.log("Enters 2.7");
 
         //Check that the token rewards already distributed is not higher than the total rewards that should be distributed
         require(rewardTokensDistributed + _hyaxRewards <= REWARD_TOKENS_TOTAL, "All the reward tokens have been already distributed");
 
         // Update the total rewards distributed
         rewardTokensDistributed += _hyaxRewards;
-        //console.log("Enters 2.8");
 
         // Update the last rewards update time
         wallets[_walletAddress].lastRewardsUpdateTime = block.timestamp;
-        //console.log("Enters 2.9");
 
         // Update the total rewards for the wallet
         wallets[_walletAddress].totalHyaxRewardsAmount += _hyaxRewards;
-        //console.log("Enters 2.10");
-
+    
         // Update the current rewards amount for the wallet
         wallets[_walletAddress].currentRewardsAmount += _hyaxRewards;
-        //console.log("Enters 2.11");
 
         // Emit an event to notify that the rewards were updated successfully
         emit RewardUpdateSuccess(msg.sender, _walletAddress, _hyaxRewards);
@@ -749,7 +764,8 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
         rewardTokensWithdrawn += withdrawableAmount;
 
         // Transfer the calculated amount to the wallet
-        require(hyaxToken.transfer(msg.sender, withdrawableAmount), "Failed to transfer reward tokens");
+        bool transferSuccess = hyaxToken.transfer(msg.sender, withdrawableAmount);
+        require(transferSuccess, "Failed to transfer reward tokens");
 
         // Emit an event to notify that the reward tokens were withdrawn
         emit RewardTokensWithdrawn(msg.sender, withdrawableAmount);
@@ -765,14 +781,13 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
      * @custom:requirements Amount must be greater than 0
      */
 
-    function withdrawTokensToBurn(FundingType _fundingType, uint256 _amount) onlyOwner() nonReentrant() isNotPaused() public {
+    function withdrawTokensToBurn(FundingType _fundingType, uint256 _amount) onlyRole(DEFAULT_ADMIN_ROLE) nonReentrant() isNotPaused() public {
 
         // Check if the funding type is valid
         require(_fundingType == FundingType.GrowthTokens || _fundingType == FundingType.TeamTokens || _fundingType == FundingType.RewardTokens, "Invalid funding type");
 
         // Verify that the amount is greater than 0
         require(_amount > 0, "Amount must be greater than 0");
-        
         
         // Check the funding type and perform the necessary actions
         if(_fundingType == FundingType.GrowthTokens){
@@ -808,7 +823,7 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
         emit TokensToBurnWithdrawn(_fundingType, _amount);
     }
 
-    function recoverTeamTokens(address _oldTeamMemberWalletAddress, address _newTeamMemberWalletAddress) onlyOwner() nonReentrant() public {
+    function updateTeamMemberWallet(address _oldTeamMemberWalletAddress, address _newTeamMemberWalletAddress) onlyRole(DEFAULT_ADMIN_ROLE) nonReentrant() public {
         // Ensure that team tokens funding has started
         require(teamTokensFundingStarted, "Team tokens funding has not started yet, no tokens to recover");
 
@@ -841,16 +856,10 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
         wallets[_newTeamMemberWalletAddress].isTeamWallet = true;
         wallets[_newTeamMemberWalletAddress].isBlacklisted = false;
         
-
-        //Do the transfer of the old values to the new team member wallet address
+        //Do the transfer of the previous values to the new team member wallet address
         wallets[_newTeamMemberWalletAddress].hyaxHoldingAmountAtWhitelistTime = wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmountAtWhitelistTime;
         wallets[_newTeamMemberWalletAddress].hyaxHoldingAmount = wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmount;
-        wallets[_newTeamMemberWalletAddress].lastRewardsUpdateTime = wallets[_oldTeamMemberWalletAddress].lastRewardsUpdateTime;
-        wallets[_newTeamMemberWalletAddress].lastRewardsWithdrawalTime = wallets[_oldTeamMemberWalletAddress].lastRewardsWithdrawalTime;
-        wallets[_newTeamMemberWalletAddress].totalHyaxRewardsAmount = wallets[_oldTeamMemberWalletAddress].totalHyaxRewardsAmount;
-        wallets[_newTeamMemberWalletAddress].currentRewardsAmount = wallets[_oldTeamMemberWalletAddress].currentRewardsAmount;
-        wallets[_newTeamMemberWalletAddress].rewardsWithdrawn = wallets[_oldTeamMemberWalletAddress].rewardsWithdrawn;
-        wallets[_newTeamMemberWalletAddress].addedToWhitelistTime = wallets[_oldTeamMemberWalletAddress].addedToWhitelistTime;
+                wallets[_newTeamMemberWalletAddress].addedToWhitelistTime = wallets[_oldTeamMemberWalletAddress].addedToWhitelistTime;
         wallets[_newTeamMemberWalletAddress].teamTokenWithdrawalTimes = wallets[_oldTeamMemberWalletAddress].teamTokenWithdrawalTimes;
 
         //Remove the old team member wallet address from the lists
@@ -858,29 +867,30 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
         wallets[_oldTeamMemberWalletAddress].isTeamWallet = false;
         wallets[_oldTeamMemberWalletAddress].isBlacklisted = true;
         
-        //Update values of the old team member wallet address to 0
+        //Update values of the old team member wallet address to 0 
         wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmountAtWhitelistTime = 0;
-        wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmount = 0;
-        wallets[_oldTeamMemberWalletAddress].lastRewardsUpdateTime = 0;
-        wallets[_oldTeamMemberWalletAddress].lastRewardsWithdrawalTime = 0;
-        wallets[_oldTeamMemberWalletAddress].totalHyaxRewardsAmount = 0;
-        wallets[_oldTeamMemberWalletAddress].currentRewardsAmount = 0;
-        wallets[_oldTeamMemberWalletAddress].rewardsWithdrawn = 0;
+        wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmount = 0; 
         wallets[_oldTeamMemberWalletAddress].teamTokenWithdrawalTimes = 0;
-
+        
         //Emit an event to notify that the team tokens were recovered
-        emit TeamMemberTokensRecovered(_oldTeamMemberWalletAddress, _newTeamMemberWalletAddress,
-            wallets[_newTeamMemberWalletAddress].hyaxHoldingAmount, wallets[_newTeamMemberWalletAddress].currentRewardsAmount);
+        emit TeamMemberWalletUpdated(_oldTeamMemberWalletAddress, _newTeamMemberWalletAddress,
+            wallets[_newTeamMemberWalletAddress].hyaxHoldingAmount);
     }
     
     /**
      * @notice Updates the white lister address
-     * @dev This function can only be called by the owner
+     * @dev This function can only be called by the admin
      * @param _whiteListerAddress The address of the new white lister
      */
-    function updateWhiteListerAddress(address _whiteListerAddress) onlyOwner() public {
+    function updateWhiteListerAddress(address _whiteListerAddress) onlyRole(DEFAULT_ADMIN_ROLE) public {
         // Validate that the white lister address is not the zero address
         require(_whiteListerAddress != address(0), "White lister address cannot be the zero address");
+
+        //Revoke role to the previous white lister address
+        revokeRole(WHITELISTER_ROLE, whiteListerAddress);
+
+        //Grant the role to the new white lister address
+        grantRole(WHITELISTER_ROLE, _whiteListerAddress);
 
         // Update the white lister address
         whiteListerAddress = _whiteListerAddress;
@@ -890,13 +900,19 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
 
     /**
      * @notice Updates the rewards updater address
-     * @dev This function can only be called by the owner
+     * @dev This function can only be called by the admin
      * @param _rewardsUpdaterAddress The address of the new rewards updater
      */
-    function updateRewardsUpdaterAddress(address _rewardsUpdaterAddress) onlyOwner() public {
+    function updateRewardsUpdaterAddress(address _rewardsUpdaterAddress) onlyRole(DEFAULT_ADMIN_ROLE) public {
         // Validate that the rewards updater address is not the zero address
         require(_rewardsUpdaterAddress != address(0), "Rewards updater address cannot be the zero address");
-        
+
+        //Revoke role to the previous rewards updater address
+        revokeRole(REWARDS_UPDATER_ROLE, rewardsUpdaterAddress);
+
+        //Grant the role to the new rewards updater address
+        grantRole(REWARDS_UPDATER_ROLE, _rewardsUpdaterAddress);
+
         // Update the rewards updater address
         rewardsUpdaterAddress = _rewardsUpdaterAddress;
 
@@ -905,14 +921,14 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
 
     /**
      * @notice Updates the hyax token address
-     * @dev This function can only be called by the owner
+     * @dev This function can only be called by the admin
      * @param _hyaxTokenAddress The address of the new hyax token
      */
-    function updateHyaxTokenAddress(address _hyaxTokenAddress) onlyOwner() public {
+    function updateHyaxTokenAddress(address _hyaxTokenAddress) onlyRole(DEFAULT_ADMIN_ROLE) public {
         require(_hyaxTokenAddress != address(0), "Hyax token address cannot be the zero address");
 
         // Validate that the token is a valid HYAX token
-        ERC20TokenInterface newHyaxToken = ERC20TokenInterface(_hyaxTokenAddress);
+        IHyaxToken newHyaxToken = IHyaxToken(_hyaxTokenAddress);
 
         // Validate that the token is a valid HYAX token    
         require(keccak256(abi.encodePacked(newHyaxToken.symbol())) == keccak256(abi.encodePacked("HYAX")), 
@@ -922,17 +938,17 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
         hyaxTokenAddress = _hyaxTokenAddress;
 
         // Update the hyax token
-        hyaxToken = ERC20TokenInterface(hyaxTokenAddress);
+        hyaxToken = IHyaxToken(hyaxTokenAddress);
 
         emit HyaxTokenAddressUpdated(_hyaxTokenAddress);
     }
 
     /**
      * @notice Updates the maximum batch size for update rewards
-     * @dev This function can only be called by the owner
+     * @dev This function can only be called by the admin
      * @param _maximumBatchSizeForUpdateRewards The maximum batch size for update rewards
      */
-    function updateMaximumBatchSizeForUpdateRewards(uint8 _maximumBatchSizeForUpdateRewards) onlyOwner() public {
+    function updateMaximumBatchSizeForUpdateRewards(uint8 _maximumBatchSizeForUpdateRewards) onlyRole(DEFAULT_ADMIN_ROLE) public {
         // Validate that the maximum batch size is greater than 0
         require(_maximumBatchSizeForUpdateRewards > 0, "Maximum batch size cannot be 0");
 
@@ -944,12 +960,23 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
 
         emit MaximumBatchSizeForUpdateRewardsUpdated(_maximumBatchSizeForUpdateRewards);
     }
+    
+
+    /**
+     * @notice Returns the owner of the contract
+     * @dev This function can only be called by the owner
+     * @return The address of the owner
+     */
+    function owner() public view returns (address) {
+    // Returns the first account with the DEFAULT_ADMIN_ROLE
+        return getRoleMember(DEFAULT_ADMIN_ROLE, 0);
+    }
 
      /**
      * @dev Pauses all functionalities of the contract.
-     * Can only be called by the owner.
+     * Can only be called by the admin.
      */
-    function pause() public onlyOwner {
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
     
@@ -957,16 +984,16 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
      * @dev Unpauses all functionalities of the contract.
      * Can only be called by the owner.
      */
-    function unpause() public onlyOwner {
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
     }
 
     /**
      * @dev Transfers ownership of the contract to a new account (`newOwner`).
-     * Can only be called by the current owner.
-     * @param newOwner The address of the new owner.
+     * Can only be called by the current admin.
+     * @param newOwner The address of the new admin.
      */
-    function transferOwnership(address newOwner) public virtual override onlyOwner {
+    function transferOwnership(address newOwner) public virtual onlyRole(DEFAULT_ADMIN_ROLE) {
 
         //Validate the new owner is not the zero address
         require(newOwner != address(0), "Ownable: new owner is the zero address");
@@ -974,14 +1001,16 @@ contract UpgradeableHYAXRewardsV2 is OwnableUpgradeable, PausableUpgradeable, Re
         //Validate the new owner is not the same contract address, otherwise management of the smart contract will be lost
         require(newOwner != address(this), "Ownable: new owner cannot be the same contract address");
         
-        // Transfer the ownership to the new owner
-        _transferOwnership(newOwner);
+        // Grant the role to the new owner
+        grantRole(DEFAULT_ADMIN_ROLE, newOwner);
+
+        // Revoke the role from the current owner
+        revokeRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
     /**
-     * @dev This function returns a string indicating it's a new function in V2.
-     * It's a pure function, meaning it doesn't modify the state of the contract.
-     * @return A string indicating it's a new function in V2.
+     * @dev Returns a string indicating a new function.
+     * @return A string indicating a new function.
      */
     function newFunction() public pure returns (string memory) {
         return "New function in V2";

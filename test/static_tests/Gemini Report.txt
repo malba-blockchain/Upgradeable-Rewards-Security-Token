@@ -119,3 +119,13 @@
 24.4.30. Unchecked Low-Level Calls
 
     Not applicable in this code.
+
+Line 1023:
+
+The updateRewardsSingle function iterates over a list of wallet addresses. Consider using a mapping to store the latest reward update time for each wallet, avoiding unnecessary iterations.
+
+Line 1099: The withdrawRewardTokens function involves multiple state updates and transfers. Explore using a single transaction to minimize gas costs.
+
+Line 1150: The calculateYearForTeamTokens function can be optimized by using a more efficient conditional check or bitwise operations.
+
+Overall: Consider using the cheatcode library or similar tools to simulate gas costs and identify optimization opportunities.

@@ -37,7 +37,7 @@ describe("Test case #6. Withdraw Growth Tokens", function () {
         // Try to withdraw growth tokens
         await expect(
             upgradeableHYAXRewards.connect(addr1).withdrawGrowthTokens()
-        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'OwnableUnauthorizedAccount');
+        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'AccessControlUnauthorizedAccount');
     });
 
     it("6.3. Should revert if trying to withdraw after a year has passed and still has not been funded", async function () {

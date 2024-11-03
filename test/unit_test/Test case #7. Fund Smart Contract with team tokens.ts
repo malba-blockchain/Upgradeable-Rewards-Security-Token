@@ -30,7 +30,7 @@ describe("Test case #7. Fund Smart Contract with team tokens", function () {
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         await expect(
             upgradeableHYAXRewards.connect(addr1).fundSmartContract(1, fundingAmount)
-        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'OwnableUnauthorizedAccount');
+        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'AccessControlUnauthorizedAccount');
     });
 
     it("7.2. Should fail to fund the contract with team tokens because its not approved", async function () {

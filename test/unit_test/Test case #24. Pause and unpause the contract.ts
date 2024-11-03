@@ -46,7 +46,7 @@ describe("Test case #24. Pause and unpause the contract", function () {
         // Attempt to pause the contract without being the owner
         await expect(
             upgradeableHYAXRewards.connect(addr1).pause()
-        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'OwnableUnauthorizedAccount');
+        ).to.be.revertedWithCustomError(upgradeableHYAXRewards, 'AccessControlUnauthorizedAccount');
     });
 
     it("24.2. Successfully pause the smart contract", async function () {
