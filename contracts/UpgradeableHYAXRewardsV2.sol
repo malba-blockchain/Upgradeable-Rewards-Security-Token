@@ -29,7 +29,7 @@ contract UpgradeableHYAXRewardsV2 is AccessControlEnumerableUpgradeable,  Pausab
     // Required annotation to maintain storage location compatibility
     /// @custom:storage-location erc7201:openzeppelin.storage.AccessControlEnumerable
     Placeholder private _placeholder;
-    
+
     ////////////////// SMART CONTRACT EVENTS //////////////////
     /**
      * @dev Emitted when funding is added to the contract
@@ -156,17 +156,17 @@ contract UpgradeableHYAXRewardsV2 is AccessControlEnumerableUpgradeable,  Pausab
 
     ////////////////// SMART CONTRACT VARIABLES & CONSTANTS //////////////////
 
-    address public hyaxTokenAddress;
+    address public hyaxTokenAddress; // Address of the HYAX token
 
-    IHyaxToken public hyaxToken;
+    IHyaxToken public hyaxToken; // Instance of the HYAX token
 
-    enum FundingType {GrowthTokens, TeamTokens, RewardTokens}
+    enum FundingType {GrowthTokens, TeamTokens, RewardTokens} // Enum to identify the type of funding
 
-    uint256 public constant MIN_INTERVAL_FOR_UPDATE_REWARDS = 6 days;
+    uint256 public constant MIN_INTERVAL_FOR_UPDATE_REWARDS = 6 days; // Minimum interval for update rewards    
 
-    bytes32 public constant REWARDS_UPDATER_ROLE = keccak256("REWARDS_UPDATER_ROLE");
+    bytes32 public constant REWARDS_UPDATER_ROLE = keccak256("REWARDS_UPDATER_ROLE"); // Role for the rewards updater
 
-    bytes32 public constant WHITELISTER_ROLE = keccak256("WHITELISTER_ROLE");
+    bytes32 public constant WHITELISTER_ROLE = keccak256("WHITELISTER_ROLE"); // Role for the whitelister
 
     ////////////////// GROWTH TOKENS VARIABLES //////////////////
 
@@ -228,12 +228,11 @@ contract UpgradeableHYAXRewardsV2 is AccessControlEnumerableUpgradeable,  Pausab
 
     bool public rewardTokensFundingStarted; // Flag to indicate if team tokens funding has begun
 
-
     ////////////////// DATA VARIABLES & MAPPINGS //////////////////
    
-    address public whiteListerAddress;
+    address public whiteListerAddress; // Address of the whitelister
 
-    address public rewardsUpdaterAddress;
+    address public rewardsUpdaterAddress; // Address of the rewards updater
 
     struct WalletData {
         uint256 hyaxHoldingAmount;                  // Current amount of HYAX tokens held by the wallet
@@ -253,9 +252,11 @@ contract UpgradeableHYAXRewardsV2 is AccessControlEnumerableUpgradeable,  Pausab
         bool isBlacklisted;                         // Flag indicating if the wallet is blacklisted
     }
     
-    uint8 public maximumBatchSizeForUpdateRewards;
+    uint8 public maximumBatchSizeForUpdateRewards; // Maximum batch size for update rewards
     
-    mapping(address => WalletData) public wallets;
+    mapping(address => WalletData) public wallets; // Mapping to store wallet data
+
+    uint256[50] private __gap; // Array to store unused space for future upgrades
 
     ////////////////// SMART CONTRACT CONSTRUCTOR /////////////////
 
@@ -291,16 +292,34 @@ contract UpgradeableHYAXRewardsV2 is AccessControlEnumerableUpgradeable,  Pausab
         // Create an instance of the HYAX token
         hyaxToken = IHyaxToken(hyaxTokenAddress);
 
+        // Set the initial values for growth tokens to prevent Uninitialized State Variable errors
+        growthTokensFunded = 0;
+        growthTokensWithdrawn = 0;
+        growthTokensInSmartContract = 0;
+        growthTokensLastWithdrawalTime = 0;
+        growthTokensStartFundingTime = 0;
+        growthTokensFundingStarted = false;
+
+        // Set the initial values for team tokens to prevent Uninitialized State Variable errors
+        teamTokensFunded = 0;
+        teamTokensWithdrawn = 0;
+        teamTokensInSmartContract = 0;
+        teamTokensStartFundingTime = 0;
+        teamTokensFundingStarted = false;
+
+        // Set the initial values for reward tokens to prevent Uninitialized State Variable errors
+        rewardTokensFunded = 0;
+        rewardTokensDistributed = 0;
+        rewardTokensWithdrawn = 0;
+        rewardTokensInSmartContract = 0;
+        rewardTokensStartFundingTime = 0;
+        rewardTokensFundingStarted = false;
+        
         // Set the initial maximum batch size for update rewards
         maximumBatchSizeForUpdateRewards = 100;
 
         //Validate that the hyax token is valid based on the symbol
         require(keccak256(abi.encodePacked(hyaxToken.symbol())) == keccak256(abi.encodePacked("HYAX"))  , "Hyax token address is not valid");
-        
-        // Set the initial rewards amounts to 0
-        growthTokensFunded = 0;
-        teamTokensFunded = 0;
-        rewardTokensFunded = 0;
     }
 
     ////////////////// SMART CONTRACT FUNCTIONS //////////////////
@@ -311,9 +330,15 @@ contract UpgradeableHYAXRewardsV2 is AccessControlEnumerableUpgradeable,  Pausab
      * @param _isTeamWallet A boolean indicating if the wallet is a team wallet
      */
     function addWalletToWhitelist(address _walletAddress, bool _isTeamWallet, uint256 _hyaxHoldingAmountAtWhitelistTime) onlyAdminOrWhitelister public {
+    
+        // Ensure the provided address is 20 bytes (the typical length for Ethereum addresses)
+        require(_walletAddress != address(0), "Address cannot be the zero address");
+
+        //Verify that the wallet address is a valid address
+        require(address(_walletAddress).code.length == 0, "Invalid address length or contract address");
 
         //Verify that the wallet is not already in the whitelist
-        require(wallets[_walletAddress].isWhitelisted == false, "Wallet is already whitelisted");
+        require(!wallets[_walletAddress].isWhitelisted, "Wallet is already whitelisted");
 
         //Verify that the wallet is not in a blacklist
         require(wallets[_walletAddress].isBlacklisted == false, "Wallet has been blacklisted");
@@ -347,6 +372,9 @@ contract UpgradeableHYAXRewardsV2 is AccessControlEnumerableUpgradeable,  Pausab
             wallets[_walletAddress].hyaxHoldingAmount = 0; // Set the wallet's HYAX holding amount
         }
 
+        // Final validation of the wallet whitelist status
+        require(wallets[_walletAddress].isWhitelisted == true && wallets[_walletAddress].addedToWhitelistTime != 0, "Failed to whitelist the wallet");
+
         //Emit an event to notify that the wallet was added to the whitelist
         emit WalletAddedToWhitelist(msg.sender, _walletAddress, _isTeamWallet, _hyaxHoldingAmountAtWhitelistTime);
     }
@@ -360,7 +388,7 @@ contract UpgradeableHYAXRewardsV2 is AccessControlEnumerableUpgradeable,  Pausab
         
         //Verify that the wallet is currently in a different status
         require(wallets[_walletAddress].isWhitelisted != _newStatus, "Wallet has already been updated to that status");
-
+        
         //Verify that the wallet has been added to the whitelist
         require(wallets[_walletAddress].addedToWhitelistTime != 0, "Wallet has not been added to the whitelist");
 
@@ -380,9 +408,12 @@ contract UpgradeableHYAXRewardsV2 is AccessControlEnumerableUpgradeable,  Pausab
         
         //Verify that the wallet is currently in a different status
         require(wallets[_walletAddress].isBlacklisted != _newStatus, "Wallet has already been updated to that status");
-    
+
         //Update the blacklist status
         wallets[_walletAddress].isBlacklisted = _newStatus; 
+
+        //If the wallet blacklist new status is true (add to blacklist), set the whitelist status to false (remove from whitelist)
+        if(_newStatus == true){ wallets[_walletAddress].isWhitelisted = false; }
 
         //Emit an event to notify that the wallet blacklisted status has been updated
         emit BlacklistStatusUpdated(msg.sender, _walletAddress, _newStatus);
@@ -396,6 +427,9 @@ contract UpgradeableHYAXRewardsV2 is AccessControlEnumerableUpgradeable,  Pausab
      * @custom:events Emits a FundingAdded event upon successful funding
      */
     function fundSmartContract(FundingType _fundingType, uint256 _amount) onlyRole(DEFAULT_ADMIN_ROLE) nonReentrant() isNotPaused() public {
+
+        // Ensure that only the contract owner can fund the smart contract
+        require(msg.sender == owner(), "Only the owner can fund the smart contract");
 
         // Check if the funding type is valid
         require(_fundingType == FundingType.GrowthTokens || _fundingType == FundingType.TeamTokens || _fundingType == FundingType.RewardTokens, "Invalid funding type");
@@ -783,6 +817,9 @@ contract UpgradeableHYAXRewardsV2 is AccessControlEnumerableUpgradeable,  Pausab
 
     function withdrawTokensToBurn(FundingType _fundingType, uint256 _amount) onlyRole(DEFAULT_ADMIN_ROLE) nonReentrant() isNotPaused() public {
 
+        // Ensure that only the contract owner can withdraw tokens
+        require(msg.sender == owner(), "Only the owner can withdraw tokens");
+
         // Check if the funding type is valid
         require(_fundingType == FundingType.GrowthTokens || _fundingType == FundingType.TeamTokens || _fundingType == FundingType.RewardTokens, "Invalid funding type");
 
@@ -824,6 +861,10 @@ contract UpgradeableHYAXRewardsV2 is AccessControlEnumerableUpgradeable,  Pausab
     }
 
     function updateTeamMemberWallet(address _oldTeamMemberWalletAddress, address _newTeamMemberWalletAddress) onlyRole(DEFAULT_ADMIN_ROLE) nonReentrant() public {
+        
+        // Ensure that only the contract owner can update the team member wallet
+        require(msg.sender == owner(), "Only the owner can update the team member wallet");
+
         // Ensure that team tokens funding has started
         require(teamTokensFundingStarted, "Team tokens funding has not started yet, no tokens to recover");
 
@@ -859,7 +900,7 @@ contract UpgradeableHYAXRewardsV2 is AccessControlEnumerableUpgradeable,  Pausab
         //Do the transfer of the previous values to the new team member wallet address
         wallets[_newTeamMemberWalletAddress].hyaxHoldingAmountAtWhitelistTime = wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmountAtWhitelistTime;
         wallets[_newTeamMemberWalletAddress].hyaxHoldingAmount = wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmount;
-                wallets[_newTeamMemberWalletAddress].addedToWhitelistTime = wallets[_oldTeamMemberWalletAddress].addedToWhitelistTime;
+        wallets[_newTeamMemberWalletAddress].addedToWhitelistTime = wallets[_oldTeamMemberWalletAddress].addedToWhitelistTime;
         wallets[_newTeamMemberWalletAddress].teamTokenWithdrawalTimes = wallets[_oldTeamMemberWalletAddress].teamTokenWithdrawalTimes;
 
         //Remove the old team member wallet address from the lists
@@ -871,6 +912,11 @@ contract UpgradeableHYAXRewardsV2 is AccessControlEnumerableUpgradeable,  Pausab
         wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmountAtWhitelistTime = 0;
         wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmount = 0; 
         wallets[_oldTeamMemberWalletAddress].teamTokenWithdrawalTimes = 0;
+
+        //Validate the new status of the wallets
+        require(wallets[_newTeamMemberWalletAddress].isWhitelisted == true && wallets[_newTeamMemberWalletAddress].addedToWhitelistTime != 0
+            && wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmountAtWhitelistTime == 0 && wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmount == 0,
+            "Failed to update the team member wallet");
         
         //Emit an event to notify that the team tokens were recovered
         emit TeamMemberWalletUpdated(_oldTeamMemberWalletAddress, _newTeamMemberWalletAddress,
@@ -994,6 +1040,9 @@ contract UpgradeableHYAXRewardsV2 is AccessControlEnumerableUpgradeable,  Pausab
      * @param newOwner The address of the new admin.
      */
     function transferOwnership(address newOwner) public virtual onlyRole(DEFAULT_ADMIN_ROLE) {
+
+        // Ensure that only the contract owner can transfer ownership
+        require(msg.sender == owner(), "Only the owner can transfer ownership");
 
         //Validate the new owner is not the zero address
         require(newOwner != address(0), "Ownable: new owner is the zero address");

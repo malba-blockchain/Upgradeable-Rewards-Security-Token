@@ -67,6 +67,9 @@ describe("Test case #12. Update rewards for a single non team wallet", function 
         // Add the wallet to the blacklist
         await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr1.address, true);
 
+        // Change the wallet whitelist status to true because when you add to the blacklist, the whitelist status is set to false
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateWhitelistStatus(addr1.address, true);
+
         // Try to update the rewards of a blacklisted wallet
         await expect(
             upgradeableHYAXRewards.connect(rewardsUpdaterAddress).updateRewardsSingle(walletAddress, rewardAmount)

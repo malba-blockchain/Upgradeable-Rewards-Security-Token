@@ -49,7 +49,6 @@ npx hardhat test
 
 4. Create growth tokens functionalities DONE
 
-
 ---------------ToDo---------------
 
 5. Create teams tokens functionalities
@@ -525,10 +524,13 @@ Copilot DONE
 
 23. Add gitlab updates
 
+Questions: The withdrawTokensToBurn function should send the tokens to the owner wallet or to the treasury wallet?
+
 To check: 
 
 getCurrentTokenPrice() function. Price freshness validation.
 getCurrentTokenPrice() function. Oracle price manipulation validation.
+
 
 26. Deploy in testnet (3 days) 
 

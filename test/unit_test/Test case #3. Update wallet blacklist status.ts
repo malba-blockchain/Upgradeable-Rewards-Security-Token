@@ -44,6 +44,9 @@ describe("Test case #3. Update wallet blacklist status", function () {
         //Add wallet to the blacklist
         await upgradeableHYAXRewards.connect(owner).updateBlacklistStatus(addr1.address, true);
 
+        // Change the wallet whitelist status to true because when you add to the blacklist, the whitelist status is set to false
+        await upgradeableHYAXRewards.connect(owner).updateWhitelistStatus(addr1.address, true);
+
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
             rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes,
@@ -72,6 +75,9 @@ describe("Test case #3. Update wallet blacklist status", function () {
 
         //Add wallet to the blacklist
         await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr1.address, true);
+
+        // Change the wallet whitelist status to true because when you add to the blacklist, the whitelist status is set to false
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateWhitelistStatus(addr1.address, true);
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
@@ -119,6 +125,9 @@ describe("Test case #3. Update wallet blacklist status", function () {
         // Remove the wallet from the blacklist
         await upgradeableHYAXRewards.connect(owner).updateBlacklistStatus(addr1.address, false);
 
+        // Change the wallet whitelist status to true because when you add to the blacklist, the whitelist status is set to false
+        await upgradeableHYAXRewards.connect(owner).updateWhitelistStatus(addr1.address, true);
+
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,
             rewardsWithdrawn, addedToWhitelistTime, teamTokenWithdrawalTimes,
@@ -150,6 +159,9 @@ describe("Test case #3. Update wallet blacklist status", function () {
 
         // Remove the wallet from the blacklist
         await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr1.address, false);
+
+        // Change the wallet whitelist status to true because when you add to the blacklist, the whitelist status is set to false
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateWhitelistStatus(addr1.address, true);
 
         //Get the wallet data of the address
         const [hyaxHoldingAmount, hyaxHoldingAmountAtWhitelistTime, totalHyaxRewardsAmount, currentRewardsAmount,

@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "D:\\USER\\Downloads\\ATLAS\\Projects\\HYAX-Upgradeable-Rewards\\contracts\\UpgradeableHYAXRewards.sol": {
-      "lastModificationDate": 1730672398249,
-      "contentHash": "4abeeffb547765e4ed18f3c3fd0e0cf0",
+      "lastModificationDate": 1730740698456,
+      "contentHash": "f7088455be77a36362b170d5683be0ec",
       "sourceName": "contracts/UpgradeableHYAXRewards.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -664,8 +664,8 @@
       ]
     },
     "D:\\USER\\Downloads\\ATLAS\\Projects\\HYAX-Upgradeable-Rewards\\contracts\\UpgradeableHYAXRewardsV2.sol": {
-      "lastModificationDate": 1730671771096,
-      "contentHash": "19f850350120697d61d6e3cc6bf2ef65",
+      "lastModificationDate": 1730740696566,
+      "contentHash": "0c6a5551589f64894c52e7765ed01e30",
       "sourceName": "contracts/UpgradeableHYAXRewardsV2.sol",
       "solcConfig": {
         "version": "0.8.20",

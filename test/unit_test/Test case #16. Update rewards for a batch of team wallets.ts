@@ -163,6 +163,11 @@ describe("Test case #16. Update rewards for a batch of team wallets", function (
         await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr2.address, true);
         await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr3.address, true);
 
+        // Change the wallet whitelist status to true because when you add to the blacklist, the whitelist status is set to false
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateWhitelistStatus(addr1.address, true);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateWhitelistStatus(addr2.address, true);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateWhitelistStatus(addr3.address, true);
+
         const walletAddresses = [addr1.address, addr2.address, addr3.address];
 
         let totalRewards = 2884615384615384615384615;
@@ -202,6 +207,10 @@ describe("Test case #16. Update rewards for a batch of team wallets", function (
         // Add the wallet to the blacklist
         await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr1.address, true);
         await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr2.address, true);
+
+        // Change the wallet whitelist status to true because when you add to the blacklist, the whitelist status is set to false
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateWhitelistStatus(addr1.address, true);
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateWhitelistStatus(addr2.address, true);
 
         const walletAddresses = [addr1.address, addr2.address, addr3.address];
 
@@ -248,6 +257,9 @@ describe("Test case #16. Update rewards for a batch of team wallets", function (
 
         // Add the wallet to the blacklist
         await upgradeableHYAXRewards.connect(whitelisterAddress).updateBlacklistStatus(addr2.address, true);
+
+        // Change the wallet whitelist status to true because when you add to the blacklist, the whitelist status is set to false
+        await upgradeableHYAXRewards.connect(whitelisterAddress).updateWhitelistStatus(addr2.address, true);
 
         const walletAddresses = [addr1.address, addr2.address, addr3.address];
 

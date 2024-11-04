@@ -17,6 +17,7 @@ ANSWER: False positive. There is a require() statement that validates that the _
 5. Impact: Medium Detail: Front-Running Attack: The withdrawTokensToBurn function, which allows withdrawal by the owner, could be manipulated if transaction ordering is influenced, enabling others to observe and react based on intended burns. Protect by adding multi-sig or timelock mechanisms.
 ANSWER: False positive. The owner wallet is already a multisig. 
 
+
 6. Impact: Critical Detail: Insecure Access Control: The updateRewardsSingle function relies on the onlyOwnerOrRewardsUpdater modifier but doesn’t restrict updates based on user roles. If rewardsUpdaterAddress is compromised, rewards can be updated arbitrarily for any wallet, leading to fraud risks. 
 ToDo:
 -Add access control for onlyOwner() require()  DONE 
@@ -26,65 +27,82 @@ ToDo:
 -Update tests
 
 npx hardhat test
-npx hardhat test "test/unit_test/Test case #10. Fund smart contract with reward tokens.ts"
+npx hardhat test "test/unit_test/Test case #12. Update rewards for a single non team wallet.ts"
 
 ANSWER: Updated control to access functionalities from Ownable() to AccessControlEnumerableUpgradeable() library in order to asign specific roles to the addresses.
 
-CONTINUE HEREEEEEEEEEEEEEEEE
 
 7. Impact: Low Detail: Short Address Attack: No explicit check on the length of the _walletAddress parameter in addWalletToWhitelist. Consider adding an address length check, though Solidity’s built-in checks mitigate this risk somewhat.
 ANSWER: Added the size control for the wallet address before adding it to the whitelist.
 
 
 8. Impact: High  Detail: Uninitialized State Variable: The contract constructor is not explicitly defined, which risks inadvertently calling the initialize function without setting values correctly. Consider adding initializer checks or setting default values.
+ANSWER: Variables have been initialized to default values in the contract constructor
 
 
 9. Impact: Critical  Detail: Delegatecall Injection: If any external calls indirectly invoke delegatecall (not observed directly), it would allow executing code within the context of this contract. Double-check dependencies and imports for delegatecall use.
+ANSWER: No delegatecall use have been implemented. Will see the results of advanced audits.
 
 
 10. Impact: Medium  Detail: Timestamp Dependence: The block.timestamp dependency in functions like withdrawGrowthTokens introduces susceptibility to miner manipulation.
+ANSWER: False positive. There is dependance on the block.timestamp however, this vulnerability can have a 15 second delay window, which is not a risk for this function that's allowed to be executed once a year and the one who executes the function is the multisign wallet owner.
 
 
 11. Impact: Critical Detail: Tx.origin Authentication: The onlyOwnerOrWhitelister modifier emits tx.origin without a specific need. If any logic relies on tx.origin for authentication elsewhere, this could open a path for phishing-style attacks where a trusted contract could be tricked into using the user’s tx.origin for authorization.
+ANSWER: False positive. The tx.origin parameter is only used for login the origin of the transaction in functions that are restricted to be executed by the owner, the whitelister, the rewardsupdater or the smart contract itself.
 
 
 12. Impact: Critical Detail: Unrestricted Ether Withdrawal: The withdrawTokensToBurn function does not limit who can withdraw tokens or if they are sent only to the owner. If ownership is transferred maliciously, any funding can be withdrawn unrestrictedly. Consider restricting the withdraw functionality to specific conditions.
+ANSWER: Modified the function so that only the owner from the multisig can withdraw tokens to burn.
 
 
 13. Impact: High Detail: Race Condition: In the fundSmartContract function, growthTokensInSmartContract is updated after growthTokensFunded, creating a potential for race conditions if called simultaneously by multiple users. Consider synchronizing updates or limiting external calls within the function to avoid discrepancies in the balances.
+ANSWER: The execution order is true, but the only address that can execute that function is the onwer multisig.
 
 
 14. Impact: Medium Detail: Insufficient Gas Griefing: During the withdrawGrowthTokens function, there is no gas stipend check for the transfer function to the owner. If the recipient reverts due to insufficient gas, it could prevent legitimate withdrawals, creating a griefing vector.
+ANSWER: The withdrawGrowthTokens() function is only executed by the owner and the transfer function implements the library SafeERC20. So risks are mitigated.
 
 
 15. Impact: High Detail: Gas Limit Vulnerabilities: In the updateRewardsBatch function, processing too many wallets at once may exceed gas limits, causing batch transactions to fail. Implementing a gas threshold or restricting array size can improve resilience to this vulnerability.
+ANSWER: False positive. The requirement maximumBatchSizeForUpdateRewards, validates that the number of wallets to be processed is below the maximum batch threshold established.
 
 
 16. Impact: High Detail: Unchecked External Calls: The external hyaxToken.transferFrom call lacks a check on the return value, potentially allowing the function to proceed with a failed transfer. This could lead to inaccurate tracking of token balances if the transfer fails silently.
+ANSWER: False positive. The hyaxToken.transferFrom functionality is executed inside of a require() statement and the transferFrom function is implemented using SafeERC20 to mitigate problems of failed transfers.
 
 
 17. Impact: Medium Detail: Unchecked Return Data: In the addWalletToWhitelist function, there is no explicit validation on whether address attributes or the whitelisting logic are processed correctly. Address whitelisting without a successful confirmation could impact reward distributions or lead to discrepancies.
+ANSWER: Added validation of registration at the end with require() statement.
 
 
 18. Impact: High Detail: Oracle Manipulation: If any price or external data is required (e.g., for token distributions), this contract lacks protections against manipulated values, especially when relying on external contract interactions. Ensure any oracle data is verified and reliable to prevent abuse.
+ANSWER: The oracle data used is from the reliable Chainlink price feeds.
 
 
 19. Impact: Critical Detail: Logic Errors: The updateTeamMemberWallet function incorrectly resets the old team member wallet and transfers all attributes to the new wallet address without confirming the new member’s role or account status. Malicious actors could abuse this transfer to obtain team tokens illegitimately.
+ANSWER: Added validation of added new wallet and removal of old wallet at the end with require() statement.
 
 
 20. Impact: High Detail: Flash Loan Attack Vectors: In the fundSmartContract function, a malicious actor could exploit flash loans to fund, withdraw, and burn tokens within the same transaction. Adding time delays or requiring non-instantaneous funding helps mitigate this attack vector.
+ANSWER: False positive. The fundSmartContract() function can only be executed by the owner, the owner is a multisig and this function only receives hyax tokens.
 
 
 21. Impact: High Detail: Storage Collision: Multiple mappings, enums, and flags are set in the storage layout, which could lead to storage collision if future contracts are added or if data is manipulated within upgradeable functions. Explicitly specify storage slots to avoid collisions, particularly in upgradeable contracts.
+ANSWER: Storage slots will be tracked using the Upgradeable library from oppenzeppelin and a gap of uint256[50] private __gap; was added at the end of variable declaration to avoid possible collisions.
 
 
 22. Impact: Critical Detail: Reentrancy Guard Bypass: Although the contract uses ReentrancyGuardUpgradeable, the onlyOwnerOrWhitelister modifier emits an event before checking reentrancy. This event could expose data or provide a way to bypass reentrancy control in other calls. Place reentrancy checks earlier to prevent potential bypasses.
+ANSWER: The reentrancy risk in the functions executed by onlyOwnerOrWhitelister is zero because the only authorized to execute these functions are exclusively the owner or the whitelister.
 
 
 23. Impact: Medium Detail: Improper Error Handling: The require statement in fundSmartContract fails silently if an invalid _fundingType is passed. While this halts execution, it lacks context for debugging and would benefit from a custom error or detailed revert message to aid developers and users.
+ANSWER: False positive. There is a require() that in case of failing reverts the function with the message "Invalid funding type".
 
+CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
 24. Impact: Medium Detail: Ambiguous Evaluation Order: In withdrawGrowthTokens, there are chained require statements and complex conditional logic. If order changes inadvertently in future versions, it could lead to different evaluations or unexpected outcomes. Refactor conditions to avoid ambiguity in execution.
+ANSWER: 
 
 
 25. Impact: High Detail: ABI Hash Collisions: Events in the contract could generate ABI selector collisions if similar function names with identical parameters are added. For instance, FundingAdded and TokensToBurnWithdrawn have similar parameters, increasing collision risk. Adding unique identifiers to events will reduce the likelihood of collisions.
