@@ -33,38 +33,38 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
     ////////////////// SMART CONTRACT EVENTS //////////////////
     /**
      * @dev Emitted when funding is added to the contract
-     * @param _fundingType The type of funding added (GrowthTokens, TeamTokens, or RewardTokens)
-     * @param _amount The amount of tokens added
+     * @param _fundingTypeAdded The type of funding added (GrowthTokens, TeamTokens, or RewardTokens)
+     * @param _amountAdded The amount of tokens added
      */
-    event FundingAdded(FundingType _fundingType, uint256 _amount);
+    event FundingAdded(FundingType _fundingTypeAdded, uint256 _amountAdded);
     
     /**
      * @dev Emitted when growth tokens are withdrawn
-     * @param _walletAddress The address of the wallet that withdrew the tokens
-     * @param _amount The amount of growth tokens withdrawn
+     * @param _walletAddressGrowthTokensWithdrawn The address of the wallet that withdrew the tokens
+     * @param _amountWithdrawn The amount of growth tokens withdrawn
      */
-    event GrowthTokensWithdrawn(address _walletAddress, uint256 _amount);
+    event GrowthTokensWithdrawn(address _walletAddressGrowthTokensWithdrawn, uint256 _amountWithdrawn);
 
     /**
      * @dev Emitted when team tokens are withdrawn
-     * @param _walletAddress The address of the wallet that withdrew the tokens
-     * @param _amount The amount of team tokens withdrawn
+     * @param _walletAddressTeamTokensWithdrawn The address of the wallet that withdrew the tokens
+     * @param _amountWithdrawn The amount of team tokens withdrawn
      */
-    event TeamTokensWithdrawn(address _walletAddress, uint256 _amount);
+    event TeamTokensWithdrawn(address _walletAddressTeamTokensWithdrawn, uint256 _amountWithdrawn);
 
     /**
      * @dev Emitted when reward tokens are withdrawn
-     * @param _walletAddress The address of the wallet that withdrew the rewards
-     * @param _amount The amount of rewards withdrawn
+     * @param _walletAddressRewardTokensWithdrawn The address of the wallet that withdrew the rewards
+     * @param _amountWithdrawn The amount of rewards withdrawn
      */
-    event RewardTokensWithdrawn(address _walletAddress, uint256 _amount);
+    event RewardTokensWithdrawn(address _walletAddressRewardTokensWithdrawn, uint256 _amountWithdrawn);
 
     /**
      * @dev Emitted when tokens are withdrawn to be burned
-     * @param _fundingType The type of funding (GrowthTokens, TeamTokens, or RewardTokens)
+     * @param _fundingTypeWithdrawn The type of funding (GrowthTokens, TeamTokens, or RewardTokens)
      * @param _amount The amount of tokens withdrawn to be burned
      */
-    event TokensToBurnWithdrawn(FundingType _fundingType, uint256 _amount);
+    event TokensToBurnWithdrawn(FundingType _fundingTypeWithdrawn, uint256 _amount);
 
     /**
      * @dev Emitted when a wallet is added to the whitelist
@@ -77,19 +77,19 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
 
     /**
      * @dev Emitted when a wallet whitelist status is updated
-     * @param _sender The address that updated the whitelist status
-     * @param _walletAddress The address of the wallet 
-     * @param _newStatus The new status of the wallet in the whitelist
+     * @param _senderWhitelistStatusUpdated The address that updated the whitelist status
+     * @param _walletAddressWhitelistStatusUpdated The address of the wallet 
+     * @param _newStatusWhitelistStatusUpdated The new status of the wallet in the whitelist
      */
-    event WhitelistStatusUpdated(address _sender, address _walletAddress, bool _newStatus);
+    event WhitelistStatusUpdated(address _senderWhitelistStatusUpdated, address _walletAddressWhitelistStatusUpdated, bool _newStatusWhitelistStatusUpdated);
 
     /**
      * @dev Emitted when a wallet blacklist status is updated
-     * @param _sender The address that updated the blacklist status
-     * @param _walletAddress The address of the wallet 
-     * @param _newStatus The new status of the wallet in the blacklist
+     * @param _senderBlacklistStatusUpdated The address that updated the blacklist status
+     * @param _walletAddressBlacklistStatusUpdated The address of the wallet 
+     * @param _newStatusBlacklistStatusUpdated The new status of the wallet in the blacklist
      */
-    event BlacklistStatusUpdated(address _sender, address _walletAddress, bool _newStatus);
+    event BlacklistStatusUpdated(address _senderBlacklistStatusUpdated, address _walletAddressBlacklistStatusUpdated, bool _newStatusBlacklistStatusUpdated);
 
     /**
      * @dev Emitted when a reward update is successful for a specific wallet
@@ -98,7 +98,7 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
      * @param _hyaxReward The amount of HYAX rewards updated for the wallet
      */
     event RewardUpdateSuccess(address _sender, address _walletAddress, uint256 _hyaxReward);
-
+ 
     /**
      * @dev Emitted when a reward update batch is sent
      * @param _sender The address that attempted to update the rewards
@@ -116,13 +116,6 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
     event RewardUpdateFailed(address _sender, address _walletAddress, string _errorMessage);
 
     /**
-     * @dev Emitted when a function is called, logging the sender and origin of the transaction
-     * @param _sender The address that initiated the transaction
-     * @param _origin The origin of the transaction (tx.origin)
-     */
-    event LogSenderAndOrigin(address _sender, address _origin);
-
-    /**
      * @dev Emitted when a team member wallet is updated
      * @param _oldTeamMemberWalletAddress The address of the old team member wallet
      * @param _newTeamMemberWalletAddress The address of the new team member wallet
@@ -132,15 +125,15 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
 
     /**
      * @dev Emitted when the white lister address is updated
-     * @param _whiteListerAddress The address of the new white lister
+     * @param _newWhiteListerAddress The address of the new white lister
      */
-    event WhiteListerAddressUpdated(address _whiteListerAddress);
+    event WhiteListerAddressUpdated(address _newWhiteListerAddress);
 
     /**
      * @dev Emitted when the rewards updater address is updated
-     * @param _rewardsUpdaterAddress The address of the new rewards updater
+     * @param _newRewardsUpdaterAddress The address of the new rewards updater
      */
-    event RewardsUpdaterAddressUpdated(address _rewardsUpdaterAddress);
+    event RewardsUpdaterAddressUpdated(address _newRewardsUpdaterAddress);
 
     /**
      * @dev Emitted when the hyax token address is updated
@@ -330,20 +323,12 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
      * @param _isTeamWallet A boolean indicating if the wallet is a team wallet
      */
     function addWalletToWhitelist(address _walletAddress, bool _isTeamWallet, uint256 _hyaxHoldingAmountAtWhitelistTime) onlyAdminOrWhitelister public {
-    
-        // Ensure the provided address is 20 bytes (the typical length for Ethereum addresses)
+        
+        // Validate the wallet address and its whitelist status
         require(_walletAddress != address(0), "Address cannot be the zero address");
-
-        //Verify that the wallet address is a valid address
         require(address(_walletAddress).code.length == 0, "Invalid address length or contract address");
-
-        //Verify that the wallet is not already in the whitelist
         require(!wallets[_walletAddress].isWhitelisted, "Wallet is already whitelisted");
-
-        //Verify that the wallet is not in a blacklist
         require(wallets[_walletAddress].isBlacklisted == false, "Wallet has been blacklisted");
-
-        //Verify that the wallet has not been added to the whitelist
         require(wallets[_walletAddress].addedToWhitelistTime == 0, "Wallet has already been added to the whitelist");
         
         //Add the wallet to the whitelist with the provided parameters
@@ -386,10 +371,8 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
      */ 
     function updateWhitelistStatus(address _walletAddress, bool _newStatus) onlyAdminOrWhitelister public {
         
-        //Verify that the wallet is currently in a different status
+        //Verify that the wallet is currently in a different status and the wallet has been added to the whitelist
         require(wallets[_walletAddress].isWhitelisted != _newStatus, "Wallet has already been updated to that status");
-        
-        //Verify that the wallet has been added to the whitelist
         require(wallets[_walletAddress].addedToWhitelistTime != 0, "Wallet has not been added to the whitelist");
 
         //Update the whitelist status
@@ -428,13 +411,9 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
      */
     function fundSmartContract(FundingType _fundingType, uint256 _amount) onlyRole(DEFAULT_ADMIN_ROLE) nonReentrant() isNotPaused() public {
 
-        // Ensure that only the contract owner can fund the smart contract
+        // Validate the funding request
         require(msg.sender == owner(), "Only the owner can fund the smart contract");
-
-        // Check if the funding type is valid
         require(_fundingType == FundingType.GrowthTokens || _fundingType == FundingType.TeamTokens || _fundingType == FundingType.RewardTokens, "Invalid funding type");
-
-        // Verify that the amount is greater than 0
         require(_amount > 0, "Amount must be greater than 0");
         
         // Transfer the specified token to this contract
@@ -497,18 +476,12 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
     modifier onlyAdminOrWhitelister {
         // Ensure that the sender is the owner or the whitelister address
         require(hasRole(WHITELISTER_ROLE, msg.sender) || hasRole(DEFAULT_ADMIN_ROLE, msg.sender)  , "Function reserved only for the whitelister or the owner");
-        
-        // Emit an event to log the sender and origin of the transaction
-        emit LogSenderAndOrigin(msg.sender, tx.origin);
         _;
     }
 
     modifier onlyAdminOrRewardsUpdater {
         // Ensure that the sender is the owner, the rewards updater address or the contract itself
         require(hasRole(REWARDS_UPDATER_ROLE, msg.sender) || hasRole(DEFAULT_ADMIN_ROLE, msg.sender) || msg.sender == address(this), "Function reserved only for the rewards updater, the owner, or the contract itself");
-        
-        // Emit an event to log the sender and origin of the transaction
-        emit LogSenderAndOrigin(msg.sender, tx.origin);
         _;
     }
 
@@ -536,6 +509,7 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
      * @dev This function can only be called by the contract owner
      * @dev Withdrawals are limited to once per year and a fixed amount per withdrawal
      * @dev The function checks various conditions before allowing the withdrawal
+     * @custom:requirements Only the owner can withdraw growth tokens
      * @custom:requirements Funding must have started
      * @custom:requirements At least one year must have passed since funding start
      * @custom:requirements Not all growth tokens have been withdrawn
@@ -544,26 +518,22 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
      */
     function withdrawGrowthTokens() onlyRole(DEFAULT_ADMIN_ROLE) nonReentrant() isNotPaused() public {
 
-        // Check if growth tokens funding has started
+        // Validate the conditions for growth tokens withdrawal
+        require(msg.sender == owner(), "Only the owner can withdraw growth tokens");
         require(growthTokensFundingStarted, "Growth tokens funding has not started yet, no tokens to withdraw");
-        
-        // Ensure that at least one year has passed since the funding start time
         require(block.timestamp >= growthTokensStartFundingTime + TOKENS_WITHDRAWAL_PERIOD , "Cannot withdraw before 1 year after funding start");
-        
-        // Verify that not all growth tokens have been withdrawn yet
         require(growthTokensWithdrawn < GROWTH_TOKENS_TOTAL, "All growth tokens have been withdrawn");
-        
-        // Ensure that at least one year has passed since the last withdrawal
         require(block.timestamp >= growthTokensLastWithdrawalTime + TOKENS_WITHDRAWAL_PERIOD, "Can only withdraw once per year");
         
         // Set the initial withdrawable amount to the yearly withdrawal limit
         uint256 withdrawableAmount = GROWTH_TOKENS_WITHDRAWAL_PER_YEAR;
         
         // Check if withdrawing the full yearly amount would exceed the total growth tokens
-        if (growthTokensWithdrawn + withdrawableAmount > GROWTH_TOKENS_TOTAL) {
-            // If so, adjust the withdrawable amount to the remaining balance
-            withdrawableAmount = GROWTH_TOKENS_TOTAL - growthTokensWithdrawn;
-        }
+        uint256 totalWithdrawn = growthTokensWithdrawn + withdrawableAmount;
+
+        // If so, adjust the withdrawable amount to the remaining balance
+        if (totalWithdrawn > GROWTH_TOKENS_TOTAL) { withdrawableAmount = GROWTH_TOKENS_TOTAL - growthTokensWithdrawn; }
+        
         // Update the growth tokens withdrawn amount
         growthTokensWithdrawn += withdrawableAmount;
 
@@ -597,22 +567,12 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
      */
     function withdrawTeamTokens() isWhitelisted(msg.sender) isNotBlacklisted(msg.sender) nonReentrant() isNotPaused() public {
 
-        // Check if the sender is a team wallet
+        // Validate the conditions for team tokens withdrawal
         require(wallets[msg.sender].isTeamWallet == true, "Only team wallets can withdraw tokens using this function");
-
-        // Check if team tokens funding has started
         require(teamTokensFundingStarted, "Team tokens funding has not started yet, no tokens to withdraw");
-        
-        // Ensure that at least four years have passed since the team wallet was added to the whitelist
         require(block.timestamp >= wallets[msg.sender].addedToWhitelistTime + TEAM_TOKENS_LOCKED_PERIOD , "Cannot withdraw before 4 years after being added to the whitelist");
-        
-        // Verify that not all team tokens have been withdrawn yet
         require(teamTokensWithdrawn < TEAM_TOKENS_TOTAL, "All team tokens have been withdrawn");
-        
-        // Verify that the wallet has a hyax holding amount as team tokens greater than 0 to withdraw
         require(wallets[msg.sender].hyaxHoldingAmount > 0, "No hyax holding amount to withdraw");
-
-        // Ensure that the number of token withdrawal times is greater than or equal to the calculated year for team tokens
         require(wallets[msg.sender].teamTokenWithdrawalTimes <  calculateYearForTeamTokens(), "Can only withdraw team tokens once per year");
 
         // Set the initial withdrawable amount to the limit per year (20% of the hyax holding amount at whitelist time) 
@@ -648,25 +608,27 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
      * @dev This function calculates the year for team tokens based on the funding start time
      * @return The year for team tokens as a uint8
      */
-    function calculateYearForTeamTokens() public view returns (uint8)  {
-
+    function calculateYearForTeamTokens() public view returns (uint8) {
         // Check if team tokens funding has started
         require(teamTokensFundingStarted, "Team tokens funding has not started yet");
 
+        // Calculate the time elapsed since the funding start time
         uint256 timeElapsed = block.timestamp - teamTokensStartFundingTime;
+        uint256 yearsElapsed = timeElapsed / 365 days;
 
-        if (timeElapsed >= 8 * 365 days) { //After 8 years elapsed since funding you get into year 8 to withdraw
-            return 5;
-        } else if (timeElapsed >= 7 * 365 days) { //After 7 years elapsed since funding you get into year 4 to withdraw
-            return 4;
-        } else if (timeElapsed >= 6 * 365 days) { //After 6 years elapsed since funding you get into year 3 to withdraw
-            return 3;
-        } else if (timeElapsed >= 5 * 365 days) { //After 5 years elapsed since funding you get into year 2 to withdraw
-            return 2;
-        } else if (timeElapsed >= 4 * 365 days) { //After 4 years elapsed since funding you get into year 1 to withdraw
-            return 1;
+        // Ensure the maximum year cap is respected
+        if (yearsElapsed >= 8) {
+            return 5; // Year 8 and beyond can withdraw
+        } else if (yearsElapsed >= 7) {
+            return 4; // Year 7 can withdraw
+        } else if (yearsElapsed >= 6) {
+            return 3; // Year 6 can withdraw
+        } else if (yearsElapsed >= 5) {
+            return 2; // Year 5 can withdraw
+        } else if (yearsElapsed >= 4) {
+            return 1; // Year 4 can withdraw
         } else {
-            return 0;
+            return 0; // Less than 4 years elapsed
         }
     }
     
@@ -680,16 +642,10 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
      */
     function updateRewardsBatch(address[] calldata _walletAddresses, uint256[] calldata _hyaxRewards) public onlyAdminOrRewardsUpdater nonReentrant {
         
-        // Check if rewards funding has started
+        //Validate the conditions for batch reward token update
         require(rewardTokensFundingStarted, "Reward tokens funding has not started yet, no tokens to update");
-
-        // Validate the batch size limit in the lower limit
         require(_walletAddresses.length > 0, "Batch size cannot be 0");
-    
-        // Validate the batch size limit in the upper limit
         require(_walletAddresses.length <= maximumBatchSizeForUpdateRewards, "Batch size exceeds the defined limit");
-        
-        // Validate the length of the arrays
         require(_walletAddresses.length == _hyaxRewards.length, "Array lengths must match");
 
         // Iterate through the list of wallets
@@ -714,32 +670,22 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
      */
      function updateRewardsSingle(address _walletAddress, uint256 _hyaxRewards) public onlyAdminOrRewardsUpdater {
         
-        // Check if rewards funding has started
+        // Validate the conditions for single reward token update
         require(rewardTokensFundingStarted, "Reward tokens funding has not started yet, no tokens to update");
-
-        // Validate that the wallet is whitelisted
         require(wallets[_walletAddress].isWhitelisted == true, "Wallet is not whitelisted");
-
-        // Validate that the wallet is not blacklisted
         require(wallets[_walletAddress].isBlacklisted == false, "Wallet has been blacklisted");
-    
-        //Timestamp validation
         require(block.timestamp >= wallets[_walletAddress].lastRewardsUpdateTime + MIN_INTERVAL_FOR_UPDATE_REWARDS, "Too soon to update rewards for this wallet");
-
-        // Ensure rewards don't exceed the weekly withdrawal limit
+        
+        // Additional validation to ensure rewards do not exceed allowed limits
         require(_hyaxRewards <= REWARD_TOKENS_PER_WEEK, "A single wallet cannot have rewards higher than the weekly limit");
-
-        // Check if there are sufficient tokens in the contract to distribute as rewards
         require(_hyaxRewards <= rewardTokensInSmartContract, "Insufficient reward tokens to distribute as rewards");
-
-        //Check that the token rewards already distributed is not higher than the total rewards that should be distributed
         require(rewardTokensDistributed + _hyaxRewards <= REWARD_TOKENS_TOTAL, "All the reward tokens have been already distributed");
-
-        // Update the total rewards distributed
-        rewardTokensDistributed += _hyaxRewards;
 
         // Update the last rewards update time
         wallets[_walletAddress].lastRewardsUpdateTime = block.timestamp;
+    
+        // Update the total rewards distributed
+        rewardTokensDistributed += _hyaxRewards;
 
         // Update the total rewards for the wallet
         wallets[_walletAddress].totalHyaxRewardsAmount += _hyaxRewards;
@@ -759,27 +705,13 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
      * @dev Upon successful withdrawal, it updates relevant state variables and transfers tokens
      * @return None
      */
-    function withdrawRewardTokens() isWhitelisted(msg.sender) nonReentrant() isNotPaused() public {
+    function withdrawRewardTokens() isWhitelisted(msg.sender) isNotBlacklisted(msg.sender) nonReentrant() isNotPaused() public {
 
-        //Check if the wallet is whitelisted
-        require(wallets[msg.sender].isWhitelisted == true, "Wallet is not whitelisted");
-
-        // Validate that the wallet is not blacklisted
-        require(wallets[msg.sender].isBlacklisted == false, "Wallet has been blacklisted");
-
-        // Check if rewards funding has started
+        // Validate various conditions before allowing reward token withdrawal
         require(rewardTokensFundingStarted, "Reward tokens funding has not started yet, no tokens to withdraw");
-        
-        // Verify that not all reward tokens have been withdrawn yet
         require(rewardTokensWithdrawn < REWARD_TOKENS_TOTAL, "All reward tokens have been withdrawn");
-        
-        // Verify that the wallet has rewards to withdraw
         uint256 withdrawableAmount = wallets[msg.sender].currentRewardsAmount;
-
-        // Validate that the wallet has rewards to withdraw
         require(withdrawableAmount > 0, "No rewards available to withdraw");
-        
-        // Verify that there are sufficient tokens in the contract to withdraw
         require(withdrawableAmount <= rewardTokensInSmartContract, "Insufficient reward tokens in the contract to withdraw");
 
         // Update the rewards withdrawn amount
@@ -817,37 +749,29 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
 
     function withdrawTokensToBurn(FundingType _fundingType, uint256 _amount) onlyRole(DEFAULT_ADMIN_ROLE) nonReentrant() isNotPaused() public {
 
-        // Ensure that only the contract owner can withdraw tokens
+        //Validate the conditions for tokens to burn withdrawal
         require(msg.sender == owner(), "Only the owner can withdraw tokens");
-
-        // Check if the funding type is valid
         require(_fundingType == FundingType.GrowthTokens || _fundingType == FundingType.TeamTokens || _fundingType == FundingType.RewardTokens, "Invalid funding type");
-
-        // Verify that the amount is greater than 0
         require(_amount > 0, "Amount must be greater than 0");
         
         // Check the funding type and perform the necessary actions
         if(_fundingType == FundingType.GrowthTokens){
-            // Ensure that growth tokens funding has started
+            // Ensure that growth tokens funding has started and there are sufficient growth tokens in the contract to withdraw
             require(growthTokensFundingStarted, "Growth tokens funding has not started yet, no tokens to withdraw");
-            // Verify that there are sufficient growth tokens in the contract to withdraw
             require(_amount <= growthTokensInSmartContract, "Insufficient growth tokens in the contract to withdraw");
             // Update the growth tokens in the smart contract
             growthTokensInSmartContract -= _amount;
         }
         else if(_fundingType == FundingType.TeamTokens){
-            // Ensure that team tokens funding has started
+            // Ensure that team tokens funding has started and there are sufficient team tokens in the contract to withdraw
             require(teamTokensFundingStarted, "Team tokens funding has not started yet, no tokens to withdraw");
-            // Verify that there are sufficient team tokens in the contract to withdraw
             require(_amount <= teamTokensInSmartContract, "Insufficient team tokens in the contract to withdraw");
             // Update the team tokens in the smart contract
             teamTokensInSmartContract -= _amount;
-
         }
         else if(_fundingType == FundingType.RewardTokens){
-            // Ensure that reward tokens funding has started
+            // Ensure that reward tokens funding has started and there are sufficient reward tokens in the contract to withdraw
             require(rewardTokensFundingStarted, "Reward tokens funding has not started yet, no tokens to withdraw");
-            // Verify that there are sufficient reward tokens in the contract to withdraw
             require(_amount <= rewardTokensInSmartContract, "Insufficient reward tokens in the contract to withdraw");
             // Update the reward tokens in the smart contract
             rewardTokensInSmartContract -= _amount;
@@ -860,69 +784,55 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
         emit TokensToBurnWithdrawn(_fundingType, _amount);
     }
 
-    function updateTeamMemberWallet(address _oldTeamMemberWalletAddress, address _newTeamMemberWalletAddress) onlyRole(DEFAULT_ADMIN_ROLE) nonReentrant() public {
-        
-        // Ensure that only the contract owner can update the team member wallet
+    function updateTeamMemberWallet(address _oldTeamMemberWalletAddress, address _newTeamMemberWalletAddress) public onlyRole(DEFAULT_ADMIN_ROLE) nonReentrant {
+    
         require(msg.sender == owner(), "Only the owner can update the team member wallet");
-
-        // Ensure that team tokens funding has started
         require(teamTokensFundingStarted, "Team tokens funding has not started yet, no tokens to recover");
 
-        // Validate that the old team member wallet address is a team wallet
-        require(wallets[_oldTeamMemberWalletAddress].isTeamWallet == true, "Old wallet address is not a team wallet");
-
-        // Validate that the old team member wallet address is whitelisted
-        require(wallets[_oldTeamMemberWalletAddress].isWhitelisted == true, "Old team member wallet address is not whitelisted");
-
-        // Validate that the old team member wallet address is not blacklisted
-        require(wallets[_oldTeamMemberWalletAddress].isBlacklisted == false, "Old team member wallet address is blacklisted");
-
-        // Validate that the new team member wallet address is not the zero address
+        // Validation checks for the old and new wallet addresses
+        require(wallets[_oldTeamMemberWalletAddress].isTeamWallet, "Old wallet address is not a team wallet");
+        require(wallets[_oldTeamMemberWalletAddress].isWhitelisted, "Old team member wallet address is not whitelisted");
+        require(!wallets[_oldTeamMemberWalletAddress].isBlacklisted, "Old team member wallet address is blacklisted");
         require(_newTeamMemberWalletAddress != address(0), "New team member wallet address cannot be the zero address");
-
-        // Validate that the new team member wallet address is not the same as the old team member wallet address
         require(_newTeamMemberWalletAddress != _oldTeamMemberWalletAddress, "New team member wallet address cannot be the same as the old team member wallet address");
+        require(!wallets[_newTeamMemberWalletAddress].isWhitelisted, "New team member wallet address is already whitelisted");
+        require(!wallets[_newTeamMemberWalletAddress].isTeamWallet, "New team member wallet address is already a team wallet");
+        require(!wallets[_newTeamMemberWalletAddress].isBlacklisted, "New team member wallet address is blacklisted");
 
-        //Validate that the new team member wallet address is not already whitelisted
-        require(wallets[_newTeamMemberWalletAddress].isWhitelisted == false, "New team member wallet address is already whitelisted");
+        // Consolidate wallet data transfer to the new address
+        WalletData storage oldWallet = wallets[_oldTeamMemberWalletAddress];
+        WalletData storage newWallet = wallets[_newTeamMemberWalletAddress];
 
-        //Validate that the new team member wallet address is not already a team wallet
-        require(wallets[_newTeamMemberWalletAddress].isTeamWallet == false, "New team member wallet address is already a team wallet");
+        //Lock the old wallet in order to prevent potetial race conditions
+        oldWallet.isWhitelisted = false;
+        oldWallet.isTeamWallet = false;
+        oldWallet.isBlacklisted = true;
 
-        //Validate that the new team member wallet address is not already blacklisted
-        require(wallets[_newTeamMemberWalletAddress].isBlacklisted == false, "New team member wallet address is blacklisted");
+        //Update the new wallet status
+        newWallet.isWhitelisted = true;
+        newWallet.isTeamWallet = true;
+        newWallet.isBlacklisted = false;
 
-        //In case it passes all validations, register the new team member wallet address
-        wallets[_newTeamMemberWalletAddress].isWhitelisted = true;
-        wallets[_newTeamMemberWalletAddress].isTeamWallet = true;
-        wallets[_newTeamMemberWalletAddress].isBlacklisted = false;
-        
-        //Do the transfer of the previous values to the new team member wallet address
-        wallets[_newTeamMemberWalletAddress].hyaxHoldingAmountAtWhitelistTime = wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmountAtWhitelistTime;
-        wallets[_newTeamMemberWalletAddress].hyaxHoldingAmount = wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmount;
-        wallets[_newTeamMemberWalletAddress].addedToWhitelistTime = wallets[_oldTeamMemberWalletAddress].addedToWhitelistTime;
-        wallets[_newTeamMemberWalletAddress].teamTokenWithdrawalTimes = wallets[_oldTeamMemberWalletAddress].teamTokenWithdrawalTimes;
+        //Update the new wallet with the values of the old wallet
+        newWallet.hyaxHoldingAmountAtWhitelistTime = oldWallet.hyaxHoldingAmountAtWhitelistTime;
+        newWallet.hyaxHoldingAmount = oldWallet.hyaxHoldingAmount;
+        newWallet.addedToWhitelistTime = oldWallet.addedToWhitelistTime;
+        newWallet.teamTokenWithdrawalTimes = oldWallet.teamTokenWithdrawalTimes;
 
-        //Remove the old team member wallet address from the lists
-        wallets[_oldTeamMemberWalletAddress].isWhitelisted = false;
-        wallets[_oldTeamMemberWalletAddress].isTeamWallet = false;
-        wallets[_oldTeamMemberWalletAddress].isBlacklisted = true;
-        
-        //Update values of the old team member wallet address to 0 
-        wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmountAtWhitelistTime = 0;
-        wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmount = 0; 
-        wallets[_oldTeamMemberWalletAddress].teamTokenWithdrawalTimes = 0;
+        // Clear the old wallet’s data in a single step
+        oldWallet.hyaxHoldingAmountAtWhitelistTime = 0;
+        oldWallet.hyaxHoldingAmount = 0;
+        oldWallet.teamTokenWithdrawalTimes = 0;
 
         //Validate the new status of the wallets
         require(wallets[_newTeamMemberWalletAddress].isWhitelisted == true && wallets[_newTeamMemberWalletAddress].addedToWhitelistTime != 0
             && wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmountAtWhitelistTime == 0 && wallets[_oldTeamMemberWalletAddress].hyaxHoldingAmount == 0,
             "Failed to update the team member wallet");
-        
-        //Emit an event to notify that the team tokens were recovered
-        emit TeamMemberWalletUpdated(_oldTeamMemberWalletAddress, _newTeamMemberWalletAddress,
-            wallets[_newTeamMemberWalletAddress].hyaxHoldingAmount);
+
+        // Emit an event to notify of the update
+        emit TeamMemberWalletUpdated(_oldTeamMemberWalletAddress, _newTeamMemberWalletAddress, newWallet.hyaxHoldingAmount);
     }
-    
+
     /**
      * @notice Updates the white lister address
      * @dev This function can only be called by the admin
@@ -971,6 +881,9 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
      * @param _hyaxTokenAddress The address of the new hyax token
      */
     function updateHyaxTokenAddress(address _hyaxTokenAddress) onlyRole(DEFAULT_ADMIN_ROLE) public {
+        
+        // Validate the conditions for hyax token address update
+        require(msg.sender == owner(), "Only the owner can update the hyax token address");
         require(_hyaxTokenAddress != address(0), "Hyax token address cannot be the zero address");
 
         // Validate that the token is a valid HYAX token
@@ -995,10 +908,8 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
      * @param _maximumBatchSizeForUpdateRewards The maximum batch size for update rewards
      */
     function updateMaximumBatchSizeForUpdateRewards(uint8 _maximumBatchSizeForUpdateRewards) onlyRole(DEFAULT_ADMIN_ROLE) public {
-        // Validate that the maximum batch size is greater than 0
+        // Validate that the maximum batch size is greater than 0 and does not exceed 100
         require(_maximumBatchSizeForUpdateRewards > 0, "Maximum batch size cannot be 0");
-
-        // Validate that the maximum batch size does not exceed 100
         require(_maximumBatchSizeForUpdateRewards <= 100, "Maximum batch size cannot be greater than 100");
         
         // Update the maximum batch size for update rewards
@@ -1041,13 +952,9 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
      */
     function transferOwnership(address newOwner) public virtual onlyRole(DEFAULT_ADMIN_ROLE) {
 
-        // Ensure that only the contract owner can transfer ownership
+        // Validate the conditions for ownership transfer
         require(msg.sender == owner(), "Only the owner can transfer ownership");
-
-        //Validate the new owner is not the zero address
         require(newOwner != address(0), "Ownable: new owner is the zero address");
-
-        //Validate the new owner is not the same contract address, otherwise management of the smart contract will be lost
         require(newOwner != address(this), "Ownable: new owner cannot be the same contract address");
         
         // Grant the role to the new owner

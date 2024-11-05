@@ -99,54 +99,66 @@ ANSWER: The reentrancy risk in the functions executed by onlyOwnerOrWhitelister 
 23. Impact: Medium Detail: Improper Error Handling: The require statement in fundSmartContract fails silently if an invalid _fundingType is passed. While this halts execution, it lacks context for debugging and would benefit from a custom error or detailed revert message to aid developers and users.
 ANSWER: False positive. There is a require() that in case of failing reverts the function with the message "Invalid funding type".
 
-CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
 24. Impact: Medium Detail: Ambiguous Evaluation Order: In withdrawGrowthTokens, there are chained require statements and complex conditional logic. If order changes inadvertently in future versions, it could lead to different evaluations or unexpected outcomes. Refactor conditions to avoid ambiguity in execution.
-ANSWER: 
+ANSWER: Added variable to refactor and avoid ambiguity in execution. Also separated the require statements so each one validates single conditions.
 
 
 25. Impact: High Detail: ABI Hash Collisions: Events in the contract could generate ABI selector collisions if similar function names with identical parameters are added. For instance, FundingAdded and TokensToBurnWithdrawn have similar parameters, increasing collision risk. Adding unique identifiers to events will reduce the likelihood of collisions.
+ANSWER: Added unique identifiers to events.
 
 
 26. Impact: Critical Detail: Approval Vulnerabilities: The updateHyaxTokenAddress function resets the token address without clearing existing approvals from previous tokens, potentially allowing an old token contract to retain control over approvals. Ensure approvals are reset on token address updates to prevent this attack.
+ANSWER: The rewards smart contract doesn't generate approvals over the token. It's all the other way around. It's the owner who approves transfers over the rewards smart contract to fund it. Additionally, once implemented the upgradeable token version, this functionality could be restricted to the launch of the smart contract. In case that extra revoking it's required, it would be implemented via an external .js script.
 
 
 27. Impact: Medium Detail: Exposed Data: Wallet information in the wallets mapping, including reward status and whitelisting times, is publicly accessible. This could be exploited by malicious actors to target specific wallet addresses. Consider reducing data exposure by using internal visibility where feasible.
+ANSWER: That is data that's intended to be publicly available due to transparency business requirements.
 
 
 28. Impact: Low Detail: Incorrect Parameter Order: In fundSmartContract, _fundingType appears before _amount. Incorrect parameter order may cause human error or call mismatches. Reorder parameters for clarity or document parameters to improve accuracy.
+ANSWER: False positive. The event first reports the fundingType and then the amount value.
 
 
 29. Impact: High Detail: Unexpected Ether Transfers (Force Feeding): The withdrawGrowthTokens and other withdrawal functions could be force-fed Ether, leading to confusion in balance tracking. Consider adding logic to reject unexpected Ether sent to the contract to avoid misleading balance interpretations.
+ANSWER: False positive. Only the owner, which is a multisig managed by the executive team can execute the withdrawGrowthTokens function.
+
 
 30. Impact: High Detail: Unchecked Low-Level Calls: The call to hyaxToken.transferFrom lacks a check on return values, creating risk if the call fails silently. This can lead to discrepancies between contract state and actual token balances. Implement explicit return checks for all external token transfers to maintain accuracy.
+ANSWER: False positive. The transferFrom() uses the SafeERC20 library for a safe transfer and has a require() statement to validate the status of the return.
 
+CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
 31. Impact: High Detail: Gas Optimization: In fundSmartContract, the repeated use of _amount could be optimized by using memory caching. Store hyaxToken.transferFrom result once in memory, reducing redundant calculations and lowering gas costs.
+ANSWER: Cached the transferFrom transaction result by using the boolean transferSuccessful.
 
 
 32. Impact: Medium Detail: Best Practice: The onlyOwnerOrWhitelister modifier emits tx.origin for logging purposes, which is generally discouraged due to the risk of phishing attacks. Prefer using msg.sender exclusively to avoid unintended side effects and improve security.
-
+ANSWER: Log eliminated because it was used just for debbugin purposes.
 
 33. Impact: High Detail: Gas Optimization: withdrawGrowthTokens function includes multiple require checks that could be refactored into a single conditional, reducing gas by minimizing code branching. Combining these checks could optimize execution flow and cut down on gas usage.
-
+ANSWER: This function is not used often to its impact it's low. The require checks are required to be separated for traceability purposes.
 
 34. Impact: Medium Detail: Best Practice: In updateRewardsBatch, the unchecked loop through _walletAddresses is limited by maximumBatchSizeForUpdateRewards, but limiting batch processing further or capping gas per transaction would improve safety and gas usage predictability. Consider also reverting partially filled arrays on failure.
+ANSWER: This functionality efficiency will be manage off chain in order to implement the right gas checks.
 
-
-35. Impact: Low Detail: Gas Optimization: Modifier-based checks, such as onlyOwnerOrWhitelister, are more gas-efficient when added as function code instead of modifiers. Consider inlining logic within critical functions to cut down on the gas cost of separate modifier calls.
-
+35. Impact: Low Detail: Gas Optimization: Modifier-based checks, such as onlyAdminOrWhitelister, are more gas-efficient when added as function code instead of modifiers. Consider inlining logic within critical functions to cut down on the gas cost of separate modifier calls.
+ANSWER: This modifier is used 3 times across the contract, its more efficient to keep it.
 
 36. Impact: Medium Detail: Best Practice: The wallets mapping holds large structs accessible publicly, exposing more data than necessary. Making sensitive attributes private or creating specific getters reduces potential external queries and saves gas by preventing unnecessary state reads.
-
+ANSWER: The attributes are not sensitive and were requested by the company team in order to increase transparency.
 
 37. Impact: Medium Detail: Best Practice: The initialize function uses hard-coded values for initial funding amounts and limits. Instead, consider defining constants for these values within an immutable pattern, which enhances readability and reduces gas by storing them in the contract's code rather than storage.
+ANSWER: Those values can not be defined as constants because they are expected to be able to change based on business requirements.
 
 
 38. Impact: Low Detail: Gas Optimization: In fundSmartContract, _fundingType is verified multiple times within a conditional check. Storing the conditional result in memory and referencing it minimizes redundant code execution and cuts down on gas usage.
+ANSWER: This function is used few times. Also adding the variables required to do the check would increase the contract size. Decided to leave it that way.
 
 
 39. Impact: Medium Detail: Best Practice: The updateRewardsSingle function could benefit from separating logic for different wallet statuses, improving modularity and readability. Refactoring wallet status checks and error messages streamlines the code and makes debugging easier.
+ANSWER: Separating the logic for this single function would increase contract size. Something that's not the focus at this point.
 
 
 40. Impact: High Detail: Gas Optimization: The updateTeamMemberWallet function duplicates logic for transferring wallet attributes. Consolidate this transfer logic into one step for both readability and gas efficiency, especially given the multiple struct member assignments.
+ANSWER: Improved the contract order and logic to increase readability and gas efficiency.

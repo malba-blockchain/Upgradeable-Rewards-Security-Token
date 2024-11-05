@@ -102,7 +102,6 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "GrowthTokensWithdrawn"
       | "HyaxTokenAddressUpdated"
       | "Initialized"
-      | "LogSenderAndOrigin"
       | "MaximumBatchSizeForUpdateRewardsUpdated"
       | "Paused"
       | "RewardTokensWithdrawn"
@@ -618,19 +617,19 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
 
 export namespace BlacklistStatusUpdatedEvent {
   export type InputTuple = [
-    _sender: AddressLike,
-    _walletAddress: AddressLike,
-    _newStatus: boolean
+    _senderBlacklistStatusUpdated: AddressLike,
+    _walletAddressBlacklistStatusUpdated: AddressLike,
+    _newStatusBlacklistStatusUpdated: boolean
   ];
   export type OutputTuple = [
-    _sender: string,
-    _walletAddress: string,
-    _newStatus: boolean
+    _senderBlacklistStatusUpdated: string,
+    _walletAddressBlacklistStatusUpdated: string,
+    _newStatusBlacklistStatusUpdated: boolean
   ];
   export interface OutputObject {
-    _sender: string;
-    _walletAddress: string;
-    _newStatus: boolean;
+    _senderBlacklistStatusUpdated: string;
+    _walletAddressBlacklistStatusUpdated: string;
+    _newStatusBlacklistStatusUpdated: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -639,11 +638,14 @@ export namespace BlacklistStatusUpdatedEvent {
 }
 
 export namespace FundingAddedEvent {
-  export type InputTuple = [_fundingType: BigNumberish, _amount: BigNumberish];
-  export type OutputTuple = [_fundingType: bigint, _amount: bigint];
+  export type InputTuple = [
+    _fundingTypeAdded: BigNumberish,
+    _amountAdded: BigNumberish
+  ];
+  export type OutputTuple = [_fundingTypeAdded: bigint, _amountAdded: bigint];
   export interface OutputObject {
-    _fundingType: bigint;
-    _amount: bigint;
+    _fundingTypeAdded: bigint;
+    _amountAdded: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -652,11 +654,17 @@ export namespace FundingAddedEvent {
 }
 
 export namespace GrowthTokensWithdrawnEvent {
-  export type InputTuple = [_walletAddress: AddressLike, _amount: BigNumberish];
-  export type OutputTuple = [_walletAddress: string, _amount: bigint];
+  export type InputTuple = [
+    _walletAddressGrowthTokensWithdrawn: AddressLike,
+    _amountWithdrawn: BigNumberish
+  ];
+  export type OutputTuple = [
+    _walletAddressGrowthTokensWithdrawn: string,
+    _amountWithdrawn: bigint
+  ];
   export interface OutputObject {
-    _walletAddress: string;
-    _amount: bigint;
+    _walletAddressGrowthTokensWithdrawn: string;
+    _amountWithdrawn: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -681,19 +689,6 @@ export namespace InitializedEvent {
   export type OutputTuple = [version: bigint];
   export interface OutputObject {
     version: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace LogSenderAndOriginEvent {
-  export type InputTuple = [_sender: AddressLike, _origin: AddressLike];
-  export type OutputTuple = [_sender: string, _origin: string];
-  export interface OutputObject {
-    _sender: string;
-    _origin: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -726,11 +721,17 @@ export namespace PausedEvent {
 }
 
 export namespace RewardTokensWithdrawnEvent {
-  export type InputTuple = [_walletAddress: AddressLike, _amount: BigNumberish];
-  export type OutputTuple = [_walletAddress: string, _amount: bigint];
+  export type InputTuple = [
+    _walletAddressRewardTokensWithdrawn: AddressLike,
+    _amountWithdrawn: BigNumberish
+  ];
+  export type OutputTuple = [
+    _walletAddressRewardTokensWithdrawn: string,
+    _amountWithdrawn: bigint
+  ];
   export interface OutputObject {
-    _walletAddress: string;
-    _amount: bigint;
+    _walletAddressRewardTokensWithdrawn: string;
+    _amountWithdrawn: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -805,10 +806,10 @@ export namespace RewardUpdateSuccessEvent {
 }
 
 export namespace RewardsUpdaterAddressUpdatedEvent {
-  export type InputTuple = [_rewardsUpdaterAddress: AddressLike];
-  export type OutputTuple = [_rewardsUpdaterAddress: string];
+  export type InputTuple = [_newRewardsUpdaterAddress: AddressLike];
+  export type OutputTuple = [_newRewardsUpdaterAddress: string];
   export interface OutputObject {
-    _rewardsUpdaterAddress: string;
+    _newRewardsUpdaterAddress: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -897,11 +898,17 @@ export namespace TeamMemberWalletUpdatedEvent {
 }
 
 export namespace TeamTokensWithdrawnEvent {
-  export type InputTuple = [_walletAddress: AddressLike, _amount: BigNumberish];
-  export type OutputTuple = [_walletAddress: string, _amount: bigint];
+  export type InputTuple = [
+    _walletAddressTeamTokensWithdrawn: AddressLike,
+    _amountWithdrawn: BigNumberish
+  ];
+  export type OutputTuple = [
+    _walletAddressTeamTokensWithdrawn: string,
+    _amountWithdrawn: bigint
+  ];
   export interface OutputObject {
-    _walletAddress: string;
-    _amount: bigint;
+    _walletAddressTeamTokensWithdrawn: string;
+    _amountWithdrawn: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -910,10 +917,13 @@ export namespace TeamTokensWithdrawnEvent {
 }
 
 export namespace TokensToBurnWithdrawnEvent {
-  export type InputTuple = [_fundingType: BigNumberish, _amount: BigNumberish];
-  export type OutputTuple = [_fundingType: bigint, _amount: bigint];
+  export type InputTuple = [
+    _fundingTypeWithdrawn: BigNumberish,
+    _amount: BigNumberish
+  ];
+  export type OutputTuple = [_fundingTypeWithdrawn: bigint, _amount: bigint];
   export interface OutputObject {
-    _fundingType: bigint;
+    _fundingTypeWithdrawn: bigint;
     _amount: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
@@ -960,10 +970,10 @@ export namespace WalletAddedToWhitelistEvent {
 }
 
 export namespace WhiteListerAddressUpdatedEvent {
-  export type InputTuple = [_whiteListerAddress: AddressLike];
-  export type OutputTuple = [_whiteListerAddress: string];
+  export type InputTuple = [_newWhiteListerAddress: AddressLike];
+  export type OutputTuple = [_newWhiteListerAddress: string];
   export interface OutputObject {
-    _whiteListerAddress: string;
+    _newWhiteListerAddress: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -973,19 +983,19 @@ export namespace WhiteListerAddressUpdatedEvent {
 
 export namespace WhitelistStatusUpdatedEvent {
   export type InputTuple = [
-    _sender: AddressLike,
-    _walletAddress: AddressLike,
-    _newStatus: boolean
+    _senderWhitelistStatusUpdated: AddressLike,
+    _walletAddressWhitelistStatusUpdated: AddressLike,
+    _newStatusWhitelistStatusUpdated: boolean
   ];
   export type OutputTuple = [
-    _sender: string,
-    _walletAddress: string,
-    _newStatus: boolean
+    _senderWhitelistStatusUpdated: string,
+    _walletAddressWhitelistStatusUpdated: string,
+    _newStatusWhitelistStatusUpdated: boolean
   ];
   export interface OutputObject {
-    _sender: string;
-    _walletAddress: string;
-    _newStatus: boolean;
+    _senderWhitelistStatusUpdated: string;
+    _walletAddressWhitelistStatusUpdated: string;
+    _newStatusWhitelistStatusUpdated: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -1642,13 +1652,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     InitializedEvent.OutputObject
   >;
   getEvent(
-    key: "LogSenderAndOrigin"
-  ): TypedContractEvent<
-    LogSenderAndOriginEvent.InputTuple,
-    LogSenderAndOriginEvent.OutputTuple,
-    LogSenderAndOriginEvent.OutputObject
-  >;
-  getEvent(
     key: "MaximumBatchSizeForUpdateRewardsUpdated"
   ): TypedContractEvent<
     MaximumBatchSizeForUpdateRewardsUpdatedEvent.InputTuple,
@@ -1822,17 +1825,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
       InitializedEvent.InputTuple,
       InitializedEvent.OutputTuple,
       InitializedEvent.OutputObject
-    >;
-
-    "LogSenderAndOrigin(address,address)": TypedContractEvent<
-      LogSenderAndOriginEvent.InputTuple,
-      LogSenderAndOriginEvent.OutputTuple,
-      LogSenderAndOriginEvent.OutputObject
-    >;
-    LogSenderAndOrigin: TypedContractEvent<
-      LogSenderAndOriginEvent.InputTuple,
-      LogSenderAndOriginEvent.OutputTuple,
-      LogSenderAndOriginEvent.OutputObject
     >;
 
     "MaximumBatchSizeForUpdateRewardsUpdated(uint8)": TypedContractEvent<

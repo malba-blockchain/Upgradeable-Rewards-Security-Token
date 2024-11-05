@@ -1,99 +1,142 @@
-Line: 24 Impact: Critical Detail: Reentrancy Attack In the withdrawTeamTokens function, state changes occur after the external call hyaxToken.transfer. This can be exploited by calling the function multiple times before the first execution is complete.
+1. Line: 24 Impact: Critical Detail: Reentrancy Attack In the withdrawTeamTokens function, state changes occur after the external call hyaxToken.transfer. This can be exploited by calling the function multiple times before the first execution is complete.
+ANSWER: False positive. State changes occur BEFORE the safe external call of hyaxToken.transfer()
 
-Line: 87 Impact: High Detail: Integer Overflow and Underflow In the updateRewardsSingle function, arithmetic operations related to rewardTokensDistributed and currentRewardsAmount do not use SafeMath, risking overflow or underflow.
+2. Line: 87 Impact: High Detail: Integer Overflow and Underflow In the updateRewardsSingle function, arithmetic operations related to rewardTokensDistributed and currentRewardsAmount do not use SafeMath, risking overflow or underflow.
+ANSWER: False positive. Solidity version > 0.8.0 is covered against Integer Overflow and Underflow by integrating SafeMath. This version uses Solidity 0.8.20
 
-Line: 145 Impact: High Detail: Unchecked Call Return Value The hyaxToken.transfer call is made without checking the return value. If the transfer fails, it could lead to loss of tokens without proper handling.
+3. Line: 145 Impact: High Detail: Unchecked Call Return Value The hyaxToken.transfer call is made without checking the return value. If the transfer fails, it could lead to loss of tokens without proper handling.
+ANSWER: False positive. The return value is checked and the transaction is executed using the library SafeERC20.
 
-Line: 112 Impact: Medium Detail: Denial of Service (DoS) In the updateRewardsBatch function, processing a large batch of wallet addresses could consume excessive gas, potentially leading to denial-of-service attacks.
+4. Line: 112 Impact: Medium Detail: Denial of Service (DoS) In the updateRewardsBatch function, processing a large batch of wallet addresses could consume excessive gas, potentially leading to denial-of-service attacks.
+ANSWER: False positive. This function can only be called by the owner or the rewards updater and the gas efficiency logic is managed using an script off-chain.
 
-Line: 62 Impact: Medium Detail: Front-Running Attack In the fundSmartContract function, an attacker could front-run the transaction, altering the state before the function executes.
+5. Line: 62 Impact: Medium Detail: Front-Running Attack In the fundSmartContract function, an attacker could front-run the transaction, altering the state before the function executes.
+ANSWER: False positive. This function can only be called by the owner of the smart contract which is a multisig managed by the company board of directors.
 
-Line: 57 Impact: Medium Detail: Insecure Access Control The onlyOwner modifier is used extensively without additional layers of access control. It might be vulnerable if the owner’s account is compromised.
+6. Line: 57 Impact: Medium Detail: Insecure Access Control The onlyOwner modifier is used extensively without additional layers of access control. It might be vulnerable if the owner’s account is compromised.
+ANSWER: The Ownable library has been replaced by Access Control library and the owner is a multisig managed by the company board of directors.
 
-Line: 29 Impact: Medium Detail: Uninitialized Storage Pointers In the function initialize, the storage variables related to funding start times and withdrawal times are not properly initialized.
+7. Line: 29 Impact: Medium Detail: Uninitialized Storage Pointers In the function initialize, the storage variables related to funding start times and withdrawal times are not properly initialized.
+ANSWER: The storage values have been initialized in the function initialize with value equal zero.
 
-Line: 120 Impact: Medium Detail: Delegatecall Injection The function updateRewardsBatch calls this.updateRewardsSingle. If any external contract modifies the delegatecall behavior, it could lead to injection vulnerabilities.
+8. Line: 120 Impact: Medium Detail: Delegatecall Injection The function updateRewardsBatch calls this.updateRewardsSingle. If any external contract modifies the delegatecall behavior, it could lead to injection vulnerabilities.
+ANSWER: False positive. This function can only be called by the owner of the smart contract which is a multisig managed by the company board of directors or by the rewards updater address that has been asigned that role.
 
-Line: 48 Impact: Medium Detail: Timestamp Dependence The use of block.timestamp in calculateYearForTeamTokens and other functions can be manipulated by miners, affecting the logic that relies on time calculations.
+9. Line: 48 Impact: Medium Detail: Timestamp Dependence The use of block.timestamp in calculateYearForTeamTokens and other functions can be manipulated by miners, affecting the logic that relies on time calculations.
+ANSWER: The manipulation that can be made is in the order or seconds, while the logic of the calculateYearForTeamTokens function is in the order of days. Any manipulation impact is minimum.
 
-Line: 3 Impact: High Detail: Tx.origin Authentication Using tx.origin in modifiers like onlyOwnerOrWhitelister for authentication can lead to phishing attacks. It’s safer to use msg.sender.
+10. Line: 3 Impact: High Detail: Tx.origin Authentication Using tx.origin in modifiers like onlyOwnerOrWhitelister for authentication can lead to phishing attacks. It’s safer to use msg.sender.
+ANSWER: The use of tx.origin has been eliminated. It was used just for debbuging purposes.
 
-Line: 76 Impact: High Detail: Unrestricted Ether Withdrawal In the function withdrawRewardTokens, the contract allows unrestricted withdrawal of tokens to whitelisted addresses, potentially leading to unauthorized withdrawals.
+11. Line: 76 Impact: High Detail: Unrestricted Ether Withdrawal In the function withdrawRewardTokens, the contract allows unrestricted withdrawal of tokens to whitelisted addresses, potentially leading to unauthorized withdrawals.
+ANSWER: False positive. As defined in the code, the withdrawableAmount is equal to the currentRewardsAmount, therefore if there are no rewards accumulated, the amount available to withdraw is zero.
 
-Line: 29 Impact: Medium Detail: Race Conditions Multiple state updates in the function updateTeamMemberWallet might lead to race conditions, especially in a multi-transactional context.
+12. Line: 29 Impact: Medium Detail: Race Conditions Multiple state updates in the function updateTeamMemberWallet might lead to race conditions, especially in a multi-transactional context.
+ANSWER: All checks are performed first, then the state is updated and finally the function emits the event. Only the owner can execute this function.
 
-Line: 90 Impact: Medium Detail: Insufficient Gas Griefing Complex operations within updateRewardsBatch might consume excessive gas, potentially leading to denial-of-service attacks.
+13. Line: 90 Impact: Medium Detail: Insufficient Gas Griefing Complex operations within updateRewardsBatch might consume excessive gas, potentially leading to denial-of-service attacks.
+ANSWER: This function can only be called by the owner or the rewards updater and the gas efficiency logic is managed using an script off-chain and the amount of transactions in the batch is limited by the variable maximumBatchSizeForUpdateRewards.
 
-Line: 110 Impact: Medium Detail: Gas Limit Vulnerabilities The function withdrawTokensToBurn could face issues with gas limits during high network usage, impacting execution.
+14. Line: 110 Impact: Medium Detail: Gas Limit Vulnerabilities The function withdrawTokensToBurn could face issues with gas limits during high network usage, impacting execution.
+ANSWER: The complexity of the function has been decreased while maintaining the same functionality.
 
-Line: 143 Impact: Medium Detail: Unchecked External Calls External calls to wallets in the function initialize are unchecked. Ensure these calls are validated to prevent failures.
+15. Line: 143 Impact: Medium Detail: Unchecked External Calls External calls to wallets in the function initialize are unchecked. Ensure these calls are validated to prevent failures.
+ANSWER: The only external call made is at the end where it's called the hyaxToken.symbol(), there is a revert() to check it out. In case it fails, the initialization MUST revert.
 
-Line: 57 Impact: Medium Detail: Unchecked Return Data The hyaxToken.transfer call in various functions is made without checking the return value, risking undetected failed transfers.
+16. Line: 57 Impact: Medium Detail: Unchecked Return Data The hyaxToken.transfer call in various functions is made without checking the return value, risking undetected failed transfers.
+ANSWER: The return value is now checked using a require() statement and the call of transfer() is made using the library SafeERC20.
 
-Line: 48 Impact: Medium Detail: Oracle Manipulation The functions dependent on token prices from oracles can be manipulated if the oracle data is compromised, affecting token distribution and calculations.
+17. Line: 48 Impact: Medium Detail: Oracle Manipulation The functions dependent on token prices from oracles can be manipulated if the oracle data is compromised, affecting token distribution and calculations.
+ANSWER:  Not a single function in this contract is depending on oracle token princes.
 
-Line: 104 Impact: Medium Detail: Logic Errors In updateRewardsSingle, logic inconsistencies might arise from updating rewards without proper checks, leading to incorrect state updates.
+18. Line: 104 Impact: Medium Detail: Logic Errors In updateRewardsSingle, logic inconsistencies might arise from updating rewards without proper checks, leading to incorrect state updates.
+ANSWER: All proper checks have been made in the beginning of the update, then the order of updates has changed from less critical to most critical.
 
-Line: 150 Impact: Medium Detail: Flash Loan Attack Vectors The contract can be vulnerable to flash loan attacks if an attacker manipulates balances and exploits logic flaws during atomic transactions.
+19. Line: 150 Impact: Medium Detail: Flash Loan Attack Vectors The contract can be vulnerable to flash loan attacks if an attacker manipulates balances and exploits logic flaws during atomic transactions.
+ANSWER: In every single transaction all proper checks have been made in the beginning of state updates, thus decreasing the probabilty of attacks. 
 
-Line: 140 Impact: High Detail: Storage Collision In an upgradeable contract, using __gap variable to reserve storage slots can prevent storage collisions in future upgrades. Ensure storage slots are properly managed to avoid collision issues.
+20. Line: 140 Impact: High Detail: Storage Collision In an upgradeable contract, using __gap variable to reserve storage slots can prevent storage collisions in future upgrades. Ensure storage slots are properly managed to avoid collision issues.
+ANSWER: The __gap variable has been added at the end of variables. 
 
-Line: 78 Impact: Critical Detail: Reentrancy Guard Bypass In the withdrawTeamTokens function, state changes occur before the external call hyaxToken.transfer. This can be exploited to reenter and manipulate the contract's state.
+21. Line: 78 Impact: Critical Detail: Reentrancy Guard Bypass In the withdrawTeamTokens function, state changes occur before the external call hyaxToken.transfer. This can be exploited to reenter and manipulate the contract's state.
+ANSWER: False positive. The state changes must effectively occur BEFORE the the external call hyaxToken.transfer, so if an attacker tries to reenter, he will find the state already changed.
 
-Line: 112 Impact: Medium Detail: Improper Error Handling Errors in updateRewardsBatch are not handled comprehensively, potentially leaving the contract in an inconsistent state if some updates fail.
+22. Line: 112 Impact: Medium Detail: Improper Error Handling Errors in updateRewardsBatch are not handled comprehensively, potentially leaving the contract in an inconsistent state if some updates fail.
+ANSWER: Transactions are execution in a unit level. Meaning, if the update fails, a log will be emitted with the reason of failure.
 
-Line: 145 Impact: High Detail: Unchecked Low-Level Calls The hyaxToken.transfer call is used without checking the return value. If the transfer fails, the contract will not correctly handle the failure.
+23. Line: 145 Impact: High Detail: Unchecked Low-Level Calls The hyaxToken.transfer call is used without checking the return value. If the transfer fails, the contract will not correctly handle the failure.
+ANSWER: The return value is now checked using a require() statement and the call of transfer() is made using the library SafeERC20.
 
-Line: 90 Impact: High Detail: Ambiguous Evaluation Order Multiple state updates and conditions in the calculateYearForTeamTokens function can lead to an ambiguous order of evaluation, causing unpredictable outcomes.
+24. Line: 90 Impact: High Detail: Ambiguous Evaluation Order Multiple state updates and conditions in the calculateYearForTeamTokens function can lead to an ambiguous order of evaluation, causing unpredictable outcomes.
+ANSWER: The evaluation order has been refactored to make it simple to evaluate.
 
-Line: 162 Impact: Medium Detail: ABI Hash Collisions Ensure function names and parameter types are carefully chosen to avoid ABI hash collisions, which might lead to function calls being intercepted incorrectly.
+25. Line: 162 Impact: Medium Detail: ABI Hash Collisions Ensure function names and parameter types are carefully chosen to avoid ABI hash collisions, which might lead to function calls being intercepted incorrectly.
+ANSWER: Ensured that function names are completely different in order to avoid ABI hash collisions.
 
-Line: 97 Impact: Medium Detail: Approval Vulnerabilities ERC20 tokens have known issues with the approve function. Consider using safeApprove to prevent race conditions.
+26. Line: 97 Impact: Medium Detail: Approval Vulnerabilities ERC20 tokens have known issues with the approve function. Consider using safeApprove to prevent race conditions.
+ANSWER: The smart contract NEVER uses the approve function. Additionaly, it uses the SafeERC20 library to increase security.
 
-Line: 28 Impact: Medium Detail: Exposed Data Sensitive data such as investor status and balances are publicly accessible through mappings, risking data exposure.
+27. Line: 28 Impact: Medium Detail: Exposed Data Sensitive data such as investor status and balances are publicly accessible through mappings, risking data exposure.
+ANSWER: Its a business requirement to have that data publicly available to increase transparency.
 
-Line: 130 Impact: Medium Detail: Incorrect Parameter Order In functions like updateTeamMemberWallet, the parameters should be ordered logically to minimize mistakes, such as placing boolean parameters last.
+28. Line: 130 Impact: Medium Detail: Incorrect Parameter Order In functions like updateTeamMemberWallet, the parameters should be ordered logically to minimize mistakes, such as placing boolean parameters last.
+ANSWER: False positive, the updateTeamMemberWallet only uses address parameters on it's function.l
 
-Line: 185 Impact: Medium Detail: Unexpected Ether Transfers (Force Feeding) The contract’s receive function allows the contract to receive MATIC, which might be force-fed unexpectedly, affecting the contract state.
+29. Line: 185 Impact: Medium Detail: Unexpected Ether Transfers (Force Feeding) The contract’s receive function allows the contract to receive MATIC, which might be force-fed unexpectedly, affecting the contract state.
+ANSWER: False positive, this function doesn't implement the receive() function.
 
 -------
 
-Line: 112 Impact: Critical Detail: Reentrancy Attack In the updateRewardsBatch function, external calls are made within a loop (this.updateRewardsSingle). If one of these calls is reentrant, it could manipulate contract state in unpredictable ways.
+30. Line: 112 Impact: Critical Detail: Reentrancy Attack In the updateRewardsBatch function, external calls are made within a loop (this.updateRewardsSingle). If one of these calls is reentrant, it could manipulate contract state in unpredictable ways.
+ANSWER: This function can only be executed by the Admin Or the RewardsUpdater. The updateRewardsBatch function uses the non reentrant tag. Also the function has all the require() checks at the begining and the first state update made is on the block.timestamp value, so a reentrancy attack becomes unfeasible.
 
-Line: 145 Impact: High Detail: Unchecked Call Return Value The hyaxToken.transfer call in withdrawTeamTokens is not checked. If this transfer fails, it could lead to loss of tokens without proper handling.
+31. Line: 145 Impact: High Detail: Unchecked Call Return Value The hyaxToken.transfer call in withdrawTeamTokens is not checked. If this transfer fails, it could lead to loss of tokens without proper handling.
+ANSWER: The return value is now checked using a require() statement and the call of transfer() is made using the library SafeERC20.
 
-Line: 90 Impact: High Detail: Timestamp Dependence The use of block.timestamp in calculateYearForTeamTokens can be manipulated by miners, affecting the logic that relies on time calculations.
+32. Line: 90 Impact: High Detail: Timestamp Dependence The use of block.timestamp in calculateYearForTeamTokens can be manipulated by miners, affecting the logic that relies on time calculations.
+ANSWER: The manipulation that can be made is in the order or seconds, while the logic of the calculateYearForTeamTokens function is in the order of days. Any manipulation impact is minimum.
 
-Line: 117 Impact: High Detail: Logic Errors The logic within updateRewardsBatch for iterating through wallets and handling exceptions might result in incomplete updates if an error occurs mid-batch, leaving some wallets unprocessed.
+33. Line: 117 Impact: High Detail: Logic Errors The logic within updateRewardsBatch for iterating through wallets and handling exceptions might result in incomplete updates if an error occurs mid-batch, leaving some wallets unprocessed.
+ANSWER: That's the idea. In case there is an error mid batch only some wallets will be left unprocesses and the event RewardUpdateFailed() will be triggered for each failed transaction, so admins can see the cause of the revert.
 
-Line: 152 Impact: High Detail: Integer Overflow/Underflow Arithmetic operations in updateRewardsSingle do not use SafeMath, risking overflow or underflow, especially in the reward calculation updates.
+34. Line: 152 Impact: High Detail: Integer Overflow/Underflow Arithmetic operations in updateRewardsSingle do not use SafeMath, risking overflow or underflow, especially in the reward calculation updates.
+ANSWER: False positive. Solidity version > 0.8.0 is covered against Integer Overflow and Underflow by integrating SafeMath. This version uses Solidity 0.8.20
 
-Line: 138 Impact: Medium Detail: Insufficient Gas Griefing Processing a large number of wallets within updateRewardsBatch might consume excessive gas, potentially leading to denial-of-service attacks.
+35. Line: 138 Impact: Medium Detail: Insufficient Gas Griefing Processing a large number of wallets within updateRewardsBatch might consume excessive gas, potentially leading to denial-of-service attacks.
+ANSWER: This function can only be called by the owner or the rewards updater and the gas efficiency logic is managed using an script off-chain and the amount of transactions in the batch is limited by the variable maximumBatchSizeForUpdateRewards.
 
-Line: 155 Impact: Medium Detail: Unchecked External Calls Calling this.updateRewardsSingle within updateRewardsBatch without verifying the success could result in missed updates or inconsistent state.
+36. Line: 155 Impact: Medium Detail: Unchecked External Calls Calling this.updateRewardsSingle within updateRewardsBatch without verifying the success could result in missed updates or inconsistent state.
+ANSWER: False positive. Every single call status is checked. In case there is an error mid batch only some wallets will be left unprocesses and the event RewardUpdateFailed() will be triggered for each failed transaction, so admins can see the cause of the revert.
 
-Line: 122 Impact: Medium Detail: Insecure Access Control The function updateRewardsBatch and updateRewardsSingle use onlyOwnerOrRewardsUpdater which might be improperly handled if the whitelister or rewards updater is compromised.
+37. Line: 122 Impact: Medium Detail: Insecure Access Control The function updateRewardsBatch and updateRewardsSingle use onlyOwnerOrRewardsUpdater which might be improperly handled if the whitelister or rewards updater is compromised.
+ANSWER: The onlyOwnerOrRewardsUpdater function has been updated to onlyAdminOrRewardsUpdater, also to mitigate these risks, the access control has been changed to one based on roles using the Access Control library from openzeppelin.
 
-Line: 130 Impact: Medium Detail: Improper Error Handling Errors encountered while updating rewards within updateRewardsBatch are caught and logged, but the rest of the batch continues processing, possibly leaving the contract in an inconsistent state.
+38. Line: 130 Impact: Medium Detail: Improper Error Handling Errors encountered while updating rewards within updateRewardsBatch are caught and logged, but the rest of the batch continues processing, possibly leaving the contract in an inconsistent state.
+ANSWER: That's the idea. In case there is an error mid batch only some wallets will be left unprocesses and the event RewardUpdateFailed() will be triggered for each failed transaction, so admins can see the cause of the revert.
 
-Line: 78 Impact: Low Detail: Logic Errors The condition in calculateYearForTeamTokens returning fixed values based on elapsed time can be simplified and validated more efficiently, reducing potential logical flaws.
+39. Line: 78 Impact: Low Detail: Logic Errors The condition in calculateYearForTeamTokens returning fixed values based on elapsed time can be simplified and validated more efficiently, reducing potential logical flaws.
+ANSWER: The evaluation order has been refactored to make it simple to evaluate to reduce potential logical flaws.
 
-Line: 97 Impact: Critical Detail: Reentrancy Attack The withdrawTeamTokens function makes state changes and then transfers tokens without a proper reentrancy guard. This can be exploited by calling the function multiple times before the first execution is complete.
+40. Line: 97 Impact: Critical Detail: Reentrancy Attack The withdrawTeamTokens function makes state changes and then transfers tokens without a proper reentrancy guard. This can be exploited by calling the function multiple times before the first execution is complete.
+ANSWER: False positive. The withdrawTeamTokens function implements the nonReentrant() guard, has all the require() checks at the beginning and only at the end executes a transfer that's also checked by a require() statement.
 
-Line: 32 Impact: High Detail: Timestamp Dependence The use of block.timestamp can be manipulated by miners, affecting the conditions for token withdrawal.
+41. Line: 32 Impact: High Detail: Timestamp Dependence The use of block.timestamp can be manipulated by miners, affecting the conditions for token withdrawal.
+ANSWER: The manipulation that can be made is in the order or seconds, while the logic of the calculateYearForTeamTokens function is in the order of days. Any manipulation impact is minimum.
 
-Line: 36 Impact: High Detail: Integer Overflow/Underflow The arithmetic operations related to wallets[msg.sender].hyaxHoldingAmountAtWhitelistTime and teamTokenWithdrawalTimes do not use SafeMath, risking overflow/underflow vulnerabilities.
+42. Line: 36 Impact: High Detail: Integer Overflow/Underflow The arithmetic operations related to wallets[msg.sender].hyaxHoldingAmountAtWhitelistTime and teamTokenWithdrawalTimes do not use SafeMath, risking overflow/underflow vulnerabilities.
+ANSWER: False positive. Solidity version > 0.8.0 is covered against Integer Overflow and Underflow by integrating SafeMath. This version uses Solidity 0.8.20
 
-Line: 57 Impact: High Detail: Unchecked Call Return Value The function hyaxToken.transfer is used without checking the return value, which could result in failed transfers.
+43. Line: 57 Impact: High Detail: Unchecked Call Return Value The function hyaxToken.transfer is used without checking the return value, which could result in failed transfers.
+ANSWER: False positive. The return value is checked using a require() statement and the call of transfer() is made using the library SafeERC20.
 
-Line: 80 Impact: Medium Detail: Insecure Access Control The modifier isWhitelisted and isNotBlacklisted are used in combination, but their logic might lead to insecure access control if not implemented correctly in other parts of the code.
+44. Line: 80 Impact: Medium Detail: Insecure Access Control The modifier isWhitelisted and isNotBlacklisted are used in combination, but their logic might lead to insecure access control if not implemented correctly in other parts of the code.
 
-Line: 23 Impact: Medium Detail: Improper Error Handling Errors related to the timing and conditions for withdrawals are not handled comprehensively, potentially leading to unexpected behavior.
+45. Line: 23 Impact: Medium Detail: Improper Error Handling Errors related to the timing and conditions for withdrawals are not handled comprehensively, potentially leading to unexpected behavior.
 
-Line: 99 Impact: Medium Detail: Race Conditions Multiple state updates in the function could lead to race conditions, especially in a multi-transactional context.
+46. Line: 99 Impact: Medium Detail: Race Conditions Multiple state updates in the function could lead to race conditions, especially in a multi-transactional context.
 
-Line: 112 Impact: Medium Detail: Insufficient Gas Griefing The operations in withdrawTeamTokens can be exploited to consume more gas than allocated, leading to denial-of-service attacks.
+47. Line: 112 Impact: Medium Detail: Insufficient Gas Griefing The operations in withdrawTeamTokens can be exploited to consume more gas than allocated, leading to denial-of-service attacks.
 
-Line: 62 Impact: Low Detail: Logic Errors The condition wallets[msg.sender].hyaxHoldingAmount > 0 does not ensure that the wallet has a positive balance, leading to logical flaws.
+48. Line: 62 Impact: Low Detail: Logic Errors The condition wallets[msg.sender].hyaxHoldingAmount > 0 does not ensure that the wallet has a positive balance, leading to logical flaws.
 
-Line: 104 Impact: Low Detail: Unchecked Return Data Return data from the transfer function is not checked, which can result in logical failures if the transfer fails.
+49. Line: 104 Impact: Low Detail: Unchecked Return Data Return data from the transfer function is not checked, which can result in logical failures if the transfer fails.

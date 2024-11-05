@@ -534,7 +534,7 @@ getCurrentTokenPrice() function. Oracle price manipulation validation.
 
 26. Deploy in testnet (3 days) 
 
-23. Optimize updates script. (2 days)
+23. Optimize updates script. (2 days) Execute 10 batch transactions each sending a pack of 10 updates. and simulate it. In case the update fails, store the values of the wallets that failed to later try to update them manually.
 
 26. Transacion optimization and simulation? https://docs.alchemy.com/reference/alchemy-sendgasoptimizedtransaction (2 days)
 
