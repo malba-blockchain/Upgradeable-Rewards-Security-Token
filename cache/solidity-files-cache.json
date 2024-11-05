@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "D:\\USER\\Downloads\\ATLAS\\Projects\\HYAX-Upgradeable-Rewards\\contracts\\UpgradeableHYAXRewards.sol": {
-      "lastModificationDate": 1730826717861,
-      "contentHash": "ef19580ab0d926f53794ed538ad45691",
+      "lastModificationDate": 1730843883811,
+      "contentHash": "a84ae3d5a9e2952b957b4da5f058ebb3",
       "sourceName": "contracts/UpgradeableHYAXRewards.sol",
       "solcConfig": {
         "version": "0.8.20",

@@ -130,13 +130,19 @@ ANSWER: False positive. Solidity version > 0.8.0 is covered against Integer Over
 ANSWER: False positive. The return value is checked using a require() statement and the call of transfer() is made using the library SafeERC20.
 
 44. Line: 80 Impact: Medium Detail: Insecure Access Control The modifier isWhitelisted and isNotBlacklisted are used in combination, but their logic might lead to insecure access control if not implemented correctly in other parts of the code.
+ANSWER: The modifier has been implemented correctly to guarantee secure access control.
 
 45. Line: 23 Impact: Medium Detail: Improper Error Handling Errors related to the timing and conditions for withdrawals are not handled comprehensively, potentially leading to unexpected behavior.
+ANSWER: The withdrawal related functions follow an step by step require() check validation BEFORE executing any transaction, the every withdrawal transaction is performed using the SafeERC20 library to increase security
 
 46. Line: 99 Impact: Medium Detail: Race Conditions Multiple state updates in the function could lead to race conditions, especially in a multi-transactional context.
+ANSWER: Every single function related to state updates is executed following the logic of require() checks first, state update later and nonReentrant() safeguard to increase security.
 
 47. Line: 112 Impact: Medium Detail: Insufficient Gas Griefing The operations in withdrawTeamTokens can be exploited to consume more gas than allocated, leading to denial-of-service attacks.
+ANSWER: The withdrawTeamTokens function can only be executed by whitelisted team members and can only be executed once, maximum a year by each wallet.
 
 48. Line: 62 Impact: Low Detail: Logic Errors The condition wallets[msg.sender].hyaxHoldingAmount > 0 does not ensure that the wallet has a positive balance, leading to logical flaws.
+ANSWER: False positive. It's not possibe to have a negative balance because the hyaxHoldingAmount attribute is an unsigned integer of 256 bytes.
 
 49. Line: 104 Impact: Low Detail: Unchecked Return Data Return data from the transfer function is not checked, which can result in logical failures if the transfer fails.
+ANSWER: False positive. The return data of every transfer function is checked using a require() statement.

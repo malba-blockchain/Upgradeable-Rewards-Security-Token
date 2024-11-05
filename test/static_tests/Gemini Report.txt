@@ -2,25 +2,44 @@
 
     Line 1099: The withdrawRewardTokens function transfers ETH to the caller's address. This could potentially lead to a reentrancy attack if the recipient's contract is malicious and can call back into the withdrawRewardTokens function before the original call completes.
 
+ANSWER: False positive. The withdrawRewardTokens function can only be executed by whitelisted members, it has a nonReentrant modifier and the first thing it does when altering the contract state is to set the amount of tokens it can withdraw to zero. 
+
+
 24.4.2. Integer Overflow and Underflow Vulnerabilities
 
     Line 1023: The updateRewardsSingle function adds _hyaxRewards to wallets[_walletAddress].currentRewardsAmount. While there's a check for sufficient tokens, a malicious actor could potentially manipulate the _hyaxRewards value to trigger an overflow.
+
+ANSWER: False positive because, the solidity version being used is 0.8.20 and solidity has inbuilt Integer Overflow and Underflow protection sinve v 0.8.0. Additionally it's not possible to trigger an overflow because there is a require() statement that checks that _hyaxRewards is less than REWARD_TOKENS_PER_WEEK.
+
 
 24.4.3. Unchecked Call Return Value Attacks
 
     Line 1099: The hyaxToken.transfer call does not check the return value. A malicious token contract could revert the transfer, leading to a loss of funds.
 
+ANSWER: False positive. Not only the return value of transfer() is checked by using the require() statement but also the transfer() function is implemented the SafeERC20 for a secure transaction.
+
+
 24.4.4. Denial of Service (DoS) Attacks
 
     Line 1023: The updateRewardsSingle function has a MIN_INTERVAL_FOR_UPDATE_REWARDS check. A malicious actor could flood the contract with update requests for many wallets, potentially overwhelming the network and preventing legitimate users from interacting with the contract.
+
+ANSWER: The only accounts that can execute the updateRewardsSingle() function are the admin or the rewards updater so the probability of a DoS attack goes down.
+
 
 24.4.5. Front-Running Attacks
 
     Line 1099: The withdrawRewardTokens function is vulnerable to front-running attacks, where a malicious actor could intercept and modify transactions to prioritize their own withdrawals, potentially draining the contract of funds.
 
+ANSWER: False positive. Only whitelisted wallets can execute the withdrawRewardTokens() function. Even if a whitelisted wallet did front run other transactions, the only amount they can withdrawn is is equal to their current rewards earned.
+
+
 24.4.6. Insecure Access Control
 
     Line 1099: The withdrawRewardTokens function relies on the isWhitelisted modifier to restrict access. However, if the whitelisting logic is compromised, unauthorized users could potentially withdraw funds.
+
+ANSWER: The withdrawRewardTokens() function relies on the isWhitelisted modifier to restrict access.
+That's why the whitelister address is stored in a safe environment using AWS cloud services, it can only distribute tokens once a week and the maximum tokens it can distribute per week is capped too.
+
 
 24.4.7. Short Address Attack
 
@@ -38,6 +57,8 @@
 
     Line 1023: The updateRewardsSingle function relies on the MIN_INTERVAL_FOR_UPDATE_REWARDS check based on timestamps. This could be manipulated by malicious actors who can control the time on their nodes.
 
+ANSWER: It's possible to manipulate the timestamps by seconds, but the rewards min interval is 6 days. Additionally the rewards can only be distributed by the owner or the rewards updater address once every 6 days.
+
 
 24.4.11. Tx.origin Authentication
 
@@ -51,17 +72,28 @@
 
     Line 1023: The updateRewardsSingle function could be susceptible to race conditions if multiple transactions attempt to update the same wallet's rewards simultaneously. This could lead to incorrect reward calculations or potential loss of funds.
 
+ANSWER: The only accounts that can execute the updateRewardsSingle() function are the admin or the rewards updater, these rewards are distributed only once a week and the first state change that's made is the timestamp of the last update reducing the prob. of this happening.
+
+
 24.4.14. Insufficient Gas Griefing
 
     Line 1099: The withdrawRewardTokens function could be vulnerable to insufficient gas griefing attacks. If the transaction's gas limit is not sufficient, the transfer might fail, leaving the funds stuck in the contract.
+
+
+ANSWER: Worse case scenario: The sender tries to send the transaction, it reverts becasue it failed and the state of the blockchain reverts to the initial state before trying to withdraw.
+
 
 24.4.15. Gas Limit Vulnerabilities
 
     Not directly applicable in this code. However, incorrect gas estimations could lead to unexpected behavior or failed transactions.
 
+
 24.4.16. Unchecked External Calls
 
     Line 1099: The hyaxToken.transfer call does not check the return value, as mentioned earlier. This could lead to potential loss of funds if the token contract reverts the transfer.
+
+ANSWER: False positive. As mentioned earlier, there is a require() check to validate the state of the transfer and it uses SafeERC20 for safe transfer.
+
 
 24.4.17. Unchecked Return Data
 
@@ -75,9 +107,14 @@
 
     Line 1023: The logic for updating rewards and checking the MIN_INTERVAL_FOR_UPDATE_REWARDS could potentially lead to unintended consequences if not carefully implemented.
 
+ANSWER: It's possible to manipulate the timestamps by seconds, but the rewards min interval is 6 days. Additionally the rewards can only be distributed by the owner or the rewards updater address once every 6 days.
+
+
 24.4.20. Flash Loan Attack Vectors
 
     Not directly applicable in this code. However, it's worth noting that flash loan attacks can be used to manipulate token prices or market conditions, which could indirectly impact the contract's behavior if it relies on external price feeds or token valuations.
+
+ANSWER: This contract doesn't rely on external token prices.
 
 
 24.4.21. Storage Collision
@@ -88,9 +125,14 @@
 
     Line 1099: While the nonReentrant modifier is used, it's essential to ensure that the withdrawRewardTokens function doesn't have any external calls that could trigger reentrancy before the state is updated.
 
+ANSWER: Only whitelisted wallets can use the withdrawRewardTokens() function. Additionally, the first state updated in this function is the currentRewards variable, making unfeasible to execute reentrancy attacks.
+
 24.4.23. Improper Error Handling
 
     Line 1099: The hyaxToken.transfer call does not check for errors, which could lead to unexpected behavior if the transfer fails.
+
+ANSWER: False positive. Not only the return value of transfer() is checked by using the require() statement but also the transfer() function is implemented the SafeERC20 for a secure transaction.
+
 
 24.4.24. Ambiguous Evaluation Order
 
@@ -103,6 +145,7 @@
 24.4.26. Approval Vulnerabilities
 
     Not directly applicable in this code. However, if the contract interacts with other contracts that use ERC20 tokens, it's important to be aware of approval vulnerabilities, such as the approve() function.
+ANSWER: The approve() funcitin is never used but also the transfer() function is implemented the SafeERC20 for a secure transaction.
 
 24.4.27. Exposed Data
 
@@ -120,12 +163,19 @@
 
     Not applicable in this code.
 
+
 Line 1023:
 
 The updateRewardsSingle function iterates over a list of wallet addresses. Consider using a mapping to store the latest reward update time for each wallet, avoiding unnecessary iterations.
 
+ANSWER: The updateRewardsSingle() function DOES acutally use a mapping called "wallets" to store the latest reward update time for each wallet.
+
+
 Line 1099: The withdrawRewardTokens function involves multiple state updates and transfers. Explore using a single transaction to minimize gas costs.
+
+ANSWER: False positive, it involves multiple state updates but one single transaction at the end to minimize gas cost.
+
 
 Line 1150: The calculateYearForTeamTokens function can be optimized by using a more efficient conditional check or bitwise operations.
 
-Overall: Consider using the cheatcode library or similar tools to simulate gas costs and identify optimization opportunities.
+ANSWER: This function has been optimized with a more efficient conditional check.

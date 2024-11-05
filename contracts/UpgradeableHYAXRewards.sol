@@ -680,10 +680,10 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
         require(_hyaxRewards <= REWARD_TOKENS_PER_WEEK, "A single wallet cannot have rewards higher than the weekly limit");
         require(_hyaxRewards <= rewardTokensInSmartContract, "Insufficient reward tokens to distribute as rewards");
         require(rewardTokensDistributed + _hyaxRewards <= REWARD_TOKENS_TOTAL, "All the reward tokens have been already distributed");
-
+        
         // Update the last rewards update time
         wallets[_walletAddress].lastRewardsUpdateTime = block.timestamp;
-    
+        
         // Update the total rewards distributed
         rewardTokensDistributed += _hyaxRewards;
 
@@ -710,15 +710,16 @@ contract UpgradeableHYAXRewards is AccessControlEnumerableUpgradeable,  Pausable
         // Validate various conditions before allowing reward token withdrawal
         require(rewardTokensFundingStarted, "Reward tokens funding has not started yet, no tokens to withdraw");
         require(rewardTokensWithdrawn < REWARD_TOKENS_TOTAL, "All reward tokens have been withdrawn");
+
         uint256 withdrawableAmount = wallets[msg.sender].currentRewardsAmount;
         require(withdrawableAmount > 0, "No rewards available to withdraw");
         require(withdrawableAmount <= rewardTokensInSmartContract, "Insufficient reward tokens in the contract to withdraw");
 
-        // Update the rewards withdrawn amount
-        wallets[msg.sender].rewardsWithdrawn += withdrawableAmount;
-
         // Reset the current rewards amount
         wallets[msg.sender].currentRewardsAmount = 0;
+
+        // Update the rewards withdrawn amount
+        wallets[msg.sender].rewardsWithdrawn += withdrawableAmount;
 
         // Update the last rewards withdrawal time
         wallets[msg.sender].lastRewardsWithdrawalTime = block.timestamp;

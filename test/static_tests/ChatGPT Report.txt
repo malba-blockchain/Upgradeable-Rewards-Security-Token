@@ -127,7 +127,6 @@ ANSWER: False positive. Only the owner, which is a multisig managed by the execu
 30. Impact: High Detail: Unchecked Low-Level Calls: The call to hyaxToken.transferFrom lacks a check on return values, creating risk if the call fails silently. This can lead to discrepancies between contract state and actual token balances. Implement explicit return checks for all external token transfers to maintain accuracy.
 ANSWER: False positive. The transferFrom() uses the SafeERC20 library for a safe transfer and has a require() statement to validate the status of the return.
 
-CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
 31. Impact: High Detail: Gas Optimization: In fundSmartContract, the repeated use of _amount could be optimized by using memory caching. Store hyaxToken.transferFrom result once in memory, reducing redundant calculations and lowering gas costs.
 ANSWER: Cached the transferFrom transaction result by using the boolean transferSuccessful.
@@ -139,14 +138,18 @@ ANSWER: Log eliminated because it was used just for debbugin purposes.
 33. Impact: High Detail: Gas Optimization: withdrawGrowthTokens function includes multiple require checks that could be refactored into a single conditional, reducing gas by minimizing code branching. Combining these checks could optimize execution flow and cut down on gas usage.
 ANSWER: This function is not used often to its impact it's low. The require checks are required to be separated for traceability purposes.
 
+
 34. Impact: Medium Detail: Best Practice: In updateRewardsBatch, the unchecked loop through _walletAddresses is limited by maximumBatchSizeForUpdateRewards, but limiting batch processing further or capping gas per transaction would improve safety and gas usage predictability. Consider also reverting partially filled arrays on failure.
 ANSWER: This functionality efficiency will be manage off chain in order to implement the right gas checks.
+
 
 35. Impact: Low Detail: Gas Optimization: Modifier-based checks, such as onlyAdminOrWhitelister, are more gas-efficient when added as function code instead of modifiers. Consider inlining logic within critical functions to cut down on the gas cost of separate modifier calls.
 ANSWER: This modifier is used 3 times across the contract, its more efficient to keep it.
 
+
 36. Impact: Medium Detail: Best Practice: The wallets mapping holds large structs accessible publicly, exposing more data than necessary. Making sensitive attributes private or creating specific getters reduces potential external queries and saves gas by preventing unnecessary state reads.
 ANSWER: The attributes are not sensitive and were requested by the company team in order to increase transparency.
+
 
 37. Impact: Medium Detail: Best Practice: The initialize function uses hard-coded values for initial funding amounts and limits. Instead, consider defining constants for these values within an immutable pattern, which enhances readability and reduces gas by storing them in the contract's code rather than storage.
 ANSWER: Those values can not be defined as constants because they are expected to be able to change based on business requirements.
