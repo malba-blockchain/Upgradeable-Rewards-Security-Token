@@ -3,6 +3,7 @@ Goal: Deploy Upgradeable HYAX Rewards Token
 D:&cd D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Token
 D:&cd D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Rewards
 
+
 ---------------DONE---------------
 
 0. Recap the functionalities and requirements 
@@ -444,13 +445,9 @@ npm i hardhat-gas-reporter
 22. Update updates script DONE
 
 
-CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-
-UP TO HERE-------------------------------
-
 npx hardhat run scripts/updateWeeklyRewards.ts 
 
-24. Add all security checks fuzzy testing and more learned in skills and job hunting experience (4 days)
+24. Add all security checks and more learned in skills and job hunting experience (4 days)
 
 24.1. Create unit tests DONE
 
@@ -511,13 +508,43 @@ Copilot DONE
 24.4.31. Gas optimization DONE
 24.4.32. Suggestions for best practices DONE
 
+CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+
+24.5. Execute static analysis using security tools
+
+https://github.com/PatrickAlphaC/hardhat-security-fcc/
+
+-Token Contract
+--Slither: static analysis tool 
+--Manticore: Symbolic execution
+--Mythril: symbolic execution and taint analysis
+
+-Rewards Contract
+--Slither: static analysis tool
+--Manticore: Symbolic execution
+--Mythril: symbolic execution and taint analysis
+
+
+24.6. Fuzzy testing
+
+-Token Contract
+--Echidna: fuzz testing tool 
+
+-Rewards Contract
+--Echidna: fuzz testing tool 
+
+
+UP TO HERE-------------------------------
+
 -Linters and Formatters
--Fuzzy testing
--Static & dynamic analysis
+--Solhint: Linter
+--Prettier: Formatter
+
+
+-Dynamic analysis
 -End-to-end tests
 -Integration testing
 
--Mythril, MythX, Slither
 -Mainnet Forking
 
 
