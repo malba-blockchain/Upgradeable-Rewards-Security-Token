@@ -22,10 +22,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.AccessControlEnumerableUpgradeable__factory>;
     getContractFactory(
-      name: "OwnableUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.OwnableUpgradeable__factory>;
-    getContractFactory(
       name: "Initializable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Initializable__factory>;
@@ -53,10 +49,6 @@ declare module "hardhat/types/runtime" {
       name: "IAccessControl",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IAccessControl__factory>;
-    getContractFactory(
-      name: "Ownable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Ownable__factory>;
     getContractFactory(
       name: "IERC1155Errors",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -102,14 +94,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC165__factory>;
     getContractFactory(
-      name: "Pausable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Pausable__factory>;
-    getContractFactory(
-      name: "ReentrancyGuard",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ReentrancyGuard__factory>;
-    getContractFactory(
       name: "HYAXToken",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.HYAXToken__factory>;
@@ -125,6 +109,10 @@ declare module "hardhat/types/runtime" {
       name: "IHyaxToken",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IHyaxToken__factory>;
+    getContractFactory(
+      name: "UpgradeableHYAXRewards",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.UpgradeableHYAXRewards__factory>;
     getContractFactory(
       name: "UpgradeableHYAXRewardsV2",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -145,11 +133,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.AccessControlEnumerableUpgradeable>;
     getContractAt(
-      name: "OwnableUpgradeable",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.OwnableUpgradeable>;
-    getContractAt(
       name: "Initializable",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -184,11 +167,6 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.IAccessControl>;
-    getContractAt(
-      name: "Ownable",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Ownable>;
     getContractAt(
       name: "IERC1155Errors",
       address: string | ethers.Addressable,
@@ -245,16 +223,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC165>;
     getContractAt(
-      name: "Pausable",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Pausable>;
-    getContractAt(
-      name: "ReentrancyGuard",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ReentrancyGuard>;
-    getContractAt(
       name: "HYAXToken",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -274,6 +242,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.IHyaxToken>;
+    getContractAt(
+      name: "UpgradeableHYAXRewards",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.UpgradeableHYAXRewards>;
     getContractAt(
       name: "UpgradeableHYAXRewardsV2",
       address: string | ethers.Addressable,
@@ -294,10 +267,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AccessControlEnumerableUpgradeable>;
     deployContract(
-      name: "OwnableUpgradeable",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.OwnableUpgradeable>;
-    deployContract(
       name: "Initializable",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Initializable>;
@@ -325,10 +294,6 @@ declare module "hardhat/types/runtime" {
       name: "IAccessControl",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IAccessControl>;
-    deployContract(
-      name: "Ownable",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Ownable>;
     deployContract(
       name: "IERC1155Errors",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -374,14 +339,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC165>;
     deployContract(
-      name: "Pausable",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Pausable>;
-    deployContract(
-      name: "ReentrancyGuard",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ReentrancyGuard>;
-    deployContract(
       name: "HYAXToken",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.HYAXToken>;
@@ -397,6 +354,10 @@ declare module "hardhat/types/runtime" {
       name: "IHyaxToken",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IHyaxToken>;
+    deployContract(
+      name: "UpgradeableHYAXRewards",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UpgradeableHYAXRewards>;
     deployContract(
       name: "UpgradeableHYAXRewardsV2",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -417,11 +378,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AccessControlEnumerableUpgradeable>;
     deployContract(
-      name: "OwnableUpgradeable",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.OwnableUpgradeable>;
-    deployContract(
       name: "Initializable",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -456,11 +412,6 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IAccessControl>;
-    deployContract(
-      name: "Ownable",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Ownable>;
     deployContract(
       name: "IERC1155Errors",
       args: any[],
@@ -517,16 +468,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC165>;
     deployContract(
-      name: "Pausable",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Pausable>;
-    deployContract(
-      name: "ReentrancyGuard",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ReentrancyGuard>;
-    deployContract(
       name: "HYAXToken",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -546,6 +487,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IHyaxToken>;
+    deployContract(
+      name: "UpgradeableHYAXRewards",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.UpgradeableHYAXRewards>;
     deployContract(
       name: "UpgradeableHYAXRewardsV2",
       args: any[],

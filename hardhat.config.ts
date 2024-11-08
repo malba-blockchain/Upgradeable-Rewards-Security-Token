@@ -5,6 +5,7 @@ import "@nomicfoundation/hardhat-verify";
 import "hardhat-gas-reporter";
 import "@nomicfoundation/hardhat-chai-matchers";
 import "@nomicfoundation/hardhat-toolbox";
+import "@nomiclabs/hardhat-solhint";
 import dotenv from 'dotenv';
 dotenv.config();
 

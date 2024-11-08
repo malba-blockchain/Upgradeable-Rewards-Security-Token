@@ -1,0 +1,31 @@
+USING SOLHINT LINTER
+
+hardhat-solhint
+
+d:&&cd D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Token
+
+d:&&cd D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Rewards 
+
+
+1. npm install --save-dev @nomiclabs/hardhat-solhint
+
+npm install --save-dev @nomiclabs/hardhat-solhint --legacy-peer-deps
+
+
+2. And add the following statement to your hardhat.config.js:
+
+require("@nomiclabs/hardhat-solhint");
+
+Or, if you are using TypeScript, add this to your hardhat.config.ts:
+
+import "@nomiclabs/hardhat-solhint";
+
+
+3. npx hardhat check
+
+4. Now check the Solhint report printed in console and save it.
+
+
+npm install --save-dev "@nomicfoundation/hardhat-ignition@^0.15.7" "@nomicfoundation/ignition-core@^0.15.7" --legacy-peer-deps
+
+

@@ -1,0 +1,60 @@
+Install docker
+https://www.docker.com/
+
+Install ETH Security Toolbox 
+https://github.com/trailofbits/eth-security-toolbox/
+
+
+Installation commands
+docker pull ghcr.io/trailofbits/eth-security-toolbox:nightly
+
+docker run -it ghcr.io/trailofbits/eth-security-toolbox:nightly
+
+solc --version
+solc-select versions
+solc-select install 0.8.20
+solc-select use 0.8.20
+solc --version
+
+docker run -it --rm -v "D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Token":/share trailofbits/eth-security-toolbox
+docker run -it --rm -v "D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Rewards":/share trailofbits/eth-security-toolbox
+
+cd ../../share
+
+USING SLITHER 
+slither .
+
+slither . --print human-summary,contract-summary,loc,cfg,function-summary
+
+USING ECHIDNA
+echidna .
+
+
+USING MEDUSA
+medusa init
+
+medusa fuzz --target-contracts "HYAXUpgradeable" --test-limit 10_000
+medusa fuzz --target-contracts "UpgradeableHYAXRewards" --test-limit 10_000
+
+
+USING MUYTHRIL
+docker pull mythril/myth
+
+d:&&cd D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Token
+
+npx hardhat flatten contracts/HYAXUpgradeable.sol > HYAXUpgradeable_flat.sol
+
+docker run -v /d/USER/Downloads/ATLAS/Projects/HYAX-Upgradeable-Token:/project mythril/myth analyze /project/HYAXUpgradeable_flat.sol --solv 0.8.20
+
+
+d:&&cd D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Rewards
+
+npx hardhat flatten contracts/UpgradeableHYAXRewards.sol > UpgradeableHYAXRewards_flat.sol
+
+docker run -v /d/USER/Downloads/ATLAS/Projects/HYAX-Upgradeable-Rewards:/project2 mythril/myth analyze /project2/UpgradeableHYAXRewards_flat.sol --solv 0.8.20
+
+
+
+
+
+ 

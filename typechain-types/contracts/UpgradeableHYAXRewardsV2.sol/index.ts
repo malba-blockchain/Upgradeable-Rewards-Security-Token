@@ -2,4 +2,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { IHyaxToken } from "./IHyaxToken";
+export type { UpgradeableHYAXRewards } from "./UpgradeableHYAXRewards";
 export type { UpgradeableHYAXRewardsV2 } from "./UpgradeableHYAXRewardsV2";

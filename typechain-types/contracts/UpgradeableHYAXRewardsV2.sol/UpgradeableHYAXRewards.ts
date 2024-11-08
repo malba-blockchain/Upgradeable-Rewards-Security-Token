@@ -43,6 +43,9 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "calculateYearForTeamTokens"
       | "fundSmartContract"
       | "getRoleAdmin"
+      | "getRoleMember"
+      | "getRoleMemberCount"
+      | "getRoleMembers"
       | "grantRole"
       | "growthTokensFunded"
       | "growthTokensFundingStarted"
@@ -59,7 +62,6 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "owner"
       | "pause"
       | "paused"
-      | "renounceOwnership"
       | "renounceRole"
       | "revokeRole"
       | "rewardTokensDistributed"
@@ -101,9 +103,7 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
       | "GrowthTokensWithdrawn"
       | "HyaxTokenAddressUpdated"
       | "Initialized"
-      | "LogSenderAndOrigin"
       | "MaximumBatchSizeForUpdateRewardsUpdated"
-      | "OwnershipTransferred"
       | "Paused"
       | "RewardTokensWithdrawn"
       | "RewardUpdateBatchSent"
@@ -191,6 +191,18 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "getRoleMember",
+    values: [BytesLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMemberCount",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMembers",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "grantRole",
     values: [BytesLike, AddressLike]
   ): string;
@@ -242,10 +254,6 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
     values: [BytesLike, AddressLike]
@@ -440,6 +448,18 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
     functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMember",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMemberCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMembers",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "growthTokensFunded",
@@ -483,10 +503,6 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
     data: BytesLike
@@ -610,19 +626,19 @@ export interface UpgradeableHYAXRewardsInterface extends Interface {
 
 export namespace BlacklistStatusUpdatedEvent {
   export type InputTuple = [
-    _sender: AddressLike,
-    _walletAddress: AddressLike,
-    _newStatus: boolean
+    _senderBlacklistStatusUpdated: AddressLike,
+    _walletAddressBlacklistStatusUpdated: AddressLike,
+    _newStatusBlacklistStatusUpdated: boolean
   ];
   export type OutputTuple = [
-    _sender: string,
-    _walletAddress: string,
-    _newStatus: boolean
+    _senderBlacklistStatusUpdated: string,
+    _walletAddressBlacklistStatusUpdated: string,
+    _newStatusBlacklistStatusUpdated: boolean
   ];
   export interface OutputObject {
-    _sender: string;
-    _walletAddress: string;
-    _newStatus: boolean;
+    _senderBlacklistStatusUpdated: string;
+    _walletAddressBlacklistStatusUpdated: string;
+    _newStatusBlacklistStatusUpdated: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -631,11 +647,14 @@ export namespace BlacklistStatusUpdatedEvent {
 }
 
 export namespace FundingAddedEvent {
-  export type InputTuple = [_fundingType: BigNumberish, _amount: BigNumberish];
-  export type OutputTuple = [_fundingType: bigint, _amount: bigint];
+  export type InputTuple = [
+    _fundingTypeAdded: BigNumberish,
+    _amountAdded: BigNumberish
+  ];
+  export type OutputTuple = [_fundingTypeAdded: bigint, _amountAdded: bigint];
   export interface OutputObject {
-    _fundingType: bigint;
-    _amount: bigint;
+    _fundingTypeAdded: bigint;
+    _amountAdded: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -644,11 +663,17 @@ export namespace FundingAddedEvent {
 }
 
 export namespace GrowthTokensWithdrawnEvent {
-  export type InputTuple = [_walletAddress: AddressLike, _amount: BigNumberish];
-  export type OutputTuple = [_walletAddress: string, _amount: bigint];
+  export type InputTuple = [
+    _walletAddressGrowthTokensWithdrawn: AddressLike,
+    _amountWithdrawn: BigNumberish
+  ];
+  export type OutputTuple = [
+    _walletAddressGrowthTokensWithdrawn: string,
+    _amountWithdrawn: bigint
+  ];
   export interface OutputObject {
-    _walletAddress: string;
-    _amount: bigint;
+    _walletAddressGrowthTokensWithdrawn: string;
+    _amountWithdrawn: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -680,37 +705,11 @@ export namespace InitializedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace LogSenderAndOriginEvent {
-  export type InputTuple = [_sender: AddressLike, _origin: AddressLike];
-  export type OutputTuple = [_sender: string, _origin: string];
-  export interface OutputObject {
-    _sender: string;
-    _origin: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
 export namespace MaximumBatchSizeForUpdateRewardsUpdatedEvent {
   export type InputTuple = [_maximumBatchSizeForUpdateRewards: BigNumberish];
   export type OutputTuple = [_maximumBatchSizeForUpdateRewards: bigint];
   export interface OutputObject {
     _maximumBatchSizeForUpdateRewards: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace OwnershipTransferredEvent {
-  export type InputTuple = [previousOwner: AddressLike, newOwner: AddressLike];
-  export type OutputTuple = [previousOwner: string, newOwner: string];
-  export interface OutputObject {
-    previousOwner: string;
-    newOwner: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -731,11 +730,17 @@ export namespace PausedEvent {
 }
 
 export namespace RewardTokensWithdrawnEvent {
-  export type InputTuple = [_walletAddress: AddressLike, _amount: BigNumberish];
-  export type OutputTuple = [_walletAddress: string, _amount: bigint];
+  export type InputTuple = [
+    _walletAddressRewardTokensWithdrawn: AddressLike,
+    _amountWithdrawn: BigNumberish
+  ];
+  export type OutputTuple = [
+    _walletAddressRewardTokensWithdrawn: string,
+    _amountWithdrawn: bigint
+  ];
   export interface OutputObject {
-    _walletAddress: string;
-    _amount: bigint;
+    _walletAddressRewardTokensWithdrawn: string;
+    _amountWithdrawn: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -810,10 +815,10 @@ export namespace RewardUpdateSuccessEvent {
 }
 
 export namespace RewardsUpdaterAddressUpdatedEvent {
-  export type InputTuple = [_rewardsUpdaterAddress: AddressLike];
-  export type OutputTuple = [_rewardsUpdaterAddress: string];
+  export type InputTuple = [_newRewardsUpdaterAddress: AddressLike];
+  export type OutputTuple = [_newRewardsUpdaterAddress: string];
   export interface OutputObject {
-    _rewardsUpdaterAddress: string;
+    _newRewardsUpdaterAddress: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -902,11 +907,17 @@ export namespace TeamMemberWalletUpdatedEvent {
 }
 
 export namespace TeamTokensWithdrawnEvent {
-  export type InputTuple = [_walletAddress: AddressLike, _amount: BigNumberish];
-  export type OutputTuple = [_walletAddress: string, _amount: bigint];
+  export type InputTuple = [
+    _walletAddressTeamTokensWithdrawn: AddressLike,
+    _amountWithdrawn: BigNumberish
+  ];
+  export type OutputTuple = [
+    _walletAddressTeamTokensWithdrawn: string,
+    _amountWithdrawn: bigint
+  ];
   export interface OutputObject {
-    _walletAddress: string;
-    _amount: bigint;
+    _walletAddressTeamTokensWithdrawn: string;
+    _amountWithdrawn: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -915,10 +926,13 @@ export namespace TeamTokensWithdrawnEvent {
 }
 
 export namespace TokensToBurnWithdrawnEvent {
-  export type InputTuple = [_fundingType: BigNumberish, _amount: BigNumberish];
-  export type OutputTuple = [_fundingType: bigint, _amount: bigint];
+  export type InputTuple = [
+    _fundingTypeWithdrawn: BigNumberish,
+    _amount: BigNumberish
+  ];
+  export type OutputTuple = [_fundingTypeWithdrawn: bigint, _amount: bigint];
   export interface OutputObject {
-    _fundingType: bigint;
+    _fundingTypeWithdrawn: bigint;
     _amount: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
@@ -965,10 +979,10 @@ export namespace WalletAddedToWhitelistEvent {
 }
 
 export namespace WhiteListerAddressUpdatedEvent {
-  export type InputTuple = [_whiteListerAddress: AddressLike];
-  export type OutputTuple = [_whiteListerAddress: string];
+  export type InputTuple = [_newWhiteListerAddress: AddressLike];
+  export type OutputTuple = [_newWhiteListerAddress: string];
   export interface OutputObject {
-    _whiteListerAddress: string;
+    _newWhiteListerAddress: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -978,19 +992,19 @@ export namespace WhiteListerAddressUpdatedEvent {
 
 export namespace WhitelistStatusUpdatedEvent {
   export type InputTuple = [
-    _sender: AddressLike,
-    _walletAddress: AddressLike,
-    _newStatus: boolean
+    _senderWhitelistStatusUpdated: AddressLike,
+    _walletAddressWhitelistStatusUpdated: AddressLike,
+    _newStatusWhitelistStatusUpdated: boolean
   ];
   export type OutputTuple = [
-    _sender: string,
-    _walletAddress: string,
-    _newStatus: boolean
+    _senderWhitelistStatusUpdated: string,
+    _walletAddressWhitelistStatusUpdated: string,
+    _newStatusWhitelistStatusUpdated: boolean
   ];
   export interface OutputObject {
-    _sender: string;
-    _walletAddress: string;
-    _newStatus: boolean;
+    _senderWhitelistStatusUpdated: string;
+    _walletAddressWhitelistStatusUpdated: string;
+    _newStatusWhitelistStatusUpdated: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -1087,6 +1101,16 @@ export interface UpgradeableHYAXRewards extends BaseContract {
 
   getRoleAdmin: TypedContractMethod<[role: BytesLike], [string], "view">;
 
+  getRoleMember: TypedContractMethod<
+    [role: BytesLike, index: BigNumberish],
+    [string],
+    "view"
+  >;
+
+  getRoleMemberCount: TypedContractMethod<[role: BytesLike], [bigint], "view">;
+
+  getRoleMembers: TypedContractMethod<[role: BytesLike], [string[]], "view">;
+
   grantRole: TypedContractMethod<
     [role: BytesLike, account: AddressLike],
     [void],
@@ -1130,8 +1154,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
   pause: TypedContractMethod<[], [void], "nonpayable">;
 
   paused: TypedContractMethod<[], [boolean], "view">;
-
-  renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
 
   renounceRole: TypedContractMethod<
     [role: BytesLike, callerConfirmation: AddressLike],
@@ -1356,6 +1378,19 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     nameOrSignature: "getRoleAdmin"
   ): TypedContractMethod<[role: BytesLike], [string], "view">;
   getFunction(
+    nameOrSignature: "getRoleMember"
+  ): TypedContractMethod<
+    [role: BytesLike, index: BigNumberish],
+    [string],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getRoleMemberCount"
+  ): TypedContractMethod<[role: BytesLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getRoleMembers"
+  ): TypedContractMethod<[role: BytesLike], [string[]], "view">;
+  getFunction(
     nameOrSignature: "grantRole"
   ): TypedContractMethod<
     [role: BytesLike, account: AddressLike],
@@ -1415,9 +1450,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
   getFunction(
     nameOrSignature: "paused"
   ): TypedContractMethod<[], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "renounceOwnership"
-  ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "renounceRole"
   ): TypedContractMethod<
@@ -1634,25 +1666,11 @@ export interface UpgradeableHYAXRewards extends BaseContract {
     InitializedEvent.OutputObject
   >;
   getEvent(
-    key: "LogSenderAndOrigin"
-  ): TypedContractEvent<
-    LogSenderAndOriginEvent.InputTuple,
-    LogSenderAndOriginEvent.OutputTuple,
-    LogSenderAndOriginEvent.OutputObject
-  >;
-  getEvent(
     key: "MaximumBatchSizeForUpdateRewardsUpdated"
   ): TypedContractEvent<
     MaximumBatchSizeForUpdateRewardsUpdatedEvent.InputTuple,
     MaximumBatchSizeForUpdateRewardsUpdatedEvent.OutputTuple,
     MaximumBatchSizeForUpdateRewardsUpdatedEvent.OutputObject
-  >;
-  getEvent(
-    key: "OwnershipTransferred"
-  ): TypedContractEvent<
-    OwnershipTransferredEvent.InputTuple,
-    OwnershipTransferredEvent.OutputTuple,
-    OwnershipTransferredEvent.OutputObject
   >;
   getEvent(
     key: "Paused"
@@ -1823,17 +1841,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
       InitializedEvent.OutputObject
     >;
 
-    "LogSenderAndOrigin(address,address)": TypedContractEvent<
-      LogSenderAndOriginEvent.InputTuple,
-      LogSenderAndOriginEvent.OutputTuple,
-      LogSenderAndOriginEvent.OutputObject
-    >;
-    LogSenderAndOrigin: TypedContractEvent<
-      LogSenderAndOriginEvent.InputTuple,
-      LogSenderAndOriginEvent.OutputTuple,
-      LogSenderAndOriginEvent.OutputObject
-    >;
-
     "MaximumBatchSizeForUpdateRewardsUpdated(uint8)": TypedContractEvent<
       MaximumBatchSizeForUpdateRewardsUpdatedEvent.InputTuple,
       MaximumBatchSizeForUpdateRewardsUpdatedEvent.OutputTuple,
@@ -1843,17 +1850,6 @@ export interface UpgradeableHYAXRewards extends BaseContract {
       MaximumBatchSizeForUpdateRewardsUpdatedEvent.InputTuple,
       MaximumBatchSizeForUpdateRewardsUpdatedEvent.OutputTuple,
       MaximumBatchSizeForUpdateRewardsUpdatedEvent.OutputObject
-    >;
-
-    "OwnershipTransferred(address,address)": TypedContractEvent<
-      OwnershipTransferredEvent.InputTuple,
-      OwnershipTransferredEvent.OutputTuple,
-      OwnershipTransferredEvent.OutputObject
-    >;
-    OwnershipTransferred: TypedContractEvent<
-      OwnershipTransferredEvent.InputTuple,
-      OwnershipTransferredEvent.OutputTuple,
-      OwnershipTransferredEvent.OutputObject
     >;
 
     "Paused(address)": TypedContractEvent<

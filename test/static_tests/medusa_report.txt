@@ -1,0 +1,56 @@
+⇾ Reading the configuration file at: /share/medusa.json
+⇾ Compiling targets with crytic-compile
+warn Currently, optimization mode's call sequence shrinking is inefficient; this may lead to minor performance issues
+⇾ Initializing corpus
+⇾ Setting up base chain
+⇾ Initializing and validating corpus call sequences
+⇾ Fuzzing with 10 workers
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.initialize(address)
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.updateMaximumBatchSizeForUpdateRewards(uint8)
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.withdrawGrowthTokens()
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.renounceRole(bytes32,address)
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.updateRewardsSingle(address,uint256)
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.updateBlacklistStatus(address,bool)
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.updateTeamMemberWallet(address,address)
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.withdrawTokensToBurn(uint8,uint256)
+⇾ fuzz: elapsed: 0s, calls: 0 (0/sec), seq/s: 0, coverage: 0
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.withdrawTeamTokens()
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.updateHyaxTokenAddress(address)
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.updateRewardsUpdaterAddress(address)
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.unpause()
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.addWalletToWhitelist(address,bool,uint256)
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.revokeRole(bytes32,address)
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.updateWhitelistStatus(address,bool)
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.fundSmartContract(uint8,uint256)
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.pause()
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.updateRewardsBatch(address[],uint256[])
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.updateWhiteListerAddress(address)
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.transferOwnership(address)
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.withdrawRewardTokens()
+⇾ [NOT STARTED] Assertion Test: UpgradeableHYAXRewards.grantRole(bytes32,address)
+⇾ fuzz: elapsed: 3s, calls: 20342 (6771/sec), seq/s: 65, coverage: 2
+⇾ Transaction test limit reached, halting now...
+⇾ Fuzzer stopped, test results follow below ...
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.addWalletToWhitelist(address,bool,uint256)
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.fundSmartContract(uint8,uint256)
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.grantRole(bytes32,address)
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.initialize(address)
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.pause()
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.renounceRole(bytes32,address)
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.revokeRole(bytes32,address)
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.transferOwnership(address)
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.unpause()
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.updateBlacklistStatus(address,bool)
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.updateHyaxTokenAddress(address)
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.updateMaximumBatchSizeForUpdateRewards(uint8)
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.updateRewardsBatch(address[],uint256[])
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.updateRewardsSingle(address,uint256)
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.updateRewardsUpdaterAddress(address)
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.updateTeamMemberWallet(address,address)
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.updateWhiteListerAddress(address)
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.updateWhitelistStatus(address,bool)
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.withdrawGrowthTokens()
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.withdrawRewardTokens()
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.withdrawTeamTokens()
+⇾ [PASSED] Assertion Test: UpgradeableHYAXRewards.withdrawTokensToBurn(uint8,uint256)
+⇾ Test summary: 22 test(s) passed, 0 test(s) failed

@@ -10,8 +10,6 @@ export type { AccessControlUpgradeable } from "./@openzeppelin/contracts-upgrade
 export { AccessControlUpgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable__factory";
 export type { AccessControlEnumerableUpgradeable } from "./@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable";
 export { AccessControlEnumerableUpgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable__factory";
-export type { OwnableUpgradeable } from "./@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable";
-export { OwnableUpgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable__factory";
 export type { Initializable } from "./@openzeppelin/contracts-upgradeable/proxy/utils/Initializable";
 export { Initializable__factory } from "./factories/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable__factory";
 export type { ContextUpgradeable } from "./@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable";
@@ -26,8 +24,6 @@ export type { IAccessControlEnumerable } from "./@openzeppelin/contracts/access/
 export { IAccessControlEnumerable__factory } from "./factories/@openzeppelin/contracts/access/extensions/IAccessControlEnumerable__factory";
 export type { IAccessControl } from "./@openzeppelin/contracts/access/IAccessControl";
 export { IAccessControl__factory } from "./factories/@openzeppelin/contracts/access/IAccessControl__factory";
-export type { Ownable } from "./@openzeppelin/contracts/access/Ownable";
-export { Ownable__factory } from "./factories/@openzeppelin/contracts/access/Ownable__factory";
 export type { IERC1155Errors } from "./@openzeppelin/contracts/interfaces/draft-IERC6093.sol/IERC1155Errors";
 export { IERC1155Errors__factory } from "./factories/@openzeppelin/contracts/interfaces/draft-IERC6093.sol/IERC1155Errors__factory";
 export type { IERC20Errors } from "./@openzeppelin/contracts/interfaces/draft-IERC6093.sol/IERC20Errors";
@@ -50,10 +46,6 @@ export type { Errors } from "./@openzeppelin/contracts/utils/Errors";
 export { Errors__factory } from "./factories/@openzeppelin/contracts/utils/Errors__factory";
 export type { IERC165 } from "./@openzeppelin/contracts/utils/introspection/IERC165";
 export { IERC165__factory } from "./factories/@openzeppelin/contracts/utils/introspection/IERC165__factory";
-export type { Pausable } from "./@openzeppelin/contracts/utils/Pausable";
-export { Pausable__factory } from "./factories/@openzeppelin/contracts/utils/Pausable__factory";
-export type { ReentrancyGuard } from "./@openzeppelin/contracts/utils/ReentrancyGuard";
-export { ReentrancyGuard__factory } from "./factories/@openzeppelin/contracts/utils/ReentrancyGuard__factory";
 export type { HYAXToken } from "./contracts/HYAXToken";
 export { HYAXToken__factory } from "./factories/contracts/HYAXToken__factory";
 export type { IHyaxToken } from "./contracts/UpgradeableHYAXRewards.sol/IHyaxToken";

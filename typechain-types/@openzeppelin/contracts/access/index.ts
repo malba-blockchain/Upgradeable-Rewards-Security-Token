@@ -4,4 +4,3 @@
 import type * as extensions from "./extensions";
 export type { extensions };
 export type { IAccessControl } from "./IAccessControl";
-export type { Ownable } from "./Ownable";

@@ -508,56 +508,61 @@ Copilot DONE
 24.4.31. Gas optimization DONE
 24.4.32. Suggestions for best practices DONE
 
-CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
 24.5. Execute static analysis using security tools
 
+D:&cd D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Token
+D:&cd D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Rewards
+D:&cd D:\USER\Downloads\ATLAS\Projects
+
 https://github.com/PatrickAlphaC/hardhat-security-fcc/
 
+24.5.1. Test running ETH Security Toolbox 
+
+
 -Token Contract
---Slither: static analysis tool 
---Manticore: Symbolic execution
---Mythril: symbolic execution and taint analysis
+--Slither: static analysis tool. https://github.com/crytic/slither DONE
+--Mythril: symbolic execution and taint analysis. https://github.com/Consensys/mythril DONE
 
 -Rewards Contract
---Slither: static analysis tool
---Manticore: Symbolic execution
---Mythril: symbolic execution and taint analysis
-
+--Slither: static analysis tool. https://github.com/crytic/slither DONE
+--Mythril: symbolic execution and taint analysis. https://github.com/Consensys/mythril DONE
 
 24.6. Fuzzy testing
 
 -Token Contract
---Echidna: fuzz testing tool 
+--Medusa: fuzz testing tool  DONE
 
 -Rewards Contract
---Echidna: fuzz testing tool 
+--Medusa: fuzz testing tool DONE
 
+CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+
+24.7. Linters and Formatters
+
+-Token Contract
+
+--Solhint: Linter DONE
+--Prettier: Formatter DONE
+
+-Rewards Contract
+
+--Solhint: Linter DONE
+--Prettier: Formatter DONE
 
 UP TO HERE-------------------------------
 
--Linters and Formatters
---Solhint: Linter
---Prettier: Formatter
+23. Add updates to contracts based on reports and update repos
 
+25. Clean comments and fix documentation on contract and tests (2 days)
 
--Dynamic analysis
--End-to-end tests
--Integration testing
-
--Mainnet Forking
-
-
-
-23. Add gitlab updates
 
 Questions: The withdrawTokensToBurn function should send the tokens to the owner wallet or to the treasury wallet?
 
-To check: 
+To check:
 
 getCurrentTokenPrice() function. Price freshness validation.
 getCurrentTokenPrice() function. Oracle price manipulation validation.
-
 
 26. Deploy in testnet (3 days) 
 
@@ -565,11 +570,9 @@ getCurrentTokenPrice() function. Oracle price manipulation validation.
 
 26. Transacion optimization and simulation? https://docs.alchemy.com/reference/alchemy-sendgasoptimizedtransaction (2 days)
 
-25. Clean comments and fix documentation on contract and tests (2 days)
-
 26. Test upgradeability with multisig transaction (2 days)
 
-27. Document (4 days)
+27. DOCUMENT EVERYTHING. DON'T FORGET THE VIDEOS (4 days)
 
 28. Share to the web2 team + rewards update script (4 days)
 
@@ -588,12 +591,6 @@ Create local upgradeable version
 
 Create testnet upgradeable version
 
-
-----------------------------
-
-Using the following hardhat testing template, generate the following test cases for the "XXXXXXXXXXXXXXXXXXXXXXX", for the solidity smart contract: UpgradeableHYAXRewards.sol
-
-----------------------------
 
 
 

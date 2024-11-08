@@ -1,0 +1,399 @@
+INFO:Printers:
+Compiled with Builder
+Total number of contracts in source files: 2
+Number of contracts in dependencies: 16
+Source lines of code (SLOC) in source files: 399
+Source lines of code (SLOC) in dependencies: 669
+Number of  assembly lines: 0
+Number of optimization issues: 0
+Number of informational issues: 73
+Number of low issues: 7
+Number of medium issues: 2
+Number of high issues: 0
+
+ERCs: ERC165, ERC1363, ERC20
+
++------------------------+-------------+--------+--------------------+--------------+--------------------+
+| Name                   | # functions |   ERCS |         ERC20 info | Complex code |           Features |
++------------------------+-------------+--------+--------------------+--------------+--------------------+
+| IHyaxToken             |           7 |  ERC20 |         No Minting |           No |                    |
+|                        |             |        | Approve Race Cond. |              |                    |
+|                        |             |        |                    |              |                    |
+| UpgradeableHYAXRewards |          80 | ERC165 |                    |           No | Tokens interaction |
+|                        |             |        |                    |              |           Assembly |
+|                        |             |        |                    |              |        Upgradeable |
++------------------------+-------------+--------+--------------------+--------------+--------------------+
+INFO:Slither:. analyzed (18 contracts)
+ethsec@74b407845634:/share$ slither . --print human-summary,contract-summary,loc,cfg,function-summary
+'npx hardhat clean' running (wd: /share)
+'npx hardhat clean --global' running (wd: /share)
+'npx hardhat compile --force' running (wd: /share)
+INFO:Printers:
+Compiled with Builder
+Total number of contracts in source files: 2
+Number of contracts in dependencies: 16
+Source lines of code (SLOC) in source files: 399
+Source lines of code (SLOC) in dependencies: 669
+Number of  assembly lines: 0
+Number of optimization issues: 0
+Number of informational issues: 73
+Number of low issues: 7
+Number of medium issues: 2
+Number of high issues: 0
+
+ERCs: ERC1363, ERC165, ERC20
+
++------------------------+-------------+--------+--------------------+--------------+--------------------+
+| Name                   | # functions |   ERCS |         ERC20 info | Complex code |           Features |
++------------------------+-------------+--------+--------------------+--------------+--------------------+
+| IHyaxToken             |           7 |  ERC20 |         No Minting |           No |                    |
+|                        |             |        | Approve Race Cond. |              |                    |
+|                        |             |        |                    |              |                    |
+| UpgradeableHYAXRewards |          80 | ERC165 |                    |           No | Tokens interaction |
+|                        |             |        |                    |              |           Assembly |
+|                        |             |        |                    |              |        Upgradeable |
++------------------------+-------------+--------+--------------------+--------------+--------------------+
+INFO:Printers:
++ Contract AccessControlUpgradeable (Upgradeable)
+  - From ERC165Upgradeable
+    - __ERC165_init() (internal)
+    - __ERC165_init_unchained() (internal)
+  - From Initializable
+    - _checkInitializing() (internal)
+    - _disableInitializers() (internal)
+    - _getInitializableStorage() (private)
+    - _getInitializedVersion() (internal)
+    - _isInitializing() (internal)
+  - From ContextUpgradeable
+    - __Context_init() (internal)
+    - __Context_init_unchained() (internal)
+    - _contextSuffixLength() (internal)
+    - _msgData() (internal)
+    - _msgSender() (internal)
+  - From AccessControlUpgradeable
+    - __AccessControl_init() (internal)
+    - __AccessControl_init_unchained() (internal)
+    - _checkRole(bytes32) (internal)
+    - _checkRole(bytes32,address) (internal)
+    - _getAccessControlStorage() (private)
+    - _grantRole(bytes32,address) (internal)
+    - _revokeRole(bytes32,address) (internal)
+    - _setRoleAdmin(bytes32,bytes32) (internal)
+    - getRoleAdmin(bytes32) (public)
+    - grantRole(bytes32,address) (public)
+    - hasRole(bytes32,address) (public)
+    - renounceRole(bytes32,address) (public)
+    - revokeRole(bytes32,address) (public)
+    - supportsInterface(bytes4) (public)
+
++ Contract AccessControlEnumerableUpgradeable (Upgradeable)
+  - From AccessControlUpgradeable
+    - __AccessControl_init() (internal)
+    - __AccessControl_init_unchained() (internal)
+    - _checkRole(bytes32) (internal)
+    - _checkRole(bytes32,address) (internal)
+    - _getAccessControlStorage() (private)
+    - _setRoleAdmin(bytes32,bytes32) (internal)
+    - getRoleAdmin(bytes32) (public)
+    - grantRole(bytes32,address) (public)
+    - hasRole(bytes32,address) (public)
+    - renounceRole(bytes32,address) (public)
+    - revokeRole(bytes32,address) (public)
+  - From ERC165Upgradeable
+    - __ERC165_init() (internal)
+    - __ERC165_init_unchained() (internal)
+  - From Initializable
+    - _checkInitializing() (internal)
+    - _disableInitializers() (internal)
+    - _getInitializableStorage() (private)
+    - _getInitializedVersion() (internal)
+    - _isInitializing() (internal)
+  - From ContextUpgradeable
+    - __Context_init() (internal)
+    - __Context_init_unchained() (internal)
+    - _contextSuffixLength() (internal)
+    - _msgData() (internal)
+    - _msgSender() (internal)
+  - From AccessControlEnumerableUpgradeable
+    - __AccessControlEnumerable_init() (internal)
+    - __AccessControlEnumerable_init_unchained() (internal)
+    - _getAccessControlEnumerableStorage() (private)
+    - _grantRole(bytes32,address) (internal)
+    - _revokeRole(bytes32,address) (internal)
+    - getRoleMember(bytes32,uint256) (public)
+    - getRoleMemberCount(bytes32) (public)
+    - getRoleMembers(bytes32) (public)
+    - supportsInterface(bytes4) (public)
+
++ Contract Initializable
+  - From Initializable
+    - _checkInitializing() (internal)
+    - _disableInitializers() (internal)
+    - _getInitializableStorage() (private)
+    - _getInitializedVersion() (internal)
+    - _isInitializing() (internal)
+
++ Contract ContextUpgradeable (Upgradeable)
+  - From Initializable
+    - _checkInitializing() (internal)
+    - _disableInitializers() (internal)
+    - _getInitializableStorage() (private)
+    - _getInitializedVersion() (internal)
+    - _isInitializing() (internal)
+  - From ContextUpgradeable
+    - __Context_init() (internal)
+    - __Context_init_unchained() (internal)
+    - _contextSuffixLength() (internal)
+    - _msgData() (internal)
+    - _msgSender() (internal)
+
++ Contract PausableUpgradeable (Upgradeable)
+  - From ContextUpgradeable
+    - __Context_init() (internal)
+    - __Context_init_unchained() (internal)
+    - _contextSuffixLength() (internal)
+    - _msgData() (internal)
+    - _msgSender() (internal)
+  - From Initializable
+    - _checkInitializing() (internal)
+    - _disableInitializers() (internal)
+    - _getInitializableStorage() (private)
+    - _getInitializedVersion() (internal)
+    - _isInitializing() (internal)
+  - From PausableUpgradeable
+    - __Pausable_init() (internal)
+    - __Pausable_init_unchained() (internal)
+    - _getPausableStorage() (private)
+    - _pause() (internal)
+    - _requireNotPaused() (internal)
+    - _requirePaused() (internal)
+    - _unpause() (internal)
+    - paused() (public)
+
++ Contract ReentrancyGuardUpgradeable (Upgradeable)
+  - From Initializable
+    - _checkInitializing() (internal)
+    - _disableInitializers() (internal)
+    - _getInitializableStorage() (private)
+    - _getInitializedVersion() (internal)
+    - _isInitializing() (internal)
+  - From ReentrancyGuardUpgradeable
+    - __ReentrancyGuard_init() (internal)
+    - __ReentrancyGuard_init_unchained() (internal)
+    - _getReentrancyGuardStorage() (private)
+    - _nonReentrantAfter() (private)
+    - _nonReentrantBefore() (private)
+    - _reentrancyGuardEntered() (internal)
+
++ Contract ERC165Upgradeable (Upgradeable)
+  - From Initializable
+    - _checkInitializing() (internal)
+    - _disableInitializers() (internal)
+    - _getInitializableStorage() (private)
+    - _getInitializedVersion() (internal)
+    - _isInitializing() (internal)
+  - From ERC165Upgradeable
+    - __ERC165_init() (internal)
+    - __ERC165_init_unchained() (internal)
+    - supportsInterface(bytes4) (public)
+
++ Contract IAccessControl
+  - From IAccessControl
+    - getRoleAdmin(bytes32) (external)
+    - grantRole(bytes32,address) (external)
+    - hasRole(bytes32,address) (external)
+    - renounceRole(bytes32,address) (external)
+    - revokeRole(bytes32,address) (external)
+
++ Contract IAccessControlEnumerable
+  - From IAccessControl
+    - getRoleAdmin(bytes32) (external)
+    - grantRole(bytes32,address) (external)
+    - hasRole(bytes32,address) (external)
+    - renounceRole(bytes32,address) (external)
+    - revokeRole(bytes32,address) (external)
+  - From IAccessControlEnumerable
+    - getRoleMember(bytes32,uint256) (external)
+    - getRoleMemberCount(bytes32) (external)
+
++ Contract IERC1363 (Most derived contract)
+  - From IERC165
+    - supportsInterface(bytes4) (external)
+  - From IERC20
+    - allowance(address,address) (external)
+    - approve(address,uint256) (external)
+    - balanceOf(address) (external)
+    - totalSupply() (external)
+    - transfer(address,uint256) (external)
+    - transferFrom(address,address,uint256) (external)
+  - From IERC1363
+    - approveAndCall(address,uint256) (external)
+    - approveAndCall(address,uint256,bytes) (external)
+    - transferAndCall(address,uint256) (external)
+    - transferAndCall(address,uint256,bytes) (external)
+    - transferFromAndCall(address,address,uint256) (external)
+    - transferFromAndCall(address,address,uint256,bytes) (external)
+
++ Contract IERC20
+  - From IERC20
+    - allowance(address,address) (external)
+    - approve(address,uint256) (external)
+    - balanceOf(address) (external)
+    - totalSupply() (external)
+    - transfer(address,uint256) (external)
+    - transferFrom(address,address,uint256) (external)
+
++ Contract SafeERC20 (Most derived contract)
+  - From SafeERC20
+    - _callOptionalReturn(IERC20,bytes) (private)
+    - _callOptionalReturnBool(IERC20,bytes) (private)
+    - approveAndCallRelaxed(IERC1363,address,uint256,bytes) (internal)
+    - forceApprove(IERC20,address,uint256) (internal)
+    - safeDecreaseAllowance(IERC20,address,uint256) (internal)
+    - safeIncreaseAllowance(IERC20,address,uint256) (internal)
+    - safeTransfer(IERC20,address,uint256) (internal)
+    - safeTransferFrom(IERC20,address,address,uint256) (internal)
+    - transferAndCallRelaxed(IERC1363,address,uint256,bytes) (internal)
+    - transferFromAndCallRelaxed(IERC1363,address,address,uint256,bytes) (internal)
+
++ Contract Address (Most derived contract)
+  - From Address
+    - _revert(bytes) (private)
+    - functionCall(address,bytes) (internal)
+    - functionCallWithValue(address,bytes,uint256) (internal)
+    - functionDelegateCall(address,bytes) (internal)
+    - functionStaticCall(address,bytes) (internal)
+    - sendValue(address,uint256) (internal)
+    - verifyCallResult(bool,bytes) (internal)
+    - verifyCallResultFromTarget(address,bool,bytes) (internal)
+
++ Contract Errors (Most derived contract)
+
++ Contract IERC165
+  - From IERC165
+    - supportsInterface(bytes4) (external)
+
++ Contract EnumerableSet (Most derived contract)
+  - From EnumerableSet
+    - _add(EnumerableSet.Set,bytes32) (private)
+    - _at(EnumerableSet.Set,uint256) (private)
+    - _contains(EnumerableSet.Set,bytes32) (private)
+    - _length(EnumerableSet.Set) (private)
+    - _remove(EnumerableSet.Set,bytes32) (private)
+    - _values(EnumerableSet.Set) (private)
+    - add(EnumerableSet.AddressSet,address) (internal)
+    - add(EnumerableSet.Bytes32Set,bytes32) (internal)
+    - add(EnumerableSet.UintSet,uint256) (internal)
+    - at(EnumerableSet.AddressSet,uint256) (internal)
+    - at(EnumerableSet.Bytes32Set,uint256) (internal)
+    - at(EnumerableSet.UintSet,uint256) (internal)
+    - contains(EnumerableSet.AddressSet,address) (internal)
+    - contains(EnumerableSet.Bytes32Set,bytes32) (internal)
+    - contains(EnumerableSet.UintSet,uint256) (internal)
+    - length(EnumerableSet.AddressSet) (internal)
+    - length(EnumerableSet.Bytes32Set) (internal)
+    - length(EnumerableSet.UintSet) (internal)
+    - remove(EnumerableSet.AddressSet,address) (internal)
+    - remove(EnumerableSet.Bytes32Set,bytes32) (internal)
+    - remove(EnumerableSet.UintSet,uint256) (internal)
+    - values(EnumerableSet.AddressSet) (internal)
+    - values(EnumerableSet.Bytes32Set) (internal)
+    - values(EnumerableSet.UintSet) (internal)
+
++ Contract IHyaxToken (Most derived contract)
+  - From IERC20
+    - allowance(address,address) (external)
+    - approve(address,uint256) (external)
+    - balanceOf(address) (external)
+    - totalSupply() (external)
+    - transfer(address,uint256) (external)
+    - transferFrom(address,address,uint256) (external)
+  - From IHyaxToken
+    - symbol() (external)
+
++ Contract UpgradeableHYAXRewards (Upgradeable) (Most derived contract)
+  - From ReentrancyGuardUpgradeable
+    - __ReentrancyGuard_init() (internal)
+    - __ReentrancyGuard_init_unchained() (internal)
+    - _getReentrancyGuardStorage() (private)
+    - _nonReentrantAfter() (private)
+    - _nonReentrantBefore() (private)
+    - _reentrancyGuardEntered() (internal)
+  - From Initializable
+    - _checkInitializing() (internal)
+    - _disableInitializers() (internal)
+    - _getInitializableStorage() (private)
+    - _getInitializedVersion() (internal)
+    - _isInitializing() (internal)
+  - From PausableUpgradeable
+    - __Pausable_init() (internal)
+    - __Pausable_init_unchained() (internal)
+    - _getPausableStorage() (private)
+    - _pause() (internal)
+    - _requireNotPaused() (internal)
+    - _requirePaused() (internal)
+    - _unpause() (internal)
+    - paused() (public)
+  - From ContextUpgradeable
+    - __Context_init() (internal)
+    - __Context_init_unchained() (internal)
+    - _contextSuffixLength() (internal)
+    - _msgData() (internal)
+    - _msgSender() (internal)
+  - From AccessControlEnumerableUpgradeable
+    - __AccessControlEnumerable_init() (internal)
+    - __AccessControlEnumerable_init_unchained() (internal)
+    - _getAccessControlEnumerableStorage() (private)
+    - _grantRole(bytes32,address) (internal)
+    - _revokeRole(bytes32,address) (internal)
+    - getRoleMember(bytes32,uint256) (public)
+    - getRoleMemberCount(bytes32) (public)
+    - getRoleMembers(bytes32) (public)
+    - supportsInterface(bytes4) (public)
+  - From AccessControlUpgradeable
+    - __AccessControl_init() (internal)
+    - __AccessControl_init_unchained() (internal)
+    - _checkRole(bytes32) (internal)
+    - _checkRole(bytes32,address) (internal)
+    - _getAccessControlStorage() (private)
+    - _setRoleAdmin(bytes32,bytes32) (internal)
+    - getRoleAdmin(bytes32) (public)
+    - grantRole(bytes32,address) (public)
+    - hasRole(bytes32,address) (public)
+    - renounceRole(bytes32,address) (public)
+    - revokeRole(bytes32,address) (public)
+  - From ERC165Upgradeable
+    - __ERC165_init() (internal)
+    - __ERC165_init_unchained() (internal)
+  - From UpgradeableHYAXRewards
+    - addWalletToWhitelist(address,bool,uint256) (public)
+    - calculateYearForTeamTokens() (public)
+    - fundSmartContract(UpgradeableHYAXRewards.FundingType,uint256) (public)
+    - initialize(address) (public)
+    - owner() (public)
+    - pause() (public)
+    - transferOwnership(address) (public)
+    - unpause() (public)
+    - updateBlacklistStatus(address,bool) (public)
+    - updateHyaxTokenAddress(address) (public)
+    - updateMaximumBatchSizeForUpdateRewards(uint8) (public)
+    - updateRewardsBatch(address[],uint256[]) (public)
+    - updateRewardsSingle(address,uint256) (public)
+    - updateRewardsUpdaterAddress(address) (public)
+    - updateTeamMemberWallet(address,address) (public)
+    - updateWhiteListerAddress(address) (public)
+    - updateWhitelistStatus(address,bool) (public)
+    - withdrawGrowthTokens() (public)
+    - withdrawRewardTokens() (public)
+    - withdrawTeamTokens() (public)
+    - withdrawTokensToBurn(UpgradeableHYAXRewards.FundingType,uint256) (public)
+
+INFO:Printers:Lines of Code
++-------+------+------+------+
+|       |  src |  dep | test |
++-------+------+------+------+
+| loc   |  967 | 1969 |    0 |
+| sloc  |  399 |  669 |    0 |
+| cloc  |  352 | 1088 |    0 |
+| Total | 1718 | 3726 |    0 |
++-------+------+------+------+

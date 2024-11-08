@@ -3,4 +3,3 @@
 /* eslint-disable */
 export * as extensions from "./extensions";
 export { IAccessControl__factory } from "./IAccessControl__factory";
-export { Ownable__factory } from "./Ownable__factory";
