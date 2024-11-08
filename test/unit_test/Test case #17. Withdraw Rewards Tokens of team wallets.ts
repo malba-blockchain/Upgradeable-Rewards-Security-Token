@@ -42,7 +42,7 @@ describe("Test case #17. Withdraw Rewards Tokens of team wallets", function () {
         //Add the whitelisted addresses
         await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr1.address, true, oneMillionTokens);
 
-        // Try to withdraw growth tokens 
+        // Try to withdraw reward tokens 
         await expect(
             upgradeableHYAXRewards.connect(addr1).withdrawRewardTokens()
         ).to.be.revertedWith('Reward tokens funding has not started yet, no tokens to withdraw');

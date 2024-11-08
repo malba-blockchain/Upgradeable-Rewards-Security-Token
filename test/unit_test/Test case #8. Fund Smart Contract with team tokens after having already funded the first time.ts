@@ -125,7 +125,7 @@ describe("Test case #8. Fund Smart Contract with team tokens after having alread
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         await expect(
             upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount)
-        ).to.be.revertedWith('Amount to fund is greater than the total intented for team tokens');
+        ).to.be.revertedWith('Amount to fund is greater than the total intended for team tokens');
     });
 
 });

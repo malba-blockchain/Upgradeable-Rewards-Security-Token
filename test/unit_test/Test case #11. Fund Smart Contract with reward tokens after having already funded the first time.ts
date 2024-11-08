@@ -110,7 +110,7 @@ describe("Test case #11. Fund Smart Contract with reward tokens after having alr
         // Get the rewardTokensStartFundingTime
         const rewardTokensStartFundingTime = await upgradeableHYAXRewards.rewardTokensStartFundingTime();
         console.log("   [Log]: RewardTokensStartFundingTime:", rewardTokensStartFundingTime);
-        // Check if the rewardTokensStartFundingTime and rewardTokensLastWithdrawalTime are equal to the timestamp of the block before
+        // Check if the rewardTokensStartFundingTime is NOT equal to the timestamp of the block before
         expect(rewardTokensStartFundingTime).to.not.equal(timestampOfBlockBefore);
     });
 
@@ -125,6 +125,6 @@ describe("Test case #11. Fund Smart Contract with reward tokens after having alr
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         await expect(
             upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount)
-        ).to.be.revertedWith('Amount to fund is greater than the total intented for reward tokens');
+        ).to.be.revertedWith('Amount to fund is greater than the total intended for reward tokens');
     });
 });

@@ -2,5 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export { IHyaxToken__factory } from "./IHyaxToken__factory";
-export { UpgradeableHYAXRewards__factory } from "./UpgradeableHYAXRewards__factory";
 export { UpgradeableHYAXRewardsV2__factory } from "./UpgradeableHYAXRewardsV2__factory";

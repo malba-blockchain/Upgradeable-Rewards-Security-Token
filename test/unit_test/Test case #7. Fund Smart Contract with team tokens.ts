@@ -180,7 +180,7 @@ describe("Test case #7. Fund Smart Contract with team tokens", function () {
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         await expect(
             upgradeableHYAXRewards.connect(owner).fundSmartContract(1, fundingAmount)
-        ).to.be.revertedWith('Amount to fund is greater than the total intented for team tokens');
+        ).to.be.revertedWith('Amount to fund is greater than the total intended for team tokens');
     });
 
     it("7.10. Should successfully fund the contract with team tokens with the total intended amount", async function () {

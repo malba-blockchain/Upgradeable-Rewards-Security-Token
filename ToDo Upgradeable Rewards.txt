@@ -536,26 +536,23 @@ https://github.com/PatrickAlphaC/hardhat-security-fcc/
 -Rewards Contract
 --Medusa: fuzz testing tool DONE
 
-CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-
 24.7. Linters and Formatters
 
 -Token Contract
-
 --Solhint: Linter DONE
 --Prettier: Formatter DONE
 
 -Rewards Contract
-
 --Solhint: Linter DONE
 --Prettier: Formatter DONE
 
-UP TO HERE-------------------------------
 
-23. Add updates to contracts based on reports and update repos
+23. Add updates to contracts based on reports and update repos DONE
 
-25. Clean comments and fix documentation on contract and tests (2 days)
+25. Clean comments and fix documentation on contract and tests (2 days) DONE
 
+
+CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
 Questions: The withdrawTokensToBurn function should send the tokens to the owner wallet or to the treasury wallet?
 
@@ -565,6 +562,8 @@ getCurrentTokenPrice() function. Price freshness validation.
 getCurrentTokenPrice() function. Oracle price manipulation validation.
 
 26. Deploy in testnet (3 days) 
+
+UP TO HERE-------------------------------
 
 23. Optimize updates script. (2 days) Execute 10 batch transactions each sending a pack of 10 updates. and simulate it. In case the update fails, store the values of the wallets that failed to later try to update them manually.
 

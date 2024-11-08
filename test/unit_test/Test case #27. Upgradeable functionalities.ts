@@ -24,7 +24,7 @@ describe("Test case #27. Upgradeable functionalities", function () {
     it("27.1. Should deploy the proxy contract successfully", async function () {
         const { upgradeableHYAXRewards } = await deployContractAndSetVariables();
 
-        // Expect the proxy contract to have a valid address
+        // Verify that the proxy contract has a valid address
         expect(await upgradeableHYAXRewards.getAddress()).to.properAddress;
     });
 
@@ -32,7 +32,7 @@ describe("Test case #27. Upgradeable functionalities", function () {
         const { upgradeableHYAXRewards } = await deployContractAndSetVariables();
         const teamTokensTotal = await upgradeableHYAXRewards.TEAM_TOKENS_TOTAL();
 
-        // Expect the total of team tokens to be 1,500,000,000 HYAX tokens
+        // Verify that the total team tokens is initialized to 1,500,000,000 HYAX tokens
         expect(teamTokensTotal).to.equal(ethers.parseEther("1500000000"));
     });
 
@@ -62,7 +62,7 @@ describe("Test case #27. Upgradeable functionalities", function () {
         const UpgradeableHYAXRewardsV2 = await ethers.getContractFactory('UpgradeableHYAXRewardsV2');
         const upgradedHyaxRewards = await upgrades.upgradeProxy(upgradeableHYAXRewards.target, UpgradeableHYAXRewardsV2);
 
-        // Expect the upgraded contract to have the same address as the original 
+        // Verify that the upgraded contract maintains the same address as the original proxy
         expect(await upgradedHyaxRewards.getAddress()).to.equal(await upgradeableHYAXRewards.getAddress());
     });
 
@@ -74,7 +74,7 @@ describe("Test case #27. Upgradeable functionalities", function () {
 
         const teamTokensTotal = await upgradeableHYAXRewards.TEAM_TOKENS_TOTAL();
 
-        // Expect the total of team tokens to remain unchanged after the upgrade
+        // Verify that the team tokens total remains unchanged after the upgrade
         expect(teamTokensTotal).to.equal(ethers.parseEther("1500000000"));
     });
 
@@ -84,14 +84,14 @@ describe("Test case #27. Upgradeable functionalities", function () {
         const UpgradeableHYAXRewardsV2 = await ethers.getContractFactory('UpgradeableHYAXRewardsV2');
         const upgradedHyaxRewards = await upgrades.upgradeProxy(upgradeableHYAXRewards.target, UpgradeableHYAXRewardsV2);
 
-        // Expect the new function to return the expected string
+        // Verify that the new function added in V2 returns "New function in V2"
         expect(await upgradedHyaxRewards.newFunction()).to.equal("New function in V2");
     });
 
     it("27.7. Should not allow initialization after deployment", async function () {
         const { upgradeableHYAXRewards, hyaxToken, owner } = await deployContractAndSetVariables();
 
-        // Expect the initialization function to revert with a custom error
+        // Verify that attempting to initialize an already initialized contract reverts
         await expect(upgradeableHYAXRewards.initialize(hyaxToken.target)).to.be.revertedWithCustomError(upgradeableHYAXRewards, "InvalidInitialization()");
     });
 
@@ -102,7 +102,7 @@ describe("Test case #27. Upgradeable functionalities", function () {
         const UpgradeableHYAXRewardsV2 = await ethers.getContractFactory('UpgradeableHYAXRewardsV2');
         const implementationContract = UpgradeableHYAXRewardsV2.attach(implementationAddress);
 
-        // The implementation contract should have a different state than the proxy
+        // Verify that the implementation contract has an uninitialized state separate from the proxy
         const implMaximumBatchSizeForUpdateRewards = await implementationContract.maximumBatchSizeForUpdateRewards();
         const proxyMaximumBatchSizeForUpdateRewards = await upgradeableHYAXRewards.maximumBatchSizeForUpdateRewards();
 

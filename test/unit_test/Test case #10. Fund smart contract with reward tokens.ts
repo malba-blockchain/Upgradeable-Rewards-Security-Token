@@ -40,7 +40,7 @@ describe("Test case #10. Fund smart contract with reward tokens", function () {
     it("10.2. Should fail to fund the contract with reward tokens because its not approved", async function () {
         const { upgradeableHYAXRewards, owner, hyaxToken } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
-        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Team Tokens
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Reward Tokens
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         await expect(
             upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount)
@@ -50,7 +50,7 @@ describe("Test case #10. Fund smart contract with reward tokens", function () {
     it("10.3. Should revert when funding with an invalid type of funding", async function () {
         const { upgradeableHYAXRewards, owner, hyaxToken } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
-        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Team Tokens
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Reward Tokens
 
         // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
         await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
@@ -76,7 +76,7 @@ describe("Test case #10. Fund smart contract with reward tokens", function () {
         const { upgradeableHYAXRewards, hyaxToken, owner } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
-        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Team Tokens
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Reward Tokens
 
         // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
         await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
@@ -113,7 +113,7 @@ describe("Test case #10. Fund smart contract with reward tokens", function () {
         const { upgradeableHYAXRewards, hyaxToken } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
-        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Team Tokens
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Reward Tokens
 
         // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
         await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
@@ -130,7 +130,7 @@ describe("Test case #10. Fund smart contract with reward tokens", function () {
         const { upgradeableHYAXRewards, hyaxToken } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
-        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Team Tokens
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Reward Tokens
 
         // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
         await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
@@ -153,7 +153,7 @@ describe("Test case #10. Fund smart contract with reward tokens", function () {
         const { upgradeableHYAXRewards, hyaxToken } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
-        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Team Tokens
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Reward Tokens
 
         // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
         await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
@@ -176,7 +176,7 @@ describe("Test case #10. Fund smart contract with reward tokens", function () {
     it("10.9. Should revert when funding with an amout above the total intended for reward tokens", async function () {
         const { upgradeableHYAXRewards, owner, hyaxToken } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
-        const fundingAmount = ethers.parseUnits("1600000000", 18); // Fund with (1,6B) 1,600,000,000 Team Tokens
+        const fundingAmount = ethers.parseUnits("1600000000", 18); // Fund with (1,6B) 1,600,000,000 Reward Tokens
 
         // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
         await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
@@ -184,7 +184,7 @@ describe("Test case #10. Fund smart contract with reward tokens", function () {
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         await expect(
             upgradeableHYAXRewards.connect(owner).fundSmartContract(2, fundingAmount)
-        ).to.be.revertedWith('Amount to fund is greater than the total intented for reward tokens');
+        ).to.be.revertedWith('Amount to fund is greater than the total intended for reward tokens');
     });
 
     it("10.10. Should successfully fund the contract with reward tokens with the total intended amount", async function () {

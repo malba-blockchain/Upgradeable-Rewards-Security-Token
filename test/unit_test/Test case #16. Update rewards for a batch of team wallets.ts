@@ -25,7 +25,7 @@ describe("Test case #16. Update rewards for a batch of team wallets", function (
         await upgradeableHYAXRewards.connect(owner).updateRewardsUpdaterAddress(rewardsUpdaterAddress.address);
 
         // Fund the smart contract with reward tokens
-        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 reward Tokens
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Reward Tokens
 
         // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
         await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);

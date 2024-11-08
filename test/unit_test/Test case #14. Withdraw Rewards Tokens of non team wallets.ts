@@ -30,7 +30,7 @@ describe("Test case #14. Withdraw Rewards Tokens of non team wallets", function 
         await hyaxToken.connect(owner).transfer(addr3.address, ethers.parseUnits("300000000", 18));
 
         // Fund the smart contract with reward tokens
-        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 reward Tokens
+        const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 Reward Tokens
 
         // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
         await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);

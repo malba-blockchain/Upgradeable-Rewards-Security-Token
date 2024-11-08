@@ -118,7 +118,7 @@ describe("Test case #13. Update rewards for a batch of non team wallets", functi
     it("13.3. Should revert only 1 internal update because the wallet is not whitelisted", async function () {
         const { upgradeableHYAXRewards, hyaxToken, owner, addr1, addr2, addr3, whitelisterAddress, rewardsUpdaterAddress } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
-        //Add only two  wallets to the whitelist
+        //Add only two wallets to the whitelist
         await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr2.address, false, 0);
         await upgradeableHYAXRewards.connect(whitelisterAddress).addWalletToWhitelist(addr3.address, false, 0);
 

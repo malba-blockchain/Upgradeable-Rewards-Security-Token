@@ -19,6 +19,12 @@ interface IHyaxToken is IERC20 {
     function symbol() external view returns (string memory);
 }
 
+/**
+ * @title UpgradeableHYAXRewards
+ * @dev This contract is designed to manage the distribution of rewards in the HYAX ecosystem.
+ * It inherits from AccessControlEnumerableUpgradeable, PausableUpgradeable, and ReentrancyGuardUpgradeable
+ * to ensure secure and controlled access to its functions.
+ */
 contract UpgradeableHYAXRewardsV2 is
     AccessControlEnumerableUpgradeable,
     PausableUpgradeable,
@@ -194,90 +200,192 @@ contract UpgradeableHYAXRewardsV2 is
 
     ////////////////// SMART CONTRACT VARIABLES & CONSTANTS //////////////////
 
-    address public hyaxTokenAddress; // Address of the HYAX token
+    /**
+     * @dev The address of the HYAX token contract.
+     */
+    address public hyaxTokenAddress;
 
+    /**
+     * @dev An instance of the HYAX token contract.
+     */
     IHyaxToken public hyaxToken; // Instance of the HYAX token
 
+    /**
+     * @dev Enum {uint256} for defining the type of funding.
+     */
     enum FundingType {
-        GrowthTokens,
-        TeamTokens,
-        RewardTokens
-    } // Enum to identify the type of funding
+        GrowthTokens, //GrowthTokens Represents funding for growth tokens.
+        TeamTokens, //TeamTokens Represents funding for team tokens.
+        RewardTokens //RewardTokens Represents funding for reward tokens.
+    } 
 
+    /**
+     * @dev The minimum interval in seconds required before rewards can be updated again.
+     */
     uint256 public constant MIN_INTERVAL_FOR_UPDATE_REWARDS = 6 days; // Minimum interval for update rewards
 
+    /**
+     * @dev The role identifier for the rewards updater.
+     */
     bytes32 public constant REWARDS_UPDATER_ROLE =
         keccak256("REWARDS_UPDATER_ROLE"); // Role for the rewards updater
 
+    /**
+     * @dev The role identifier for the whitelister.
+     */
     bytes32 public constant WHITELISTER_ROLE = keccak256("WHITELISTER_ROLE"); // Role for the whitelister
 
     ////////////////// GROWTH TOKENS VARIABLES //////////////////
+    /**
+     * @dev The total supply of growth tokens. 2.4 Billion growth tokens. 60% of 4B.
+     */
+    uint256 public constant GROWTH_TOKENS_TOTAL = 2400000000 * 10 ** 18;
 
-    uint256 public constant GROWTH_TOKENS_TOTAL = 2400000000 * 10 ** 18; // Total of 2.4 Billion growth tokens. 60% of 4B.
-
+    /**
+     * @dev The amount of growth tokens that can be withdrawn per year. 120 Million tokens per year.
+     */
     uint256 public constant GROWTH_TOKENS_WITHDRAWAL_PER_YEAR =
-        120000000 * 10 ** 18; // 120 Million tokens per year
+        120000000 * 10 ** 18;
 
-    uint256 public constant TOKENS_WITHDRAWAL_PERIOD = 365 days; // 1 year
+    /**
+     * @dev The period in which growth tokens can be withdrawn.
+     * 1 year.
+     */
+    uint256 public constant TOKENS_WITHDRAWAL_PERIOD = 365 days;
 
-    uint256 public growthTokensFunded; // Total amount of growth tokens funded to the contract
+    /**
+     * @dev The total amount of growth tokens funded to the contract.
+     */
+    uint256 public growthTokensFunded;
 
-    uint256 public growthTokensWithdrawn; // Total amount of growth tokens withdrawn from the contract
+    /**
+     * @dev The total amount of growth tokens withdrawn from the contract.
+     */
+    uint256 public growthTokensWithdrawn;
 
-    uint256 public growthTokensInSmartContract; // Current balance of growth tokens in the contract
+    /**
+     * @dev The current balance of growth tokens in the contract.
+     */
+    uint256 public growthTokensInSmartContract;
 
-    uint256 public growthTokensLastWithdrawalTime; // Timestamp of the last growth tokens withdrawal
+    /**
+     * @dev The timestamp of the last growth tokens withdrawal.
+     */
+    uint256 public growthTokensLastWithdrawalTime;
 
-    uint256 public growthTokensStartFundingTime; // Timestamp when growth tokens funding started
+    /**
+     * @dev The timestamp when growth tokens funding started.
+     */
+    uint256 public growthTokensStartFundingTime;
 
-    bool public growthTokensFundingStarted; // Flag to indicate if growth tokens funding has begun
+    /**
+     * @dev A flag to indicate if growth tokens funding has begun.
+     */
+    bool public growthTokensFundingStarted;
 
-    ////////////////// TEAM TOKENS VARIABLES //////////////////
+    /**
+     * @dev The total supply of team tokens.
+     * 1.5 Billion as team tokens.
+     */
+    uint256 public constant TEAM_TOKENS_TOTAL = 1500000000 * 10 ** 18;
 
-    uint256 public constant TEAM_TOKENS_TOTAL = 1500000000 * 10 ** 18; // Total of 1.5 Billion as team tokens
-
+    /**
+     * @dev The amount of team tokens that can be withdrawn per year. 300 Million tokens per year.
+     */
     uint256 public constant TEAM_TOKENS_WITHDRAWAL_PER_YEAR =
-        300000000 * 10 ** 18; // 300 Million tokens per year
+        300000000 * 10 ** 18;
 
-    uint256 public constant TEAM_TOKENS_LOCKED_PERIOD = 1460 days; // 4 years
+    /**
+     * @dev The period in which team tokens can be withdrawn. 4 years. 1460 days.
+     */
+    uint256 public constant TEAM_TOKENS_LOCKED_PERIOD = 1460 days;
 
-    uint256 public teamTokensFunded; // Total amount of team tokens funded to the contract
+    /**
+     * @dev The total amount of team tokens funded to the contract.
+     */
+    uint256 public teamTokensFunded;
 
-    uint256 public teamTokensWithdrawn; // Total amount of team tokens withdrawn from the contract
+    /**
+     * @dev The total amount of team tokens withdrawn from the contract.
+     */
+    uint256 public teamTokensWithdrawn;
 
-    uint256 public teamTokensInSmartContract; // Current balance of team tokens in the contract
+    /**
+     * @dev The current balance of team tokens in the contract.
+     */
+    uint256 public teamTokensInSmartContract;
 
-    uint256 public teamTokensStartFundingTime; // Timestamp when team tokens funding started
+    /**
+     * @dev The timestamp when team tokens funding started.
+     */
+    uint256 public teamTokensStartFundingTime;
 
-    bool public teamTokensFundingStarted; // Flag to indicate if team tokens funding has begun
+    /**
+     * @dev A flag to indicate if team tokens funding has begun.
+     */
+    bool public teamTokensFundingStarted;
 
-    ////////////////// REWARD TOKENS VARIABLES //////////////////
+    /**
+     * @dev The total supply of reward tokens. 1.2 Billion as reward tokens.
+     */
+    uint256 public constant REWARD_TOKENS_TOTAL = 1200000000 * 10 ** 18;
 
-    uint256 public constant REWARD_TOKENS_TOTAL = 1200000000 * 10 ** 18; // Total of 1.2 Billion as reward tokens
+    /**
+     * @dev The amount of reward tokens that can be distributed per year. 150 Million tokens per year.
+     */
+    uint256 public constant REWARD_TOKENS_PER_YEAR = 150000000 * 10 ** 18;
 
-    uint256 public constant REWARD_TOKENS_PER_YEAR = 150000000 * 10 ** 18; // 150 Million tokens per year
+    /**
+     * @dev The amount of reward tokens that can be distributed per week. 150 Million tokens divided by 52 weeks.
+     */
+    uint256 public constant REWARD_TOKENS_PER_WEEK = REWARD_TOKENS_PER_YEAR / 52;
 
-    uint256 public constant REWARD_TOKENS_PER_WEEK =
-        REWARD_TOKENS_PER_YEAR / 52; // 150 Million tokens divided by 52 weeks
+    /**
+     * @dev The total amount of reward tokens funded to the contract.
+     */
+    uint256 public rewardTokensFunded;
 
-    uint256 public rewardTokensFunded; // Total amount of reward tokens funded to the contract
+    /**
+     * @dev The total amount of reward tokens distributed to the wallets.
+     */
+    uint256 public rewardTokensDistributed;
 
-    uint256 public rewardTokensDistributed; // Total amount of reward tokens distributed to the wallets
+    /**
+     * @dev The total amount of reward tokens withdrawn from the contract.
+     */
+    uint256 public rewardTokensWithdrawn;
 
-    uint256 public rewardTokensWithdrawn; // Total amount of reward tokens withdrawn from the contract
+    /**
+     * @dev The current balance of reward tokens in the contract.
+     */
+    uint256 public rewardTokensInSmartContract;
 
-    uint256 public rewardTokensInSmartContract; // Current balance of reward tokens in the contract
+    /**
+     * @dev The timestamp when reward tokens funding started.
+     */
+    uint256 public rewardTokensStartFundingTime;
 
-    uint256 public rewardTokensStartFundingTime; // Timestamp when team tokens funding started
-
-    bool public rewardTokensFundingStarted; // Flag to indicate if team tokens funding has begun
+    /**
+     * @dev A flag to indicate if reward tokens funding has begun.
+     */
+    bool public rewardTokensFundingStarted;
 
     ////////////////// DATA VARIABLES & MAPPINGS //////////////////
 
-    address public whiteListerAddress; // Address of the whitelister
+    /**
+     * @dev The address of the whitelister, responsible for managing the whitelist of wallets.
+     */
+    address public whiteListerAddress;
+    
+    /**
+     * @dev The address of the rewards updater, responsible for updating the rewards for wallets.
+     */
+    address public rewardsUpdaterAddress;
 
-    address public rewardsUpdaterAddress; // Address of the rewards updater
-
+    /**
+     * @dev Struct to hold wallet data.
+     * This struct contains information about a wallet's HYAX token holdings, rewards, and whitelist/blacklist status.
+     */
     struct WalletData {
         uint256 hyaxHoldingAmount; // Current amount of HYAX tokens held by the wallet
         uint256 hyaxHoldingAmountAtWhitelistTime; // Amount of HYAX tokens held when the wallet was whitelisted. Useful for the team wallets
@@ -292,12 +400,23 @@ contract UpgradeableHYAXRewardsV2 is
         bool isWhitelisted; // Flag indicating if the wallet is whitelisted
         bool isBlacklisted; // Flag indicating if the wallet is blacklisted
     }
+    /**
+     * @dev The maximum number of wallets that can be processed in a single batch for reward updates.
+     * This variable controls the size of the batch for reward updates to prevent gas issues.
+     */
+    uint8 public maximumBatchSizeForUpdateRewards;
 
-    uint8 public maximumBatchSizeForUpdateRewards; // Maximum batch size for update rewards
+    /**
+     * @dev Mapping to store data for each wallet interacting with the contract.
+     * This mapping associates each wallet address with its corresponding WalletData struct.
+     */
+    mapping(address => WalletData) public wallets;
 
-    mapping(address => WalletData) public wallets; // Mapping to store wallet data
-
-    uint256[50] private __gap; // Array to store unused space for future upgrades
+    /**
+     * @dev An array to reserve space for future upgrades.
+     * This array is intentionally left unused to ensure that future upgrades can be implemented without affecting the storage layout.
+     */
+    uint256[50] private __gap;
 
     ////////////////// SMART CONTRACT CONSTRUCTOR /////////////////
 
@@ -367,11 +486,17 @@ contract UpgradeableHYAXRewardsV2 is
     }
 
     ////////////////// SMART CONTRACT FUNCTIONS //////////////////
+
     /**
-     * @notice Adds a wallet to the whitelist
-     * @dev This function allows the owner or the whitelister address to add a wallet to the whitelist
-     * @param _walletAddress The address of the wallet to be added to the whitelist
-     * @param _isTeamWallet A boolean indicating if the wallet is a team wallet
+     * @dev Adds a wallet to the whitelist with specified parameters.
+     * This function can only be called by the admin or the whitelister.
+     * It validates the wallet address, its whitelist status, and the HYAX holding amount.
+     * If the wallet is a team wallet, it requires a HYAX holding amount greater than 0 and less than or equal to the total team tokens.
+     * If the wallet is not a team wallet, it requires a HYAX holding amount of 0.
+     * It then updates the wallet's status in the whitelist and emits an event to notify of the addition.
+     * @param _walletAddress The address of the wallet to be added to the whitelist.
+     * @param _isTeamWallet Boolean indicating if the wallet is a team wallet.
+     * @param _hyaxHoldingAmountAtWhitelistTime The amount of HYAX tokens held by the wallet at the time of whitelisting.
      */
     function addWalletToWhitelist(
         address _walletAddress,
@@ -452,16 +577,18 @@ contract UpgradeableHYAXRewardsV2 is
         );
     }
 
+
     /**
-     * @notice Updates the status of a wallet in the whitelist
-     * @dev This function allows the owner or the whitelister address to update the status of a wallet in the whitelist
-     * @param _walletAddress The address of the wallet to be updated
+     * @dev Updates the whitelist status of a wallet.
+     * @param _walletAddress The address of the wallet to update.
+     * @param _newStatus The new whitelist status to set.
+     * This function can only be called by the admin or the whitelister.
      */
     function updateWhitelistStatus(
         address _walletAddress,
         bool _newStatus
     ) public onlyAdminOrWhitelister {
-        //Verify that the wallet is currently in a different status and the wallet has been added to the whitelist
+        // Verify that the wallet is currently in a different status and the wallet has been added to the whitelist
         require(
             wallets[_walletAddress].isWhitelisted != _newStatus,
             "Wallet has already been updated to that status"
@@ -471,46 +598,47 @@ contract UpgradeableHYAXRewardsV2 is
             "Wallet has not been added to the whitelist"
         );
 
-        //Update the whitelist status
+        // Update the whitelist status
         wallets[_walletAddress].isWhitelisted = _newStatus;
 
-        //Emit an event to notify that the wallet whitelist status has been updated
+        // Emit an event to notify that the wallet whitelist status has been updated
         emit WhitelistStatusUpdated(msg.sender, _walletAddress, _newStatus);
     }
 
     /**
-     * @notice Updates the status of a wallet in the blacklist
-     * @dev This function allows the owner or the whitelister address to update the status of a wallet in the blacklist
-     * @param _walletAddress The address of the wallet to be updated
+     * @dev Updates the blacklist status of a wallet.
+     * @param _walletAddress The address of the wallet to update.
+     * @param _newStatus The new blacklist status to set.
+     * This function can only be called by the admin or the whitelister.
      */
     function updateBlacklistStatus(
         address _walletAddress,
         bool _newStatus
     ) public onlyAdminOrWhitelister {
-        //Verify that the wallet is currently in a different status
+        // Verify that the wallet is currently in a different status
         require(
             wallets[_walletAddress].isBlacklisted != _newStatus,
             "Wallet has already been updated to that status"
         );
 
-        //Update the blacklist status
+        // Update the blacklist status
         wallets[_walletAddress].isBlacklisted = _newStatus;
 
-        //If the wallet blacklist new status is true (add to blacklist), set the whitelist status to false (remove from whitelist)
+        // If the wallet blacklist new status is true (add to blacklist), set the whitelist status to false (remove from whitelist)
         if (_newStatus == true) {
             wallets[_walletAddress].isWhitelisted = false;
         }
 
-        //Emit an event to notify that the wallet blacklisted status has been updated
+        // Emit an event to notify that the wallet blacklisted status has been updated
         emit BlacklistStatusUpdated(msg.sender, _walletAddress, _newStatus);
     }
 
     /**
-     * @notice Funds the smart contract with tokens for different purposes
-     * @dev This function can only be called by the contract owner
-     * @param _fundingType The type of funding (GrowthTokens, TeamTokens, or RewardTokens)
-     * @param _amount The amount of tokens to fund
-     * @custom:events Emits a FundingAdded event upon successful funding
+     * @dev Allows the owner to fund the smart contract with HYAX tokens.
+     * This function can only be called by the owner of the contract and is protected against reentrancy.
+     * It also checks if the contract is not paused before executing.
+     * @param _fundingType The type of funding to be added, which can be GrowthTokens, TeamTokens, or RewardTokens.
+     * @param _amount The amount of HYAX tokens to be funded.
      */
     function fundSmartContract(
         FundingType _fundingType,
@@ -540,7 +668,7 @@ contract UpgradeableHYAXRewardsV2 is
             //Require that the amount is less than the total growth tokens
             require(
                 growthTokensFunded + _amount <= GROWTH_TOKENS_TOTAL,
-                "Amount to fund is greater than the total intented for growth tokens"
+                "Amount to fund is greater than the total intended for growth tokens"
             );
 
             // Increase the total amount of growth tokens funded
@@ -559,7 +687,7 @@ contract UpgradeableHYAXRewardsV2 is
             //Require that the amount is less than the total growth tokens
             require(
                 teamTokensFunded + _amount <= TEAM_TOKENS_TOTAL,
-                "Amount to fund is greater than the total intented for team tokens"
+                "Amount to fund is greater than the total intended for team tokens"
             );
 
             // Increase the total amount of team tokens funded
@@ -577,7 +705,7 @@ contract UpgradeableHYAXRewardsV2 is
             //Require that the amount is less than the total growth tokens
             require(
                 rewardTokensFunded + _amount <= REWARD_TOKENS_TOTAL,
-                "Amount to fund is greater than the total intented for reward tokens"
+                "Amount to fund is greater than the total intended for reward tokens"
             );
 
             //Increase the total amount of reward tokens funded
@@ -596,6 +724,12 @@ contract UpgradeableHYAXRewardsV2 is
         emit FundingAdded(_fundingType, _amount);
     }
 
+    /**
+     * @dev Modifier to ensure that the function can only be called by the owner or the whitelister.
+     * This modifier is used to restrict access to certain functions within the contract.
+     * It checks if the message sender has the role of either the whitelister or the default admin.
+     * If the sender does not have either of these roles, it reverts the transaction.
+     */
     modifier onlyAdminOrWhitelister() {
         // Ensure that the sender is the owner or the whitelister address
         require(
@@ -606,6 +740,12 @@ contract UpgradeableHYAXRewardsV2 is
         _;
     }
 
+    /**
+     * @dev Modifier to ensure that the function can only be called by the owner, the rewards updater, or the contract itself.
+     * This modifier is used to restrict access to certain functions within the contract.
+     * It checks if the message sender has the role of either the rewards updater, the default admin, or if the sender is the contract itself.
+     * If the sender does not have either of these roles or is not the contract itself, it reverts the transaction.
+     */
     modifier onlyAdminOrRewardsUpdater() {
         // Ensure that the sender is the owner, the rewards updater address or the contract itself
         require(
@@ -616,7 +756,13 @@ contract UpgradeableHYAXRewardsV2 is
         );
         _;
     }
-
+    
+    /**
+     * @dev Modifier to ensure that the function can only be called by a whitelisted wallet.
+     * This modifier is used to restrict access to certain functions within the contract.
+     * It checks if the wallet address is whitelisted.
+     * If the wallet address is not whitelisted, it reverts the transaction.
+     */
     modifier isWhitelisted(address _walletAddress) {
         // Ensure that the sender is the owner or the white lister address
         require(
@@ -626,8 +772,14 @@ contract UpgradeableHYAXRewardsV2 is
         _;
     }
 
+    /**
+     * @dev Modifier to ensure that the function can only be called by a wallet that is not blacklisted.
+     * This modifier is used to restrict access to certain functions within the contract.
+     * It checks if the wallet address is not blacklisted.
+     * If the wallet address is blacklisted, it reverts the transaction.
+     */
     modifier isNotBlacklisted(address _walletAddress) {
-        // Ensure that the sender is the owner or the white lister address
+        // Ensure that the wallet address is not blacklisted
         require(
             wallets[_walletAddress].isBlacklisted == false,
             "Wallet has been blacklisted"
@@ -635,6 +787,11 @@ contract UpgradeableHYAXRewardsV2 is
         _;
     }
 
+    /**
+     * @dev Modifier to ensure that the function can only be called when the contract is not paused.
+     * This modifier is used to restrict access to certain functions within the contract.
+     * It checks if the contract is paused. If the contract is paused, it reverts the transaction.
+     */
     modifier isNotPaused() {
         // Ensure that the smart contract is not paused
         require(paused() == false, "Contract is paused");
@@ -644,14 +801,13 @@ contract UpgradeableHYAXRewardsV2 is
     /////////////GROWTH TOKENS FUNCTIONS///////////
     /**
      * @notice Allows the owner to withdraw growth tokens
-     * @dev This function can only be called by the contract owner
+     * @dev This function can only be called by the owner
      * @dev Withdrawals are limited to once per year and a fixed amount per withdrawal
      * @dev The function checks various conditions before allowing the withdrawal
-     * @custom:requirements Only the owner can withdraw growth tokens
-     * @custom:requirements Funding must have started
-     * @custom:requirements At least one year must have passed since funding start
+     * @custom:requirements Caller must be the owner
+     * @custom:requirements Growth tokens funding must have started
+     * @custom:requirements At least one year must have passed since the last withdrawal
      * @custom:requirements Not all growth tokens have been withdrawn
-     * @custom:requirements At least one year has passed since the last withdrawal
      * @custom:events Emits a GrowthTokensWithdrawn event upon successful withdrawal
      */
     function withdrawGrowthTokens()
@@ -717,17 +873,20 @@ contract UpgradeableHYAXRewardsV2 is
     /////////////TEAM TOKENS FUNCTIONS///////////
 
     /**
-     * @notice Allows team members to withdraw their allocated tokens
-     * @dev This function can only be called by whitelisted team wallets
-     * @dev Withdrawals are limited to once per year and a fixed amount per withdrawal
-     * @dev The function checks various conditions before allowing the withdrawal
-     * @custom:requirements Caller must be a whitelisted team wallet
-     * @custom:requirements Team tokens funding must have started
-     * @custom:requirements At least four years must have passed since the wallet was added to the whitelist
-     * @custom:requirements At least one year must have passed since the last withdrawal
-     * @custom:requirements Not all team tokens have been withdrawn
-     * @custom:requirements The wallet must have a positive HYAX holding amount
-     * @custom:events Emits a TeamTokensWithdrawn event upon successful withdrawal
+     * @notice Allows team wallets to withdraw their allocated team tokens.
+     * @dev This function is restricted to team wallets and implements a nonReentrant guard to prevent reentrancy attacks.
+     * It also checks if the contract is not paused to ensure that the function can only be called when the contract is operational.
+     * The function validates various conditions before allowing team token withdrawal, including:
+     * - The wallet calling the function is a team wallet.
+     * - Team tokens funding has started.
+     * - The wallet has waited at least 4 years after being added to the whitelist before attempting to withdraw.
+     * - Not all team tokens have been withdrawn.
+     * - The wallet has a positive HYAX holding amount.
+     * - The wallet has not exceeded the maximum number of team token withdrawals per year.
+     * Upon successful validation, it calculates the withdrawable amount based on the wallet's HYAX holding amount at whitelist time,
+     * updates the wallet's HYAX holding amount, team tokens withdrawn amount, and team tokens in the smart contract,
+     * increases the wallet's team token withdrawal times, transfers the calculated amount to the wallet,
+     * and emits an event to notify that the team tokens were withdrawn.
      */
     function withdrawTeamTokens()
         public
@@ -798,9 +957,11 @@ contract UpgradeableHYAXRewardsV2 is
     }
 
     /**
-     * @notice Calculates the year for team tokens based on the funding start time
-     * @dev This function calculates the year for team tokens based on the funding start time
-     * @return The year for team tokens as a uint8
+     * @dev Calculates the number of years that have elapsed since team tokens funding started.
+     * This function is used to determine the number of team tokens that can be withdrawn.
+     * It takes into account the maximum year cap for team token withdrawals.
+     * 
+     * @return The number of years that have elapsed since team tokens funding started, capped at 5.
      */
     function calculateYearForTeamTokens() public view returns (uint8) {
         // Check if team tokens funding has started
@@ -833,9 +994,11 @@ contract UpgradeableHYAXRewardsV2 is
 
     /**
      * @notice Updates the rewards for a batch of wallets
-     * @dev This function updates the rewards for a list of wallets in a single transaction.
-     * @param _walletAddresses The list of wallet addresses to update rewards for.
-     * @param _hyaxRewards The list of HYAX rewards to be updated for each wallet.
+     * @dev This function updates the rewards for a batch of wallet addresses.
+     * It iterates through the list of wallets and tries to update the rewards for each wallet.
+     * If an error occurs during the update, it emits a RewardUpdateFailed event.
+     * @param _walletAddresses The addresses of the wallets to update rewards for.
+     * @param _hyaxRewards The amounts of HYAX rewards to update for the wallets.
      */
     function updateRewardsBatch(
         address[] calldata _walletAddresses,
@@ -874,8 +1037,11 @@ contract UpgradeableHYAXRewardsV2 is
     }
 
     /**
-     * @notice Updates the rewards for a single wallet internally
-     * @dev This function updates the rewards for a single wallet address internally.
+     * @notice Updates the rewards for a single wallet
+     * @dev This function updates the rewards for a single wallet address.
+     * It validates the conditions for the reward token update and ensures that the wallet is whitelisted, not blacklisted,
+     * and that the rewards do not exceed the allowed limits.
+     * If an error occurs during the update, it emits a RewardUpdateFailed event.
      * @param _walletAddress The address of the wallet to update rewards for.
      * @param _hyaxRewards The amount of HYAX rewards to update for the wallet.
      */
@@ -933,13 +1099,12 @@ contract UpgradeableHYAXRewardsV2 is
         emit RewardUpdateSuccess(msg.sender, _walletAddress, _hyaxRewards);
     }
 
-    /*
-     * @notice Allows whitelisted holders to withdraw their accumulated rewards
-     * @dev This function is restricted to whitelisted addresses and implements a nonReentrant guard
-     * @dev Rewards can be withdrawn instantly once they are distributed
-     * @dev The function checks for various conditions before allowing withdrawal
-     * @dev Upon successful withdrawal, it updates relevant state variables and transfers tokens
-     * @return None
+    /**
+     * @dev Allows a whitelisted and not blacklisted user to withdraw their reward tokens.
+     * This function can only be called when the contract is not paused and the user has not been blacklisted.
+     * It validates various conditions before allowing the withdrawal, including ensuring reward tokens funding has started,
+     * not all reward tokens have been withdrawn, there are sufficient reward tokens in the contract, and the user has rewards available to withdraw.
+     * It then updates the user's wallet state, transfers the reward tokens, and emits an event to notify of the withdrawal.
      */
     function withdrawRewardTokens()
         public
@@ -993,14 +1158,11 @@ contract UpgradeableHYAXRewardsV2 is
 
     /////////////SMART CONTRACT MANAGEMENT FUNCTIONS///////////
     /**
-     * @notice Allows the owner to withdraw tokens to be burned
-     * @dev This function can only be called by the owner
-     * @param _fundingType The type of funding to withdraw from
-     * @param _amount The amount of tokens to withdraw
-     * @custom:requirements Funding must have started
-     * @custom:requirements Amount must be greater than 0
+     * @dev This function is used to withdraw tokens to be burned.
+     * It can only be called by the default admin role, is non-reentrant, and is not paused.
+     * @param _fundingType The type of funding to be withdrawn (GrowthTokens, TeamTokens, or RewardTokens)
+     * @param _amount The amount of tokens to be withdrawn
      */
-
     function withdrawTokensToBurn(
         FundingType _fundingType,
         uint256 _amount
@@ -1064,6 +1226,15 @@ contract UpgradeableHYAXRewardsV2 is
         emit TokensToBurnWithdrawn(_fundingType, _amount);
     }
 
+    /**
+     * @dev Updates the wallet address of a team member.
+     * This function can only be called by the contract owner and is used to update the wallet address of a team member.
+     * It ensures that the old wallet address is no longer considered a team wallet and the new wallet address is marked as a team wallet.
+     * It also transfers the wallet data from the old wallet to the new wallet.
+     * 
+     * @param _oldTeamMemberWalletAddress The address of the old team member wallet.
+     * @param _newTeamMemberWalletAddress The address of the new team member wallet.
+     */
     function updateTeamMemberWallet(
         address _oldTeamMemberWalletAddress,
         address _newTeamMemberWalletAddress
@@ -1115,7 +1286,7 @@ contract UpgradeableHYAXRewardsV2 is
         WalletData storage oldWallet = wallets[_oldTeamMemberWalletAddress];
         WalletData storage newWallet = wallets[_newTeamMemberWalletAddress];
 
-        //Lock the old wallet in order to prevent potetial race conditions
+        //Lock the old wallet in order to prevent potential race conditions
         oldWallet.isWhitelisted = false;
         oldWallet.isTeamWallet = false;
         oldWallet.isBlacklisted = true;
@@ -1157,10 +1328,15 @@ contract UpgradeableHYAXRewardsV2 is
         );
     }
 
+
     /**
-     * @notice Updates the white lister address
-     * @dev This function can only be called by the admin
-     * @param _whiteListerAddress The address of the new white lister
+     * @dev Updates the address of the white lister.
+     * This function can only be called by the admin.
+     * It validates that the new white lister address is not the zero address,
+     * revokes the white lister role from the previous address,
+     * grants the white lister role to the new address,
+     * updates the white lister address, and emits an event to notify of the update.
+     * @param _whiteListerAddress The address of the new white lister.
      */
     function updateWhiteListerAddress(
         address _whiteListerAddress
@@ -1184,9 +1360,13 @@ contract UpgradeableHYAXRewardsV2 is
     }
 
     /**
-     * @notice Updates the rewards updater address
-     * @dev This function can only be called by the admin
-     * @param _rewardsUpdaterAddress The address of the new rewards updater
+     * @dev Updates the address of the rewards updater.
+     * This function can only be called by the admin.
+     * It validates that the new rewards updater address is not the zero address,
+     * revokes the rewards updater role from the previous address,
+     * grants the rewards updater role to the new address,
+     * updates the rewards updater address, and emits an event to notify of the update.
+     * @param _rewardsUpdaterAddress The address of the new rewards updater.
      */
     function updateRewardsUpdaterAddress(
         address _rewardsUpdaterAddress
@@ -1210,9 +1390,14 @@ contract UpgradeableHYAXRewardsV2 is
     }
 
     /**
-     * @notice Updates the hyax token address
-     * @dev This function can only be called by the admin
-     * @param _hyaxTokenAddress The address of the new hyax token
+     * @dev Updates the address of the HYAX token contract.
+     * This function can only be called by the admin.
+     * It validates that the new HYAX token address is not the zero address,
+     * ensures the caller is the owner of the contract,
+     * verifies that the token at the new address is a valid HYAX token,
+     * updates the HYAX token address, updates the HYAX token instance,
+     * and emits an event to notify of the update.
+     * @param _hyaxTokenAddress The address of the new HYAX token contract.
      */
     function updateHyaxTokenAddress(
         address _hyaxTokenAddress
@@ -1247,9 +1432,11 @@ contract UpgradeableHYAXRewardsV2 is
     }
 
     /**
-     * @notice Updates the maximum batch size for update rewards
-     * @dev This function can only be called by the admin
-     * @param _maximumBatchSizeForUpdateRewards The maximum batch size for update rewards
+     * @dev Updates the maximum batch size for updating rewards.
+     * This function can only be called by the admin.
+     * It validates that the new maximum batch size is within the allowed range (1 to 100),
+     * updates the maximum batch size for update rewards, and emits an event to notify of the update.
+     * @param _maximumBatchSizeForUpdateRewards The new maximum batch size for update rewards.
      */
     function updateMaximumBatchSizeForUpdateRewards(
         uint8 _maximumBatchSizeForUpdateRewards
@@ -1272,36 +1459,43 @@ contract UpgradeableHYAXRewardsV2 is
         );
     }
 
+
     /**
-     * @notice Returns the owner of the contract
-     * @dev This function can only be called by the owner
-     * @return The address of the owner
+     * @dev Returns the address of the owner of the contract.
+     * This function is view-only and does not modify the state of the contract.
+     * It retrieves the first account that has been assigned the DEFAULT_ADMIN_ROLE.
+     * @return The address of the owner of the contract.
      */
     function owner() public view returns (address) {
         // Returns the first account with the DEFAULT_ADMIN_ROLE
         return getRoleMember(DEFAULT_ADMIN_ROLE, 0);
     }
 
+
     /**
      * @dev Pauses all functionalities of the contract.
-     * Can only be called by the admin.
+     * This function can only be called by the admin.
+     * It calls the internal _pause function to pause the contract.
      */
     function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
 
+
     /**
-     * @dev Unpauses all functionalities of the contract.
-     * Can only be called by the owner.
+     * @dev Unpauses the contract, allowing normal functionality to resume.
+     * This function can only be called by the admin.
+     * It calls the internal _unpause function to unpause the contract.
      */
     function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
     }
 
     /**
-     * @dev Transfers ownership of the contract to a new account (`newOwner`).
-     * Can only be called by the current admin.
-     * @param newOwner The address of the new admin.
+     * @dev Transfers the ownership of the contract to a new address.
+     * This function can only be called by the admin.
+     * It validates the conditions for ownership transfer and revokes the role from the current owner.
+     * @param newOwner The address of the new owner.
      */
     function transferOwnership(
         address newOwner

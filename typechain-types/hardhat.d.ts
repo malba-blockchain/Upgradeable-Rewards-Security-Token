@@ -110,10 +110,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IHyaxToken__factory>;
     getContractFactory(
-      name: "UpgradeableHYAXRewards",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.UpgradeableHYAXRewards__factory>;
-    getContractFactory(
       name: "UpgradeableHYAXRewardsV2",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.UpgradeableHYAXRewardsV2__factory>;
@@ -243,11 +239,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IHyaxToken>;
     getContractAt(
-      name: "UpgradeableHYAXRewards",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.UpgradeableHYAXRewards>;
-    getContractAt(
       name: "UpgradeableHYAXRewardsV2",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -354,10 +345,6 @@ declare module "hardhat/types/runtime" {
       name: "IHyaxToken",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IHyaxToken>;
-    deployContract(
-      name: "UpgradeableHYAXRewards",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.UpgradeableHYAXRewards>;
     deployContract(
       name: "UpgradeableHYAXRewardsV2",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -487,11 +474,6 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IHyaxToken>;
-    deployContract(
-      name: "UpgradeableHYAXRewards",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.UpgradeableHYAXRewards>;
     deployContract(
       name: "UpgradeableHYAXRewardsV2",
       args: any[],

@@ -30,7 +30,7 @@ describe("Test case #24. Pause and unpause the contract", function () {
         await hyaxToken.connect(owner).transfer(addr2.address, ethers.parseUnits("200000000", 18));
         await hyaxToken.connect(owner).transfer(addr3.address, ethers.parseUnits("300000000", 18));
 
-        // Fund the smart contract with reward tokens
+        // Prepare the smart contract for reward token funding
         const fundingAmount = ethers.parseUnits("1000000000", 18); // Fund with (1B) 1,000,000,000 reward Tokens
 
         // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner

@@ -173,7 +173,7 @@ describe("Test case #4. Fund Smart Contract with growth tokens", function () {
     it("4.9. Should revert when funding with an amout above the total intended for growth tokens", async function () {
         const { upgradeableHYAXRewards, owner, hyaxToken } = await loadFixture(deployUpgradeableHYAXRewardsFixture);
 
-        const fundingAmount = ethers.parseUnits("2500000000", 18); // Fund with (1B) 1,000,000,000 Growth Tokens
+        const fundingAmount = ethers.parseUnits("2500000000", 18); // Fund with (2.5B) 2,500,000,000 Growth Tokens
 
         // Approve the UpgradeableHYAXRewards contract to spend tokens on behalf of the owner
         await hyaxToken.approve(upgradeableHYAXRewards.target, fundingAmount);
@@ -181,7 +181,7 @@ describe("Test case #4. Fund Smart Contract with growth tokens", function () {
         //enum FundingType {GrowthTokens, TeamTokens, InvestorRewards}
         await expect(
             upgradeableHYAXRewards.connect(owner).fundSmartContract(0, fundingAmount)
-        ).to.be.revertedWith('Amount to fund is greater than the total intented for growth tokens');
+        ).to.be.revertedWith('Amount to fund is greater than the total intended for growth tokens');
     });
 
     it("4.10. Should successfully fund the contract with growth tokens with the total intended amount", async function () {

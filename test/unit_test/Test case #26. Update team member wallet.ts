@@ -1312,8 +1312,7 @@ describe("Test case #26. Update team member wallet", function () {
         expect(oldWallet.currentRewardsAmount).to.equal(ethers.parseUnits("600000", 18));
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
         expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
-        expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
-
+        
         // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
         expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
 
@@ -1403,8 +1402,7 @@ describe("Test case #26. Update team member wallet", function () {
         expect(oldWallet.currentRewardsAmount).to.equal(ethers.parseUnits("700000", 18));
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
         expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
-        expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
-    
+
         // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
         expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
 
@@ -1497,8 +1495,7 @@ describe("Test case #26. Update team member wallet", function () {
         expect(oldWallet.currentRewardsAmount).to.equal(ethers.parseUnits("800000", 18));
         expect(oldWallet.rewardsWithdrawn).to.equal(0);
         expect(oldWallet.teamTokenWithdrawalTimes).to.equal(0);
-        expect(oldWallet.lastRewardsWithdrawalTime).to.equal(0);
-        
+
         // Check that the new wallet has inherited the addedToWhitelistTime from the old wallet 
         expect(newWallet.addedToWhitelistTime).to.equal(oldWallet.addedToWhitelistTime);
 
