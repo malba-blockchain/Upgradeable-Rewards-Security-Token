@@ -86,12 +86,7 @@ Add 3 team wallets with tokens DONE
 
 22.5.6. Create the testnet version of the upgrades script DONE
 
-23. Adjust for reward token non recovery DONE
 
-ToDo
-1. Change function name in smart contract and tests. recoverTeamTokens => updateTeamMemberWallet DONE
-2. Start new wallet with new values. DONE
-3. Don't delete past values of wallet. DONE
 
 
 

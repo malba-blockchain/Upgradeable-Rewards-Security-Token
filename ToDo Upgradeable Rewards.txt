@@ -371,52 +371,52 @@ INPUT: address teamWallet, address newWallet
 
 18. Test all cases for the recoverTeamTokens function
 
-26.1. Revert because funding has not started yet DONE
-26.2. Revert because Old wallet address is not a team wallet DONE
-26.3. Revert because Old team member wallet address is not whitelisted DONE
-26.4. Revert because Old team member wallet address is blacklisted DONE
-26.5. Revert because New team member wallet address cannot be the zero address DONE
-26.6. Revert because New team member wallet address cannot be the same as the old team member wallet address DONE
-26.7. Revert because New team member wallet address is already whitelisted DONE
-26.8. Revert because New team member wallet address is already a team wallet DONE
-26.9. Revert because New team member wallet address is blacklisted DONE
+#26.1. Revert because funding has not started yet DONE
+#26.2. Revert because Old wallet address is not a team wallet DONE
+#26.3. Revert because Old team member wallet address is not whitelisted DONE
+#26.4. Revert because Old team member wallet address is blacklisted DONE
+#26.5. Revert because New team member wallet address cannot be the zero address DONE
+#26.6. Revert because New team member wallet address cannot be the same as the old team member wallet address DONE
+#26.7. Revert because New team member wallet address is already whitelisted DONE
+#26.8. Revert because New team member wallet address is already a team wallet DONE
+#26.9. Revert because New team member wallet address is blacklisted DONE
 
 WHITOUT REWARDS
-26.10. Successfully execute for a wallet in year zero DONE
-26.11. Successfully execute for a wallet in year one DONE
-26.12. Successfully execute for a wallet in year two DONE
-26.13. Successfully execute for a wallet in year three DONE
-26.14. Successfully execute for a wallet in year four DONE
-26.15. Successfully execute for a wallet in year five DONE
+#26.10. Successfully execute for a wallet in year zero DONE
+#26.11. Successfully execute for a wallet in year one DONE
+#26.12. Successfully execute for a wallet in year two DONE
+#26.13. Successfully execute for a wallet in year three DONE
+#26.14. Successfully execute for a wallet in year four DONE
+#26.15. Successfully execute for a wallet in year five DONE
 
 WITH REWARDS
-26.16. Successfully execute for a wallet in year zero DONE
-26.17. Successfully execute for a wallet in year one DONE
-26.18. Successfully execute for a wallet in year two DONE
-26.19. Successfully execute for a wallet in year three DONE
-26.20. Successfully execute for a wallet in year four DONE
-26.21. Successfully execute for a wallet in year five DONE
+#26.16. Successfully execute for a wallet in year zero DONE
+#26.17. Successfully execute for a wallet in year one DONE
+#26.18. Successfully execute for a wallet in year two DONE
+#26.19. Successfully execute for a wallet in year three DONE
+#26.20. Successfully execute for a wallet in year four DONE
+#26.21. Successfully execute for a wallet in year five DONE
 
 WITH REWARDS AFTER TEAM TOKEN WITHDRAWAL
-26.22. Successfully execute for a wallet in year four DONE
-26.23. Successfully execute for a wallet in year five DONE
-26.24. Successfully execute for a wallet in year six DONE
-26.25. Successfully execute for a wallet in year seven DONE
-26.26. Successfully execute for a wallet in year eight DONE
+#26.22. Successfully execute for a wallet in year four DONE
+#26.23. Successfully execute for a wallet in year five DONE
+#26.24. Successfully execute for a wallet in year six DONE
+#26.25. Successfully execute for a wallet in year seven DONE
+#26.26. Successfully execute for a wallet in year eight DONE
 
 WITH REWARDS AFTER TEAM TOKEN WITHDRAWAL AND REWARDS WITHDRAWAL
-26.27. Successfully execute for a wallet in year four DONE
-26.28. Successfully execute for a wallet in year five DONE
-26.29. Successfully execute for a wallet in year six DONE
-26.30. Successfully execute for a wallet in year seven DONE
-26.31. Successfully execute for a wallet in year eight DONE
+#26.27. Successfully execute for a wallet in year four DONE
+#26.28. Successfully execute for a wallet in year five DONE
+#26.29. Successfully execute for a wallet in year six DONE
+#26.30. Successfully execute for a wallet in year seven DONE
+#26.31. Successfully execute for a wallet in year eight DONE
 
-9.13. Successfully withdraw team tokens after recovering the wallet DONE
-9.14. Revert when trying to withdraw tokens after recovering the wallet before a year has elapsed DONE
-9.15. Revert when trying to withdraw tokens after recovering the wallet after withdrawing all team tokens DONE
+#9.13. Successfully withdraw team tokens after recovering the wallet DONE
+#9.14. Revert when trying to withdraw tokens after recovering the wallet before a year has elapsed DONE
+#9.15. Revert when trying to withdraw tokens after recovering the wallet after withdrawing all team tokens DONE
 
-17.8. Successfully  withdraw reward tokens after recovering the wallet DONE
-17.9. Revert when trying to withdraw tokens after recovering the wallet after withdrawing all reward tokens that wallet has DONE
+#17.8. Successfully  withdraw reward tokens after recovering the wallet DONE
+#17.9. Revert when trying to withdraw tokens after recovering the wallet after withdrawing all reward tokens that wallet has DONE
 
 
 19. Test fail cases
@@ -444,8 +444,13 @@ npm i hardhat-gas-reporter
 
 22. Update updates script DONE
 
-
 npx hardhat run scripts/updateWeeklyRewards.ts 
+
+23. Adjust for reward token non recovery DONE
+
+23.1. Change function name in smart contract and tests. recoverTeamTokens => updateTeamMemberWallet DONE
+23.2. Start new wallet with new values. DONE
+23.3. Don't delete past values of wallet. DONE
 
 24. Add all security checks and more learned in skills and job hunting experience (4 days)
 
@@ -547,12 +552,18 @@ https://github.com/PatrickAlphaC/hardhat-security-fcc/
 --Prettier: Formatter DONE
 
 
-23. Add updates to contracts based on reports and update repos DONE
+25. Add updates to contracts based on reports and update repos DONE
 
-25. Clean comments and fix documentation on contract and tests (2 days) DONE
+26. Clean comments and fix documentation on contract and tests (2 days) DONE
 
 
 CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+
+27. Optimize updates script. (2 days) Execute 10 batch transactions each sending a pack of 10 updates. and simulate it. 
+In case the update fails, store the values of the wallets that failed to later try to update them manually.
+
+UP TO HERE-------------------------------
+
 
 Questions: The withdrawTokensToBurn function should send the tokens to the owner wallet or to the treasury wallet?
 
@@ -561,21 +572,18 @@ To check:
 getCurrentTokenPrice() function. Price freshness validation.
 getCurrentTokenPrice() function. Oracle price manipulation validation.
 
-26. Deploy in testnet (3 days) 
+28. Deploy in testnet (3 days) 
 
-UP TO HERE-------------------------------
 
-23. Optimize updates script. (2 days) Execute 10 batch transactions each sending a pack of 10 updates. and simulate it. In case the update fails, store the values of the wallets that failed to later try to update them manually.
+29. Transacion optimization and simulation? https://docs.alchemy.com/reference/alchemy-sendgasoptimizedtransaction (2 days)
 
-26. Transacion optimization and simulation? https://docs.alchemy.com/reference/alchemy-sendgasoptimizedtransaction (2 days)
+30. Test upgradeability with multisig transaction (2 days)
 
-26. Test upgradeability with multisig transaction (2 days)
+31. DOCUMENT EVERYTHING. DON'T FORGET THE VIDEOS (4 days)
 
-27. DOCUMENT EVERYTHING. DON'T FORGET THE VIDEOS (4 days)
+32. Share to the web2 team + rewards update script (4 days)
 
-28. Share to the web2 team + rewards update script (4 days)
-
-29. Do realistic tests with team . I.e. 1 Day = week of rewards (1 week)
+33. Do realistic tests with team . I.e. 1 Day = week of rewards (1 week)
 
 QUESTION
 Function name: withdrawTokensToBurn() or withdrawTokensOnlyOwner()
