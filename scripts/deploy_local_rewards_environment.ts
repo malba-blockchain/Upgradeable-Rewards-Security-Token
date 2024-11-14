@@ -359,25 +359,25 @@ async function addTeamWalletsToWhitelist(upgradeableHYAXRewards:any) {
   await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(taddr3.address, true, ethers.parseUnits("2000000", 18));
   console.log("Added team wallet to whitelist", taddr3.address);
 
-  await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(taddr4.address, true, ethers.parseUnits("1000000", 18));
+  await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(taddr4.address, true, ethers.parseUnits("4000000", 18));
   console.log("Added team wallet to whitelist", taddr4.address);
 
-  await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(taddr5.address, true, ethers.parseUnits("1000000", 18));
+  await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(taddr5.address, true, ethers.parseUnits("6000000", 18));
   console.log("Added team wallet to whitelist", taddr5.address);
 
-  await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(taddr6.address, true, ethers.parseUnits("1000000", 18));
+  await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(taddr6.address, true, ethers.parseUnits("7000000", 18));
   console.log("Added team wallet to whitelist", taddr6.address);
 
-  await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(taddr7.address, true, ethers.parseUnits("1000000", 18));
+  await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(taddr7.address, true, ethers.parseUnits("5000000", 18));
   console.log("Added team wallet to whitelist", taddr7.address);
 
-  await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(taddr8.address, true, ethers.parseUnits("1000000", 18));
+  await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(taddr8.address, true, ethers.parseUnits("10000000", 18));
   console.log("Added team wallet to whitelist", taddr8.address);
 
-  await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(taddr9.address, true, ethers.parseUnits("1000000", 18));
+  await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(taddr9.address, true, ethers.parseUnits("8000000", 18));
   console.log("Added team wallet to whitelist", taddr9.address);
 
-  await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(taddr10.address, true, ethers.parseUnits("1000000", 18));
+  await upgradeableHYAXRewards.connect(whiteListerAddress).addWalletToWhitelist(taddr10.address, true, ethers.parseUnits("9000000", 18));
   console.log("Added team wallet to whitelist", taddr10.address);
 }
 

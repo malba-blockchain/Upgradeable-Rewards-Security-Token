@@ -136,7 +136,7 @@ contract UpgradeableHYAXRewards is
         address _walletAddress,
         uint256 _hyaxReward
     );
-
+    
     /**
      * @dev Emitted when a reward update batch is sent
      * @param _sender The address that attempted to update the rewards
@@ -1215,11 +1215,11 @@ contract UpgradeableHYAXRewards is
             // Update the reward tokens in the smart contract
             rewardTokensInSmartContract -= _amount;
         }
-
+        
         // Transfer the calculated amount to the owner
         require(
             hyaxToken.transfer(owner(), _amount),
-            "Failed to transfer growth tokens"
+            "Failed to withdraw tokens"
         );
 
         // Emit an event to notify that the growth tokens were withdrawn

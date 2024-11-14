@@ -31,6 +31,9 @@ const config: HardhatUserConfig = {
         accountsBalance: "100000000000000000000000",
         count: 70,
       },
+      mining: {
+        auto: true, // Enable automatic mining
+      },
     }
   },
    // configuration for harhdat-verify plugin

@@ -37,7 +37,7 @@ async function main() {
     txSmartContractDeployment.nonce = await provider.getTransactionCount(deployerWallet.address, "latest"), // Set the nonce for the transaction
     txSmartContractDeployment.type = 2; // Set the transaction type to EIP-1559 (type 2)
     txSmartContractDeployment.chainId = BigInt(80002); // Set the chain ID to 80002 (PolygonAmoy testnet)
-
+    
     // Sign the deployment transaction with the deployer's wallet
     const signedTxSmartContractDeployment = await deployerWallet.signTransaction(txSmartContractDeployment);
 
