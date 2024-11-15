@@ -559,8 +559,6 @@ https://github.com/PatrickAlphaC/hardhat-security-fcc/
 
 27. Optimize updates script. (1 day) Execute 10 batch transactions each sending a pack of 10 updates. and simulate it. DONE
 
-FINISH THIS ONE AND DEPLOY TO FUCKING TESTNET
-
 In case the update fails, store the values of the wallets that failed to later try to update them manually. DONE
 
 D:&&cd D:\USER\Downloads\ATLAS\Projects\HYAX-Upgradeable-Rewards\
@@ -589,15 +587,54 @@ npx hardhat verify --network polygonAmoy 0x4805e72439d34555CB7DDa729341215f79940
 (PROXY ADMIN)
 0xa1A90110D4E9f0D2e58981fe023C8A586EedbD95
 
+28.2. Deploy rewards contract DONE
+28.2.1. Do the launch with the token contract as parameter 
+
+npx hardhat run --network polygonAmoy scripts/deploy_testnet_upgradeable_rewards_contract.ts
+
+npx hardhat verify --network polygonAmoy 0xb1E69361222Bb7f897F6c628b443bA3bBC87495a
+
+
+28.2.2. Validate the proxy and implementation
+
+(PROXY) Stores the variables
+0xb1E69361222Bb7f897F6c628b443bA3bBC87495a
+
+(IMPLEMENTATION) Stores the logic
+0x61CD42c67499655B92832E28fA4E9f1b2559a478
+
+(PROXY ADMIN)
+0x0C5cba82da996df9FDb65320eeCF6CBbaB365ACE
+
+
+28.2.3. Mint rewards tokens in token contract 5.1B (5 times 1B and 100M)
+1000000000000000000000000000 (1B)
+100000000000000000000000000 (100M)
+
+28.2.4. Approve sending HYAX tokens from owner to rewards
+5100000000000000000000000000 (1B)
+
+28.2.5. Fund rewards contract from owner wallet (Proxy smart contract) 
+
+2400000000000000000000000000 (2.4B) Growth #0
+1500000000000000000000000000 (1.5B) Team #1
+1200000000000000000000000000 (1.2B) Rewards #2
+
+28.2.6. Add investor wallets to whitelist DONE
+
+28.2.7. Add team wallets to whitelist DONE
+
+
 CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
-28.2. Deploy rewards contract
+29. Transacion optimization and simulation? https://docs.alchemy.com/reference/alchemy-sendgasoptimizedtransaction (2 days)
 
+NOW TEST THE SCRIPT. REMEMBER //const updateRewardsBatchResult = await updateRewardsBatch();
+
+npx hardhat run --network polygonAmoy scripts/update_weekly_rewards.ts
 
 UP TO HERE-------------------------------
 
-
-29. Transacion optimization and simulation? https://docs.alchemy.com/reference/alchemy-sendgasoptimizedtransaction (2 days)
 
 30. Deploy rewards update script onchain. (3 days)
 
@@ -606,14 +643,13 @@ To check:
 getCurrentTokenPrice() function. Price freshness validation.
 
 
-
 30. Test real time upgradeability with multisig transaction (2 days)
 
 31. DOCUMENT EVERYTHING. DON'T FORGET THE VIDEOS (4 days)
 
 32. Share to the web2 team + rewards update script (4 days)
 
-Extra. Do realistic tests with team . I.e. 1 Day = week of rewards (1 week extra)
+Extra. Do realistic tests with team . I.e. 1 Day = week of rewards (1 week)
 
 
 ---------INITIAL LOCAL DEPLOYMENT---------

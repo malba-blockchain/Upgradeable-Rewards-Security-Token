@@ -1,0 +1,543 @@
+{
+  "manifestVersion": "3.2",
+  "proxies": [
+    {
+      "address": "0xb1E69361222Bb7f897F6c628b443bA3bBC87495a",
+      "txHash": "0x97d285ae2c6f352454b59acc0d34aee18ec1d0c7b7b35154c3103945e8e29d92",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "9c807366429230844c0faa557c7a0adb1196c3593a89cc65d9ccb6a37482fdaf": {
+      "address": "0x61CD42c67499655B92832E28fA4E9f1b2559a478",
+      "txHash": "0x81466e5010f363b3aad6a20468fdb4750032b59e7fd50d576a54616676fe126a",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "_placeholder",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_struct(Placeholder)2850_storage",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:40"
+          },
+          {
+            "label": "hyaxTokenAddress",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:206"
+          },
+          {
+            "label": "hyaxToken",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_contract(IHyaxToken)2840",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:211"
+          },
+          {
+            "label": "growthTokensFunded",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:259"
+          },
+          {
+            "label": "growthTokensWithdrawn",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:264"
+          },
+          {
+            "label": "growthTokensInSmartContract",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_uint256",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:269"
+          },
+          {
+            "label": "growthTokensLastWithdrawalTime",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_uint256",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:274"
+          },
+          {
+            "label": "growthTokensStartFundingTime",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_uint256",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:279"
+          },
+          {
+            "label": "growthTokensFundingStarted",
+            "offset": 0,
+            "slot": "8",
+            "type": "t_bool",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:284"
+          },
+          {
+            "label": "teamTokensFunded",
+            "offset": 0,
+            "slot": "9",
+            "type": "t_uint256",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:306"
+          },
+          {
+            "label": "teamTokensWithdrawn",
+            "offset": 0,
+            "slot": "10",
+            "type": "t_uint256",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:311"
+          },
+          {
+            "label": "teamTokensInSmartContract",
+            "offset": 0,
+            "slot": "11",
+            "type": "t_uint256",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:316"
+          },
+          {
+            "label": "teamTokensStartFundingTime",
+            "offset": 0,
+            "slot": "12",
+            "type": "t_uint256",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:321"
+          },
+          {
+            "label": "teamTokensFundingStarted",
+            "offset": 0,
+            "slot": "13",
+            "type": "t_bool",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:326"
+          },
+          {
+            "label": "rewardTokensFunded",
+            "offset": 0,
+            "slot": "14",
+            "type": "t_uint256",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:346"
+          },
+          {
+            "label": "rewardTokensDistributed",
+            "offset": 0,
+            "slot": "15",
+            "type": "t_uint256",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:351"
+          },
+          {
+            "label": "rewardTokensWithdrawn",
+            "offset": 0,
+            "slot": "16",
+            "type": "t_uint256",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:356"
+          },
+          {
+            "label": "rewardTokensInSmartContract",
+            "offset": 0,
+            "slot": "17",
+            "type": "t_uint256",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:361"
+          },
+          {
+            "label": "rewardTokensStartFundingTime",
+            "offset": 0,
+            "slot": "18",
+            "type": "t_uint256",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:366"
+          },
+          {
+            "label": "rewardTokensFundingStarted",
+            "offset": 0,
+            "slot": "19",
+            "type": "t_bool",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:371"
+          },
+          {
+            "label": "whiteListerAddress",
+            "offset": 1,
+            "slot": "19",
+            "type": "t_address",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:378"
+          },
+          {
+            "label": "rewardsUpdaterAddress",
+            "offset": 0,
+            "slot": "20",
+            "type": "t_address",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:383"
+          },
+          {
+            "label": "maximumBatchSizeForUpdateRewards",
+            "offset": 20,
+            "slot": "20",
+            "type": "t_uint8",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:407"
+          },
+          {
+            "label": "wallets",
+            "offset": 0,
+            "slot": "21",
+            "type": "t_mapping(t_address,t_struct(WalletData)3151_storage)",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:413"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "22",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "UpgradeableHYAXRewards",
+            "src": "contracts\\UpgradeableHYAXRewards.sol:419"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_bytes32)dyn_storage": {
+            "label": "bytes32[]",
+            "numberOfBytes": "32"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_struct(AddressSet)1082_storage)": {
+            "label": "mapping(bytes32 => struct EnumerableSet.AddressSet)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)24_storage)": {
+            "label": "mapping(bytes32 => struct AccessControlUpgradeable.RoleData)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_uint256)": {
+            "label": "mapping(bytes32 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(AccessControlEnumerableStorage)175_storage": {
+            "label": "struct AccessControlEnumerableUpgradeable.AccessControlEnumerableStorage",
+            "members": [
+              {
+                "label": "_roleMembers",
+                "type": "t_mapping(t_bytes32,t_struct(AddressSet)1082_storage)",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(AccessControlStorage)34_storage": {
+            "label": "struct AccessControlUpgradeable.AccessControlStorage",
+            "members": [
+              {
+                "label": "_roles",
+                "type": "t_mapping(t_bytes32,t_struct(RoleData)24_storage)",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(AddressSet)1082_storage": {
+            "label": "struct EnumerableSet.AddressSet",
+            "members": [
+              {
+                "label": "_inner",
+                "type": "t_struct(Set)950_storage",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(InitializableStorage)261_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(PausableStorage)353_storage": {
+            "label": "struct PausableUpgradeable.PausableStorage",
+            "members": [
+              {
+                "label": "_paused",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(ReentrancyGuardStorage)424_storage": {
+            "label": "struct ReentrancyGuardUpgradeable.ReentrancyGuardStorage",
+            "members": [
+              {
+                "label": "_status",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(RoleData)24_storage": {
+            "label": "struct AccessControlUpgradeable.RoleData",
+            "members": [
+              {
+                "label": "hasRole",
+                "type": "t_mapping(t_address,t_bool)",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "adminRole",
+                "type": "t_bytes32",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(Set)950_storage": {
+            "label": "struct EnumerableSet.Set",
+            "members": [
+              {
+                "label": "_values",
+                "type": "t_array(t_bytes32)dyn_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_positions",
+                "type": "t_mapping(t_bytes32,t_uint256)",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_contract(IHyaxToken)2840": {
+            "label": "contract IHyaxToken",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_struct(WalletData)3151_storage)": {
+            "label": "mapping(address => struct UpgradeableHYAXRewards.WalletData)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Placeholder)2850_storage": {
+            "label": "struct UpgradeableHYAXRewards.Placeholder",
+            "members": [
+              {
+                "label": "_unused",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(WalletData)3151_storage": {
+            "label": "struct UpgradeableHYAXRewards.WalletData",
+            "members": [
+              {
+                "label": "hyaxHoldingAmount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "hyaxHoldingAmountAtWhitelistTime",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "totalHyaxRewardsAmount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "currentRewardsAmount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "rewardsWithdrawn",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "addedToWhitelistTime",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "5"
+              },
+              {
+                "label": "teamTokenWithdrawalTimes",
+                "type": "t_uint8",
+                "offset": 0,
+                "slot": "6"
+              },
+              {
+                "label": "lastRewardsWithdrawalTime",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "7"
+              },
+              {
+                "label": "lastRewardsUpdateTime",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "8"
+              },
+              {
+                "label": "isTeamWallet",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "9"
+              },
+              {
+                "label": "isWhitelisted",
+                "type": "t_bool",
+                "offset": 1,
+                "slot": "9"
+              },
+              {
+                "label": "isBlacklisted",
+                "type": "t_bool",
+                "offset": 2,
+                "slot": "9"
+              }
+            ],
+            "numberOfBytes": "320"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.ReentrancyGuard": [
+            {
+              "contract": "ReentrancyGuardUpgradeable",
+              "label": "_status",
+              "type": "t_uint256",
+              "src": "@openzeppelin\\contracts-upgradeable\\utils\\ReentrancyGuardUpgradeable.sol:43",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Pausable": [
+            {
+              "contract": "PausableUpgradeable",
+              "label": "_paused",
+              "type": "t_bool",
+              "src": "@openzeppelin\\contracts-upgradeable\\utils\\PausableUpgradeable.sol:21",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.AccessControlEnumerable": [
+            {
+              "contract": "AccessControlEnumerableUpgradeable",
+              "label": "_roleMembers",
+              "type": "t_mapping(t_bytes32,t_struct(AddressSet)1082_storage)",
+              "src": "@openzeppelin\\contracts-upgradeable\\access\\extensions\\AccessControlEnumerableUpgradeable.sol:19",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.AccessControl": [
+            {
+              "contract": "AccessControlUpgradeable",
+              "label": "_roles",
+              "type": "t_mapping(t_bytes32,t_struct(RoleData)24_storage)",
+              "src": "@openzeppelin\\contracts-upgradeable\\access\\AccessControlUpgradeable.sol:60",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

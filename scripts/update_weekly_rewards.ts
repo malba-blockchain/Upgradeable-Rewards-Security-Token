@@ -1,6 +1,23 @@
-import { ethers } from "ethers";
+import { ethers } from 'hardhat'; // Import the ethers object from Hardhat
 import * as dotenv from "dotenv";
 import { Alchemy, Network } from "alchemy-sdk";
+
+import * as fs from 'fs';
+import * as path from 'path';
+
+////////////////LOG HANDLING////////////////
+const logFilePath = path.join('D:/USER/Downloads/ATLAS/Projects/HYAX-Upgradeable-Rewards/utils/logs/', 'logs.txt');
+
+// Create a write stream for the log file
+const logFileStream = fs.createWriteStream(logFilePath, { flags: 'a' });
+
+// Override console.log to log to both console and file
+const originalConsoleLog = console.log;
+console.log = (...args: any[]) => {
+    const message = args.join(' ') + '\n';
+    originalConsoleLog.apply(console, args); // Write to console
+    logFileStream.write(message); // Write to the log file
+};
 
 dotenv.config();
 
@@ -12,6 +29,8 @@ const AVERAGE_BLOCK_TIME_IN_BLOCKCHAIN = 2.2;
 const { TOKEN_SMART_CONTRACT_ADDRESS, REWARDS_SMART_CONTRACT_ADDRESS } = require('../utils/addresses.ts');
 
 const { TOKEN_SMART_CONTRACT_ABI, REWARDS_SMART_CONTRACT_ABI } = require('../utils/abi.ts');
+
+const BATCH_SIZE_REWARDS_UPDATE = 10;
 
 const REWARD_TOKENS_PER_YEAR = 150000000 * 10**18; // 150 Million tokens per year
 
@@ -36,7 +55,6 @@ const alchemy = new Alchemy({
     apiKey: process.env.REACT_APP_ALCHEMY_API_KEY, // Replace with your Alchemy API key
     network: SMART_CONTRACT_NETWORK, // Adjust the network if needed
 });
-
 
 //Get all the whitelisted investor wallets
 async function getAllWhitelistedInvestorWallets(): Promise<Set<string>> {
@@ -70,7 +88,6 @@ async function getAllWhitelistedInvestorWallets(): Promise<Set<string>> {
     return whitelistedTokenHolders;
 }
 
-
 //Get the token balances and total holdings of the whitelisted investor wallets
 async function getTokenBalancesInvestors(): Promise<{ balances: Map<string, number>, totalTokenHoldings: number }> {
     // Fetch all whitelisted token holders
@@ -84,16 +101,16 @@ async function getTokenBalancesInvestors(): Promise<{ balances: Map<string, numb
     const targetBlockNumber = currentBlockNumber - blocksInAWeek; // Change to currentBlock - blocksInAWeek for last week's data
 
     //Fetch the block details for the target block number
-    console.log("   [Log]: Current block number: ", currentBlockNumber);
-    console.log("   [Log]: Target block number: ", targetBlockNumber);
+    console.log("   [LOG]: Current block number: ", currentBlockNumber);
+    console.log("   [LOG]: Target block number: ", targetBlockNumber);
 
     const currentBlock = await alchemy.core.getBlock(currentBlockNumber);
     const currentBlockDate = new Date(currentBlock.timestamp * 1000); // Convert timestamp to milliseconds
-    console.log("   [Log]: Current block date: ", currentBlockDate.toISOString());
+    console.log("   [LOG]: Current block date: ", currentBlockDate.toISOString());
     
     const targetBlock = await alchemy.core.getBlock(targetBlockNumber);
     const targetBlockDate = new Date(targetBlock.timestamp * 1000); // Convert timestamp to milliseconds
-    console.log("   [Log]: Target block date: ", targetBlockDate.toISOString());
+    console.log("   [LOG]: Target block date: ", targetBlockDate.toISOString());
 
     // Initialize total holdings last week to 0
     let totalHoldingsLastWeek = 0;
@@ -223,6 +240,7 @@ async function calculateRewardsForAllWallets(): Promise<{ balances: Map<string, 
     return { balances: rewardsForWallets, totalRewards }; // Return final rewards map and total rewards
 }
 
+
 //Update the rewards for all wallets in a batch
 async function updateRewardsBatch(): Promise<string> {
     // Log the updater wallet's address and balance
@@ -233,62 +251,88 @@ async function updateRewardsBatch(): Promise<string> {
                 "\n   Updater wallet balance:", await alchemyProvider.getBalance(rewardsUpdaterWallet.address));
     
     // Get rewards data from the calculateRewardsForAllWallets function
-    const { totalRewards, balances: rewardsForWallets } = await calculateRewardsForAllWallets();
+    const { balances: rewardsForWallets, totalRewards: totalRewards } = await calculateRewardsForAllWallets();
 
-    console.log("\n   Rewards to distribute this week:", Number(ethers.formatEther(totalRewards.toString())));
+    console.log("\n     Rewards to distribute this week:", Number(ethers.formatEther(totalRewards.toString())));
 
     // Check if total rewards exceed the weekly cap
     if (totalRewards <= REWARD_TOKENS_PER_WEEK) {
         // Extract wallet addresses and reward amounts
         const walletAddresses = Array.from(rewardsForWallets.keys());
         const walletRewards = Array.from(rewardsForWallets.values()).map(([rewardAmount]) => rewardAmount);
-
+        
         // Ensure the addresses and rewards lists are of the same length
         if (walletAddresses.length === walletRewards.length) {
-            try {
-                // Send the batch update transaction
-                const tx = await rewardsContract.connect(rewardsUpdaterWallet).updateRewardsBatch(walletAddresses, walletRewards);
-                console.log("\n   [LOG]: Sending batch update transaction...");
-                const updateRewardsBatchReceipt = await tx.wait(); // Wait for the transaction to be mined
-                const events = updateRewardsBatchReceipt?.logs || [];
+            
+            //Create a batch of transactions
+            for (let i = 0; i < walletAddresses.length; i += BATCH_SIZE_REWARDS_UPDATE) {
+
+                console.log(`\n   [LOG]: Processing batch ${Math.floor(i/BATCH_SIZE_REWARDS_UPDATE) + 1} of ${Math.ceil(walletAddresses.length/BATCH_SIZE_REWARDS_UPDATE)}`);
+            
+                const batchAddresses = walletAddresses.slice(i, i + BATCH_SIZE_REWARDS_UPDATE);
+                const batchRewards = walletRewards.slice(i, i + BATCH_SIZE_REWARDS_UPDATE);
                 
-                let numberOfFailedUpdates = 0;
+                //Print the addresses and rewards to be updated
+                for (let j =0; j < batchAddresses.length; j++) {
+                    
+                    console.log(`     Address to update: ${batchAddresses[j]}. Rewards: ${Number(ethers.formatEther(batchRewards[j]))}`);
+                } 
                 
-                for (const event of events) {
-                    if (event.fragment.name === "RewardUpdateFailed") {
-                        numberOfFailedUpdates++;
+                try {
+                    // Send the batch update transaction
+                    const tx = await rewardsContract.connect(rewardsUpdaterWallet).updateRewardsBatch(batchAddresses, batchRewards);
+                    console.log("\n   [LOG]: Sending batch update transaction...");
+                    
+                    const updateRewardsBatchReceipt = await tx.wait(); // Wait for the transaction to be mined
+                    
+                    const events = updateRewardsBatchReceipt?.logs || [];
+                    
+                    let batchFailedUpdates  = 0;
+                    
+                    for (const event of events) {
+                        if (event.fragment.name === "RewardUpdateFailed") {
+                            console.log(`   [LOG]: Reward Update Failed. Sender: ${event.args[0]}. Wallet address: ${event.args[1]}. Error message:  ${event.args[2]}`);
+                            batchFailedUpdates++;
+                        }
                     }
+                    if (batchFailedUpdates == 0) {
+                        console.log(`   [LOG]: Successful batch update. All updated wallets received rewards correctly.`);
+                    }
+                    if (batchFailedUpdates == walletAddresses.length) {
+                        console.error(`   [ERROR]: All rewards in the batch failed to be updated. Check blockchain explorer logs for more details.`);
+                        return `   [ERROR]: All rewards in the batch failed to be updated. Check blockchain explorer logs for more details.`;
+                    }
+                    if (batchFailedUpdates > 0) {
+                        console.error(`   [ERROR]: ${batchFailedUpdates} out of ${BATCH_SIZE_REWARDS_UPDATE} rewards in the batch failed to be updated. Check blockchain explorer logs for more details.`);
+                        //return `   [ERROR]: ${batchFailedUpdates} out of ${BATCH_SIZE_REWARDS_UPDATE} rewards in the batch failed to be updated. Check blockchain explorer logs for more details.`;
+                    }
+                } catch (error) {
+                    console.error(`   [ERROR]: Batch transaction sent to smart contract failed:`, error); // Handle transaction failure
+                    return `   [ERROR]: Batch transaction sent to smart contract failed:` + error;
                 }
-                if (numberOfFailedUpdates == walletAddresses.length) {
-                    console.error("   [ERROR]: All rewards failed to be updated. Check blockchain explorer logs for more details.");
-                    return "   [ERROR]: All rewards failed to be updated. Check blockchain explorer logs for more details.";
-                }
-                if (numberOfFailedUpdates > 0) {
-                    console.error("   [ERROR]: Some rewards failed to be updated. Check blockchain explorer logs for more details.");
-                    return "   [ERROR]: Some rewards failed to be updated. Check blockchain explorer logs for more details.";
-                }
-            } catch (error) {
-                console.error("   [ERROR]: Batch transaction failed:", error); // Handle transaction failure
-                return "   [ERROR]: Batch transaction failed:" + error;
             }
         } else {
-            console.error("   [ERROR]: Mismatch in wallet addresses and rewards length.");
-            return "   [ERROR]: Mismatch in wallet addresses and rewards length.";
+            console.error(`   [ERROR]: Mismatch in wallet addresses and rewards length.`);
+            return `   [ERROR]: Mismatch in wallet addresses and rewards length.`;
         }
     } else {
         console.error("   [ERROR]: Total rewards exceed the weekly limit.");
         return "   [ERROR]: Total rewards exceed the weekly limit.";
     }
+    
+    // Show the rewards of all wallets after the batch update.
+    await showRewardsOfAllWallets(rewardsForWallets);
     return "";
 }
 
+
 //Show the rewards of all wallets
-async function showRewardsOfAllWallets(){
+async function showRewardsOfAllWallets(balances:any){
 
     console.log("\n   [LOG]: WALLETS AND REWARDS LIST");
 
     //Get the wallet addresses
-    const walletAddresses = Array.from(((await calculateRewardsForAllWallets()).balances).keys());
+    const walletAddresses = Array.from(balances.keys());
     
     for (const address of walletAddresses) {
 
@@ -296,7 +340,7 @@ async function showRewardsOfAllWallets(){
             currentRewardsAmount, rewardsWithdrawn, addedToWhitelistTime, tokenWithdrawalTimes, 
             lastRewardsWithdrawalTime, lastRewardsUpdateTime, isTeamWallet, isWhitelisted, isBlacklisted]
             = await rewardsContract.wallets(address);
-
+            
         console.log(`\n     Address: ${address}. Total rewards: ${Number(ethers.formatEther(totalHyaxRewardsAmount))}. Current rewards: ${Number(ethers.formatEther(currentRewardsAmount))}. Rewards withdrawn: ${Number(ethers.formatEther(rewardsWithdrawn))}`);
     }
 }
@@ -314,11 +358,12 @@ async function showRewardsSmartContractState() {
 //Simulate the weekly reward distribution
 async function automateWeeklyRewardsDistribution() {
     // Calculate the total number of weeks to simulate, assuming 8 years with 52 weeks per year, plus 14 weeks for rounding errors.
-    const totalWeeks = 416; // 8 years * 52 weeks = 416 weeks + 14 weeks for rounding errors = 430 weeks
+    const totalWeeks = 430; // 8 years * 52 weeks = 416 weeks + 14 weeks for rounding errors = 430 weeks
     
     // Loop through each week to simulate the reward distribution process.
     for (let i = 0; i < totalWeeks; i++) {
-
+        console.log("\n   #######################################################################################################");
+        
         // Log the current week's information, including the year, week in the year, and the absolute week number.
         console.log("\n   --------------------------------------------------------------------------------------------------------");
         console.log("\n   [LOG]: Year: ", Math.floor(i / 52), ". Week in year: ", i % 52, ". Absolute week: ", i);
@@ -326,10 +371,12 @@ async function automateWeeklyRewardsDistribution() {
 
         // Show the current state of the rewards smart contract.
         await showRewardsSmartContractState();
-
+        
         // Attempt to update the rewards batch for the current week.
-        const updateRewardsBatchResult = await updateRewardsBatch();
+        //const updateRewardsBatchResult = await updateRewardsBatch();
 
+        const updateRewardsBatchResult = "";
+        
         // If the update process fails, log the error and exit the simulation.
         if (updateRewardsBatchResult != "") {
             console.error(updateRewardsBatchResult);
@@ -337,15 +384,8 @@ async function automateWeeklyRewardsDistribution() {
         }
         // If the update process succeeds, log a success message.
         else {
-            console.log("   [LOG]: Batch rewards updated successfully!");
+            console.log("\n   [LOG]: All batch rewards updated successfully!");
         }
-
-        // Show the rewards of all wallets after the batch update.
-        await showRewardsOfAllWallets();
-
-        const oneWeek = 7 * 24 * 60 * 60 * 1000; // One week in milliseconds
-
-        await new Promise(f => setTimeout(f, oneWeek));
     }
 }
 

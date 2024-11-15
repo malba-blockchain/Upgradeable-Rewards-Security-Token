@@ -8,7 +8,7 @@ async function main() {
     
     const smartContractToDeploy = 'UpgradeableHYAXRewards'; // Define the name of the smart contract to deploy
 
-    const HYAXSmartContractAddress = "0xCd1fA2C8626B023197158aC84C5DF56EDD1F3f0C";
+    const HYAXSmartContractAddress = "0x4805e72439d34555CB7DDa729341215f7994000D";
     
     // Connect to the custom JsonRpcProvider for PolygonAmoy using Alchemy API
     const provider = new ethers.JsonRpcProvider(`https://polygon-amoy.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`);
@@ -22,7 +22,7 @@ async function main() {
     console.log("\nDeployer wallet balance: ", await provider.getBalance(deployerWallet.address)); // Log the deployer wallet's balance
 
     console.log("\nCreating deployment transaction..."); // Log that the deployment transaction is being created
-
+    
     // Get a contract factory for the smart contract to deploy, connected with the deployer's wallet
     const smartContractFactory = await ethers.getContractFactory(smartContractToDeploy, deployerWallet);
 

@@ -52,7 +52,7 @@ async function getInvestorData() {
 async function investFromCryptoToken() {
 
     console.log("\n Owner wallet address: ", ownerWallet.address); // Log the deployer wallet's address
-
+    
     console.log("\n Owner wallet balance: ", await alchemyProvider.getBalance(ownerWallet.address)); // Log the deployer wallet's balance
 
     //0:MATIC - 1:USDC - 2:USDT - 3:WBTC - 4:WETH
@@ -72,8 +72,6 @@ async function investFromCryptoToken() {
 
 
 async function main() {
-
-    //await getInvestorData(); 
 
     await investFromCryptoToken();
 

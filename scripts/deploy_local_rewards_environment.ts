@@ -125,7 +125,6 @@ async function deployHYAXRewardsContract(hyaxUpgradeable:any) {
     // Transfer ownership to the owner
     await upgradeableHYAXRewards.connect(deployer).transferOwnership(owner.address);
 
-
     /////////////UPDATE THE REWARDS SMART CONTRACT/////////////
 
     //Update the whitelister address
@@ -177,7 +176,7 @@ async function fundHYAXRewardsContract(hyaxUpgradeable:any, upgradeableHYAXRewar
   //Fund rewards smart contract with team tokens
   const teamTokensFundingAmount = ethers.parseUnits("1500000000", 18); // Fund with (1.5B) 1,500,000,000 Team Tokens
   await upgradeableHYAXRewards.connect(owner).fundSmartContract(1, teamTokensFundingAmount);
-
+  
   //Fund rewards smart contract with rewards tokens
   const rewardTokensFundingAmount = ethers.parseUnits("1200000000", 18); // Fund with (1.2B) 1,200,000,000 Team Tokens
   await upgradeableHYAXRewards.connect(owner).fundSmartContract(2, rewardTokensFundingAmount);
