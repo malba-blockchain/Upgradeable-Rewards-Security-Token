@@ -24,7 +24,7 @@ dotenv.config();
 // Define the constant values to interact with the smart contract
 const SMART_CONTRACT_NETWORK = Network.MATIC_AMOY;
 
-const AVERAGE_BLOCK_TIME_IN_BLOCKCHAIN = 2.2;
+const AVERAGE_BLOCK_TIME_IN_BLOCKCHAIN = 2.1;
 
 const { TOKEN_SMART_CONTRACT_ADDRESS, REWARDS_SMART_CONTRACT_ADDRESS } = require('../utils/addresses.ts');
 
@@ -99,6 +99,7 @@ async function getTokenBalancesInvestors(): Promise<{ balances: Map<string, numb
 
     // Define target block number as the current block for now (can change if historical data is needed)
     const targetBlockNumber = currentBlockNumber - blocksInAWeek; // Change to currentBlock - blocksInAWeek for last week's data
+    //const targetBlockNumber = currentBlockNumber; // Change to currentBlock - blocksInAWeek for last week's data
 
     //Fetch the block details for the target block number
     console.log("   [LOG]: Current block number: ", currentBlockNumber);
@@ -178,6 +179,7 @@ async function getTokenBalancesTeam(): Promise<{ balances: Map<string, number>, 
     
     // Define target block number as the current block for now (can change if historical data is needed)
     const targetBlockNumber = currentBlockNumber - blocksInAWeek; // Change to currentBlock - blocksInAWeek for last week's data
+    //const targetBlockNumber = currentBlockNumber; // Change to currentBlock - blocksInAWeek for last week's data
 
     // Loop through all whitelisted team wallets and fetch their token data
     for (const wallet of whitelistedTeamWallets) {
@@ -280,7 +282,9 @@ async function updateRewardsBatch(): Promise<string> {
                 
                 try {
                     // Send the batch update transaction
-                    const tx = await rewardsContract.connect(rewardsUpdaterWallet).updateRewardsBatch(batchAddresses, batchRewards);
+                    //const tx = await rewardsContract.connect(rewardsUpdaterWallet).updateRewardsBatch(batchAddresses, batchRewards);
+                    const tx = await rewardsContract.connect(rewardsUpdaterWallet).growthTokensFunded();
+
                     console.log("\n   [LOG]: Sending batch update transaction...");
                     
                     const updateRewardsBatchReceipt = await tx.wait(); // Wait for the transaction to be mined
@@ -368,14 +372,12 @@ async function automateWeeklyRewardsDistribution() {
         console.log("\n   --------------------------------------------------------------------------------------------------------");
         console.log("\n   [LOG]: Year: ", Math.floor(i / 52), ". Week in year: ", i % 52, ". Absolute week: ", i);
         console.log("\n   --------------------------------------------------------------------------------------------------------");
-
+        
         // Show the current state of the rewards smart contract.
         await showRewardsSmartContractState();
         
         // Attempt to update the rewards batch for the current week.
-        //const updateRewardsBatchResult = await updateRewardsBatch();
-
-        const updateRewardsBatchResult = "";
+        const updateRewardsBatchResult = await updateRewardsBatch();
         
         // If the update process fails, log the error and exit the simulation.
         if (updateRewardsBatchResult != "") {

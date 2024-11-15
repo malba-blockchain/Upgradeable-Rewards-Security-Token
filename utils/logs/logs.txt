@@ -47706,3 +47706,4256 @@
      Updater wallet balance: 99999761803742332626208
 
      Reward batch size update: 10
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  0 . Absolute week:  0
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  1 . Absolute week:  1
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  2 . Absolute week:  2
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  3 . Absolute week:  3
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  4 . Absolute week:  4
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  5 . Absolute week:  5
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  6 . Absolute week:  6
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  7 . Absolute week:  7
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  8 . Absolute week:  8
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  9 . Absolute week:  9
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  10 . Absolute week:  10
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  11 . Absolute week:  11
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  12 . Absolute week:  12
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  13 . Absolute week:  13
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  14 . Absolute week:  14
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  15 . Absolute week:  15
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  16 . Absolute week:  16
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  17 . Absolute week:  17
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  18 . Absolute week:  18
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  19 . Absolute week:  19
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  20 . Absolute week:  20
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  21 . Absolute week:  21
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  22 . Absolute week:  22
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  23 . Absolute week:  23
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  24 . Absolute week:  24
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  25 . Absolute week:  25
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  26 . Absolute week:  26
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  27 . Absolute week:  27
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  28 . Absolute week:  28
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  29 . Absolute week:  29
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  30 . Absolute week:  30
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  31 . Absolute week:  31
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  32 . Absolute week:  32
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  33 . Absolute week:  33
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  34 . Absolute week:  34
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  35 . Absolute week:  35
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  36 . Absolute week:  36
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  37 . Absolute week:  37
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  38 . Absolute week:  38
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  39 . Absolute week:  39
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  40 . Absolute week:  40
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  41 . Absolute week:  41
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  42 . Absolute week:  42
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  43 . Absolute week:  43
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  44 . Absolute week:  44
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  45 . Absolute week:  45
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  46 . Absolute week:  46
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  47 . Absolute week:  47
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  48 . Absolute week:  48
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  49 . Absolute week:  49
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  50 . Absolute week:  50
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  51 . Absolute week:  51
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  0 . Absolute week:  52
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  1 . Absolute week:  53
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  2 . Absolute week:  54
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  3 . Absolute week:  55
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  4 . Absolute week:  56
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  5 . Absolute week:  57
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  6 . Absolute week:  58
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  7 . Absolute week:  59
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  8 . Absolute week:  60
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  9 . Absolute week:  61
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  10 . Absolute week:  62
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  11 . Absolute week:  63
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  12 . Absolute week:  64
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  13 . Absolute week:  65
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  14 . Absolute week:  66
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  15 . Absolute week:  67
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  16 . Absolute week:  68
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  17 . Absolute week:  69
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  18 . Absolute week:  70
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  19 . Absolute week:  71
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  20 . Absolute week:  72
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  21 . Absolute week:  73
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  22 . Absolute week:  74
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  23 . Absolute week:  75
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  24 . Absolute week:  76
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  25 . Absolute week:  77
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  26 . Absolute week:  78
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  27 . Absolute week:  79
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  28 . Absolute week:  80
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  29 . Absolute week:  81
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  30 . Absolute week:  82
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  31 . Absolute week:  83
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  32 . Absolute week:  84
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  33 . Absolute week:  85
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  34 . Absolute week:  86
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  35 . Absolute week:  87
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  36 . Absolute week:  88
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  37 . Absolute week:  89
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  38 . Absolute week:  90
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  39 . Absolute week:  91
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  40 . Absolute week:  92
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  41 . Absolute week:  93
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  42 . Absolute week:  94
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  43 . Absolute week:  95
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  44 . Absolute week:  96
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  45 . Absolute week:  97
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  46 . Absolute week:  98
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  47 . Absolute week:  99
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  48 . Absolute week:  100
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  49 . Absolute week:  101
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  50 . Absolute week:  102
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  1 . Week in year:  51 . Absolute week:  103
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  0 . Absolute week:  104
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  1 . Absolute week:  105
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  2 . Absolute week:  106
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  3 . Absolute week:  107
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  4 . Absolute week:  108
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  5 . Absolute week:  109
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  6 . Absolute week:  110
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  7 . Absolute week:  111
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  8 . Absolute week:  112
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  9 . Absolute week:  113
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  10 . Absolute week:  114
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  11 . Absolute week:  115
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  12 . Absolute week:  116
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  13 . Absolute week:  117
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  14 . Absolute week:  118
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  15 . Absolute week:  119
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  16 . Absolute week:  120
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  17 . Absolute week:  121
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  18 . Absolute week:  122
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  19 . Absolute week:  123
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  20 . Absolute week:  124
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  21 . Absolute week:  125
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  22 . Absolute week:  126
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  23 . Absolute week:  127
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  24 . Absolute week:  128
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  25 . Absolute week:  129
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  26 . Absolute week:  130
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  27 . Absolute week:  131
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  28 . Absolute week:  132
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  29 . Absolute week:  133
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  30 . Absolute week:  134
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  31 . Absolute week:  135
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  32 . Absolute week:  136
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  33 . Absolute week:  137
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  34 . Absolute week:  138
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  35 . Absolute week:  139
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  36 . Absolute week:  140
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  37 . Absolute week:  141
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  38 . Absolute week:  142
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  39 . Absolute week:  143
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  40 . Absolute week:  144
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  41 . Absolute week:  145
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  42 . Absolute week:  146
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  43 . Absolute week:  147
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  44 . Absolute week:  148
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  45 . Absolute week:  149
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  46 . Absolute week:  150
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  47 . Absolute week:  151
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  48 . Absolute week:  152
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  49 . Absolute week:  153
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  50 . Absolute week:  154
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  2 . Week in year:  51 . Absolute week:  155
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  3 . Week in year:  0 . Absolute week:  156
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  3 . Week in year:  1 . Absolute week:  157
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  3 . Week in year:  2 . Absolute week:  158
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  3 . Week in year:  3 . Absolute week:  159
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  3 . Week in year:  4 . Absolute week:  160
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  3 . Week in year:  5 . Absolute week:  161
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  3 . Week in year:  6 . Absolute week:  162
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  3 . Week in year:  7 . Absolute week:  163
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  3 . Week in year:  8 . Absolute week:  164
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  3 . Week in year:  9 . Absolute week:  165
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  3 . Week in year:  10 . Absolute week:  166
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  3 . Week in year:  11 . Absolute week:  167
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  3 . Week in year:  12 . Absolute week:  168
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  3 . Week in year:  13 . Absolute week:  169
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  3 . Week in year:  14 . Absolute week:  170
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  3 . Week in year:  15 . Absolute week:  171
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  0 . Absolute week:  0
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  1 . Absolute week:  1
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  2 . Absolute week:  2
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  3 . Absolute week:  3
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  4 . Absolute week:  4
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  5 . Absolute week:  5
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  6 . Absolute week:  6
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  7 . Absolute week:  7
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  8 . Absolute week:  8
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  9 . Absolute week:  9
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  10 . Absolute week:  10
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  11 . Absolute week:  11
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  12 . Absolute week:  12
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  13 . Absolute week:  13
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  14 . Absolute week:  14
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  15 . Absolute week:  15
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  16 . Absolute week:  16
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  17 . Absolute week:  17
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  18 . Absolute week:  18
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  19 . Absolute week:  19
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  20 . Absolute week:  20
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  21 . Absolute week:  21
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  22 . Absolute week:  22
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  23 . Absolute week:  23
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  24 . Absolute week:  24
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  25 . Absolute week:  25
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  26 . Absolute week:  26
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  27 . Absolute week:  27
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  28 . Absolute week:  28
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  29 . Absolute week:  29
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: All batch rewards updated successfully!
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  30 . Absolute week:  30
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  0 . Absolute week:  0
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: EXECUTION OF BATCH UPDATE
+
+   Updater wallet address: 0x01c2f012de19e6436744c3F81f56E9e70C93a8C3 
+   Updater wallet balance: 1047816213709921992
+   [LOG]: Current block number:  14473629
+   [LOG]: Target block number:  14198720
+   [LOG]: Current block date:  2024-11-15T22:37:54.000Z
+   [LOG]: Target block date:  2024-11-09T03:04:02.000Z
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  0 . Absolute week:  0
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: EXECUTION OF BATCH UPDATE
+
+   Updater wallet address: 0x01c2f012de19e6436744c3F81f56E9e70C93a8C3 
+   Updater wallet balance: 1047816213709921992
+   [LOG]: Current block number:  14473790
+   [LOG]: Target block number:  14204990
+   [LOG]: Current block date:  2024-11-15T22:43:36.000Z
+   [LOG]: Target block date:  2024-11-09T06:46:08.000Z
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  0 . Absolute week:  0
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: EXECUTION OF BATCH UPDATE
+
+   Updater wallet address: 0x01c2f012de19e6436744c3F81f56E9e70C93a8C3 
+   Updater wallet balance: 1047816213709921992
+   [LOG]: Current block number:  14473822
+   [LOG]: Target block number:  14210866
+   [LOG]: Current block date:  2024-11-15T22:44:44.000Z
+   [LOG]: Target block date:  2024-11-09T10:29:44.000Z
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  0 . Absolute week:  0
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: EXECUTION OF BATCH UPDATE
+
+   Updater wallet address: 0x01c2f012de19e6436744c3F81f56E9e70C93a8C3 
+   Updater wallet balance: 1047816213709921992
+   [LOG]: Current block number:  14473841
+   [LOG]: Target block number:  14185841
+   [LOG]: Current block date:  2024-11-15T22:45:26.000Z
+   [LOG]: Target block date:  2024-11-08T19:27:54.000Z
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  0 . Absolute week:  0
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: EXECUTION OF BATCH UPDATE
+
+   Updater wallet address: 0x01c2f012de19e6436744c3F81f56E9e70C93a8C3 
+   Updater wallet balance: 1047816213709921992
+   [LOG]: Current block number:  14473862
+   [LOG]: Target block number:  14473862
+   [LOG]: Current block date:  2024-11-15T22:46:10.000Z
+   [LOG]: Target block date:  2024-11-15T22:46:10.000Z
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  0 . Absolute week:  0
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: EXECUTION OF BATCH UPDATE
+
+   Updater wallet address: 0x01c2f012de19e6436744c3F81f56E9e70C93a8C3 
+   Updater wallet balance: 1047816213709921992
+   [LOG]: Current block number:  14473912
+   [LOG]: Target block number:  14473912
+   [LOG]: Current block date:  2024-11-15T22:47:56.000Z
+   [LOG]: Target block date:  2024-11-15T22:47:56.000Z
+
+     Rewards to distribute this week: 2884612
+
+   [LOG]: Processing batch 1 of 1
+     Address to update: 0x6Fbc023ACCBA56c1b32bDaFA2F27D4cd58145AB1. Rewards: 1168441
+     Address to update: 0x9a4B007a10E1d1EC63157c8D69eBa76F30B4a2B4. Rewards: 934753
+     Address to update: 0x34795B6a05543Fe097C8BbBc221e3119f27B793E. Rewards: 351035
+     Address to update: 0xb44e0C06718534F27847e607B6AE9368798fB974. Rewards: 234275
+     Address to update: 0xEDfcDEf54AE487Bd2F49e88E5b447cC26eB48e47. Rewards: 117137
+     Address to update: 0x350441F8a82680a785FFA9d3EfEa60BB4cA417f8. Rewards: 23691
+     Address to update: 0x01c2f012de19e6436744c3F81f56E9e70C93a8C3. Rewards: 15794
+     Address to update: 0x7dE9a234E67b9Ac172c803555f5aA7fFf3DB5581. Rewards: 39486
+
+   [LOG]: Sending batch update transaction...
+
+   #######################################################################################################
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: Year:  0 . Week in year:  0 . Absolute week:  0
+
+   --------------------------------------------------------------------------------------------------------
+
+   [LOG]: SMART CONTRACT STATE
+
+     Rewards token funded: 1200000000
+
+     Rewards token in smart contract: 1200000000
+
+     Rewards token distributed: 0
+
+     Rewards token withdrawn: 0
+
+   [LOG]: EXECUTION OF BATCH UPDATE
+
+   Updater wallet address: 0x01c2f012de19e6436744c3F81f56E9e70C93a8C3 
+   Updater wallet balance: 1047816213709921992
+   [LOG]: Current block number:  14473962
+   [LOG]: Target block number:  14185962
+   [LOG]: Current block date:  2024-11-15T22:49:42.000Z
+   [LOG]: Target block date:  2024-11-08T19:32:10.000Z
