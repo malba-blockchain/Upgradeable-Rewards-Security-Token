@@ -625,7 +625,6 @@ npx hardhat verify --network polygonAmoy 0xb1E69361222Bb7f897F6c628b443bA3bBC874
 28.2.7. Add team wallets to whitelist DONE
 
 
-CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
 29. Transacion optimization and simulation? https://docs.alchemy.com/reference/alchemy-sendgasoptimizedtransaction (2 days)
 
@@ -633,7 +632,37 @@ NOW TEST THE SCRIPT. REMEMBER //const updateRewardsBatchResult = await updateRew
 
 npx hardhat run --network polygonAmoy scripts/update_weekly_rewards.ts
 
+
+
+31. DOCUMENT EVERYTHING. DON'T FORGET THE VIDEOS (4 days)
+
+31.1. Check previous documentation DONE
+
+31.2. Create documentation format DONE
+
+31.3. Token contract documentation 
+-Finish documenting last 3 ERC20 Methods DONE
+-Check the numeration DONE
+-Add bottom line comments DONE
+-Fix spacing between tables DONE
+-Update content table DONE
+-Export PDF
+
+
+CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+
+31.4. Reward contract documentation
+CONTINUE WITH THE FORMAT FROM Use case # 11: Update Rewards for a Single Wallet
+
+
 UP TO HERE-------------------------------
+
+
+31.5. Create documentation videos
+
+
+
+31. Test real time upgradeability with multisig transaction (2 days)
 
 
 30. Deploy rewards update script onchain. (3 days)
@@ -642,10 +671,6 @@ To check:
 
 getCurrentTokenPrice() function. Price freshness validation.
 
-
-30. Test real time upgradeability with multisig transaction (2 days)
-
-31. DOCUMENT EVERYTHING. DON'T FORGET THE VIDEOS (4 days)
 
 32. Share to the web2 team + rewards update script (4 days)
 

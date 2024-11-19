@@ -1239,7 +1239,7 @@ contract UpgradeableHYAXRewards is
         address _oldTeamMemberWalletAddress,
         address _newTeamMemberWalletAddress
     ) public onlyRole(DEFAULT_ADMIN_ROLE) nonReentrant {
-        require(
+        require( 
             msg.sender == owner(),
             "Only the owner can update the team member wallet"
         );

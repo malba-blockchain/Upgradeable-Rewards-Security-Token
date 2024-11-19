@@ -1,0 +1,30 @@
+Your task is to create the documentation of the following smart contract function, following the following documentation format:
+
+FORMAT:
+
+1. Title: Name of the function in the natural way of writing.
+
+2. Description: (Description of what the function does in less than 300 chraracers) 
+
+3. Actors and interfaces: (Who will interact with the function. I.e. Investor, smart contract owner, etc)
+
+4. Initial status and preconditions: What's required in order to be able to properly execute the function. I.e. The address executing the function has MATIC to pay the gas for the transaction
+
+5. Basic Flow (The detailed description step by step of the function execution following the expected and normal flow of the function without any anormalities)
+Step 1. 
+Step 2.
+Step 3.
+...
+Step N.
+
+5. Post Condition
+The state of the smart contract, balances or global variables after executing the function.
+
+6. Alternative flows
+The possibilities of the function execution outside of the Basic Normal Flow. 
+I.e. In case invalid parameters are entered in the function, the transaction is reverted.
+I.e. In case the wallet to register is a team wallet, the variable "isTeamWallet" is set to "true"
+
+
+FUNCTION:
+
