@@ -648,45 +648,29 @@ npx hardhat run --network polygonAmoy scripts/update_weekly_rewards.ts
 -Update content table DONE
 -Export PDF
 
+31.4. Reward contract documentation DONE
+
 
 CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
-31.4. Reward contract documentation
-CONTINUE WITH THE FORMAT FROM Use case # 11: Update Rewards for a Single Wallet
+32. Deploy rewards update script onchain. (4 days)
 
+33. Create documentation videos (2 days)
 
-UP TO HERE-------------------------------
-
-
-31.5. Create documentation videos
+34. Test real time upgradeability with multisig transaction (2 days)
 
 
 
-31. Test real time upgradeability with multisig transaction (2 days)
 
-
-30. Deploy rewards update script onchain. (3 days)
 
 To check:
 
 getCurrentTokenPrice() function. Price freshness validation.
 
 
-32. Share to the web2 team + rewards update script (4 days)
+35. Share testnet version to the web2 team + rewards update script
 
-Extra. Do realistic tests with team . I.e. 1 Day = week of rewards (1 week)
-
-
----------INITIAL LOCAL DEPLOYMENT---------
-
-npx hardhat node
-
-npx hardhat compile --force
-
-Create local upgradeable version
-
-Create testnet upgradeable version
-
+Do realistic tests with team . I.e. 1 Day = week of rewards (1 week)
 
 
 
