@@ -78,10 +78,24 @@ async function getAllWhitelistedInvestorWallets(): Promise<Set<string>> {
 
     // Check whitelisting status for each holder
     await Promise.all(Array.from(holders).map(async (holder) => {
+  
         // Fetch the wallet details for the current holder
-        const { isWhitelisted, isBlacklisted } = await rewardsContract.wallets(holder);
-        // If the holder is whitelisted and not blacklisted, add them to the whitelisted set
-        if (isWhitelisted && !isBlacklisted) whitelistedTokenHolders.add(holder);
+        const { isWhitelisted, isBlacklisted, lastRewardsUpdateTime } = await rewardsContract.wallets(holder);
+        
+        // Get the current block number
+        const currentBlockNumber = await alchemy.core.getBlockNumber();
+
+        // Get the current block details
+        const currentBlock = await alchemy.core.getBlock(currentBlockNumber);
+        
+        // Calculate the time difference between the current block and the last rewards update time
+        const lastUpdateTimeSpread = currentBlock.timestamp - Number(lastRewardsUpdateTime);
+        
+        // Check if the holder is whitelisted, not blacklisted, and if the time since the last update exceeds 550000 seconds (approximately 6.4 days)
+        if (isWhitelisted && !isBlacklisted && lastUpdateTimeSpread > 550000) {
+            // Add the holder to the set of whitelisted token holders if all conditions are met
+            whitelistedTokenHolders.add(holder);
+        }
     }));
 
     // Return the set of whitelisted token holders
@@ -152,8 +166,20 @@ async function getAllWhitelistedTeamWallets(): Promise<Set<string>> {
         
         // If it's a team wallet, check its whitelist and blacklist status
         if (isTeamWallet) {
-            const { isWhitelisted, isBlacklisted } = await rewardsContract.wallets(walletAddress);
-            if (isWhitelisted && !isBlacklisted) {
+            const { isWhitelisted, isBlacklisted, lastRewardsUpdateTime } = await rewardsContract.wallets(walletAddress);
+
+            // Get the current block number
+            const currentBlockNumber = await alchemy.core.getBlockNumber();
+
+            // Get the current block details
+            const currentBlock = await alchemy.core.getBlock(currentBlockNumber);
+            
+            // Calculate the time difference between the current block and the last rewards update time
+            const lastUpdateTimeSpread = currentBlock.timestamp - Number(lastRewardsUpdateTime);
+            
+            // Check if the holder is whitelisted, not blacklisted, and if the time since the last update exceeds 550000 seconds (approximately 6.4 days)
+            if (isWhitelisted && !isBlacklisted && lastUpdateTimeSpread > 550000) {
+                // Add the holder to the set of whitelisted token holders if all conditions are met
                 whitelistedTeamWallets.add(walletAddress);
             }
         }

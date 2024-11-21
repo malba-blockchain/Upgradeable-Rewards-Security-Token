@@ -1068,7 +1068,7 @@ contract UpgradeableHYAXRewards is
                     MIN_INTERVAL_FOR_UPDATE_REWARDS,
             "Too soon to update rewards for this wallet"
         );
-
+        
         // Additional validation to ensure rewards do not exceed allowed limits
         require(
             _hyaxRewards <= REWARD_TOKENS_PER_WEEK,
@@ -1082,7 +1082,7 @@ contract UpgradeableHYAXRewards is
             rewardTokensDistributed + _hyaxRewards <= REWARD_TOKENS_TOTAL,
             "All the reward tokens have been already distributed"
         );
-
+        
         // Update the last rewards update time
         wallets[_walletAddress].lastRewardsUpdateTime = block.timestamp;
 
@@ -1421,7 +1421,7 @@ contract UpgradeableHYAXRewards is
                 keccak256(abi.encodePacked("HYAX")),
             "Token address must be a valid HYAX token address"
         );
-
+    
         // Update the hyax token address
         hyaxTokenAddress = _hyaxTokenAddress;
 

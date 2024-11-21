@@ -625,8 +625,7 @@ npx hardhat verify --network polygonAmoy 0xb1E69361222Bb7f897F6c628b443bA3bBC874
 28.2.7. Add team wallets to whitelist DONE
 
 
-
-29. Transacion optimization and simulation? https://docs.alchemy.com/reference/alchemy-sendgasoptimizedtransaction (2 days)
+29. Transacion optimization and simulation? https://docs.alchemy.com/reference/alchemy-sendgasoptimizedtransaction
 
 NOW TEST THE SCRIPT. REMEMBER //const updateRewardsBatchResult = await updateRewardsBatch();
 
@@ -634,7 +633,7 @@ npx hardhat run --network polygonAmoy scripts/update_weekly_rewards.ts
 
 
 
-31. DOCUMENT EVERYTHING. DON'T FORGET THE VIDEOS (4 days)
+31. DOCUMENT EVERYTHING.
 
 31.1. Check previous documentation DONE
 
@@ -653,12 +652,27 @@ npx hardhat run --network polygonAmoy scripts/update_weekly_rewards.ts
 
 CONTINUE HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
-32. Deploy rewards update script onchain. (4 days)
+32. Add time check control to the upgrades script. DONE
 
-33. Create documentation videos (2 days)
+32.1. Add time check to local script: Investors and team. DONE
 
-34. Test real time upgradeability with multisig transaction (2 days)
+32.2. Add to to online script. Investors and team. DONE
 
+
+
+33. Create deliverables list
+
+
+-Whats the limit for weekly rewards?
+-Whats the answer to the voice note question? Total crash of prioritize the successful ones?
+
+
+
+34. Deploy rewards update script onchain. (4 days) 
+
+35. Create documentation videos (2 days) 
+
+36. Test real time upgradeability with multisig transaction (2 days)
 
 
 
